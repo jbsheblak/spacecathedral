@@ -37,24 +37,13 @@ namespace OuterSpaceCathedral
             }
 
             position += movement * deltaTime;
+            
+            int halfWidth  = sourceRectangle.Width  / 2;
+            int halfHeight = sourceRectangle.Height / 2;
 
-            if (position.X < sourceRectangle.Width / 2)
-            {
-                position.X = sourceRectangle.Width / 2;
-            }
-            else if (position.X > 480 - sourceRectangle.Width / 2)
-            {
-                position.X = 480 - sourceRectangle.Width / 2;
-            }
-
-            if (position.Y < sourceRectangle.Height / 2)
-            {
-                position.Y = sourceRectangle.Height / 2;
-            }
-            else if (position.Y > 270 - sourceRectangle.Height / 2)
-            {
-                position.Y = 270 - sourceRectangle.Height / 2;
-            }
+            // clamp position to be onscreen
+            position.X = Math.Max( halfWidth,  Math.Min( position.X, GameConstants.RenderTargetWidth  - halfWidth  ) );
+            position.Y = Math.Max( halfHeight, Math.Min( position.Y, GameConstants.RenderTargetHeight - halfHeight ) );
 
             if (fireIntervalCounterElapsed < fireInterval)
             {

@@ -37,7 +37,7 @@ namespace OuterSpaceCathedral
         protected override void Initialize()
         {
 
-            renderTarget = new RenderTarget2D(GraphicsDevice, 480, 270);
+            renderTarget = new RenderTarget2D(GraphicsDevice, GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight);
 
             graphics.PreferredBackBufferWidth = 960;
             graphics.PreferredBackBufferHeight = 540;

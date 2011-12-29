@@ -9,7 +9,7 @@ namespace OuterSpaceCathedral
     {
         public Background()
         {
-            position = new Vector2(480 / 2, 270 / 2);
+            position = GameConstants.RenderTargetCenter;
         }
     }
 }

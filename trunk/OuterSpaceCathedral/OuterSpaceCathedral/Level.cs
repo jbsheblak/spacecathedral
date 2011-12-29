@@ -14,6 +14,7 @@ namespace OuterSpaceCathedral
         List<Bullet> enemyBullets = new List<Bullet>();
 
         static int mTempEnemyIndex = 0;
+        static Vector2 mEnemyVelocity = new Vector2(0, 100);
 
         public Level()
         {
@@ -22,7 +23,7 @@ namespace OuterSpaceCathedral
             players.Add(new Player(PlayerIndex.Three));
             players.Add(new Player(PlayerIndex.Four));
 
-            enemies.Add(new Enemy(new Vector2( GameConstants.RenderTargetWidth/2, 0 ) ) );
+            enemies.Add(new Enemy(new Vector2( GameConstants.RenderTargetWidth/2, 0 ), mEnemyVelocity ) );
 
             backgrounds.Add(new SolidColorBackground(Color.CornflowerBlue));
             backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
@@ -53,7 +54,8 @@ namespace OuterSpaceCathedral
             }
 
             //Check collisions
-            CheckBulletCollisions(enemies, playerBullets);
+            CheckCollisions(enemies, playerBullets);
+            CheckCollisions(players, enemies);
 
             //Remove objects
             for (int i = players.Count - 1; i >= 0; i--)
@@ -85,7 +87,7 @@ namespace OuterSpaceCathedral
             if ( enemies.Count == 0 )
             {
                 ++mTempEnemyIndex;
-                enemies.Add( new Enemy( new Vector2( (mTempEnemyIndex % 5) * GameConstants.RenderTargetWidth / 5, 0 ) ) );
+                enemies.Add( new Enemy( new Vector2( (mTempEnemyIndex % 5) * GameConstants.RenderTargetWidth / 5, 0 ), mEnemyVelocity ) );
             }
         }
 
@@ -123,19 +125,17 @@ namespace OuterSpaceCathedral
         #region Private
 
         /// <summary>
-        /// Check if a list of bullets collides with a list of target objects.
-        /// All colliding targets will be marked for removal.
+        /// Check to see if a list of target objects intersect a list of dangerous objects.
+        /// Intersecting target objects will be removed.
         /// </summary>
-        /// <param name="targetObjects">Non-null list of target objects.</param>
-        /// <param name="bullets">Non-null list of bullet objects.</param>
-        void CheckBulletCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> bullets)
+        void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects)
         {
             foreach ( GameObject target in targetObjects )
             {
-                foreach ( GameObject bullet in bullets )
+                foreach ( GameObject danger in dangerObjects )
                 {
                     // check for bound intersection
-                    if ( target.PositionRectangle.Intersects(bullet.PositionRectangle) )
+                    if ( target.PositionRectangle.Intersects(danger.PositionRectangle) )
                     {
                         target.RemoveObject();
                         break;

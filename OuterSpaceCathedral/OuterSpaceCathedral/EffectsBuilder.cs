@@ -17,10 +17,10 @@ namespace OuterSpaceCathedral
                 GameConstants.CalcRectFor32x32Sprite(1, 4),
             };
 
-            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1/15f ,animFrames), 0.333f));
+            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1/15f ,animFrames), 0.333f, Color.White));
         }
 
-        public static void BuildBulletHitEvaporation(Vector2 position)
+        public static void BuildBulletHitEvaporation(Vector2 position, Color bulletColor)
         {
             List<Rectangle> animFrames = new List<Rectangle>()
             {
@@ -30,7 +30,7 @@ namespace OuterSpaceCathedral
                 new Rectangle(184, 8, 8, 8),
             };
 
-            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1 / 30f, animFrames), 0.1333f));
+            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1 / 30f, animFrames), 0.1333f, bulletColor));
         }
     }
 }

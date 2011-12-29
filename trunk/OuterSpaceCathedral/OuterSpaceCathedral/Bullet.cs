@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OuterSpaceCathedral
 {
-    class Bullet : GameObject
+    public class Bullet : GameObject
     {
         protected Vector2 velocity = new Vector2(0, -200);
 

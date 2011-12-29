@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OuterSpaceCathedral
 {
-    internal class Effect : GameObject
+    public class Effect : GameObject
     {
         private const int skSpriteWidth  = 32;
         private const int skSpriteHeight = 32;

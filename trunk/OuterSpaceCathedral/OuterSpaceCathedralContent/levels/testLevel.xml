@@ -1,0 +1,11 @@
+<LevelData Name="TestLevel">  
+  <EnemyWaves>
+    <EnemyWave Name="FirstWave">      
+      <EnemyPatterns>
+        <EnemyPattern PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern PatternId="line_up_then_move"       TimeOffset="3" />        
+        <EnemyPattern PatternId="wave_line"               TimeOffset="8" />
+      </EnemyPatterns>      
+    </EnemyWave>
+  </EnemyWaves>
+</LevelData>

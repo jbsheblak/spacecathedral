@@ -1,12 +1,116 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace OuterSpaceCathedral
 {
-    class Level
+    /// <summary>
+    /// Pattern of enemies all released simultaneously.
+    /// </summary>
+    public class EnemyPattern
+    {
+        public EnemyPattern()
+        {
+            PatternId = string.Empty;
+            TimeOffset = 0.0f;
+        }
+
+        [XmlAttribute("PatternId")]
+        public string PatternId
+        { 
+            get; 
+            set; 
+        }
+
+        [XmlAttribute("TimeOffset")]
+        public float TimeOffset
+        { 
+            get; 
+            set; 
+        }
+    }
+
+    /// <summary>
+    /// Wave of enemies consisting of a set of EnemyPatterns released over time.
+    /// </summary>
+    public class EnemyWave
+    {   
+        private int    mPatternIdx = 0;
+        private float  mTimeOffset = 0.0f;
+
+        public EnemyWave()
+        {
+            Name = string.Empty;
+            EnemyPatterns = null;
+        }
+
+        [XmlAttribute("Name")]
+        public string Name
+        {
+            get;
+            set;
+        }
+        
+        public List<EnemyPattern> EnemyPatterns
+        {
+            get;
+            set;
+        }
+
+        public void Update(float deltaTime, List<Enemy> enemyList)
+        {
+            mTimeOffset += deltaTime;
+
+            if ( EnemyPatterns != null )
+            {
+                if ( mPatternIdx < EnemyPatterns.Count )
+                {
+                    EnemyPattern currentPatern = EnemyPatterns[mPatternIdx];
+                    if ( mTimeOffset >= currentPatern.TimeOffset )
+                    {
+                        // spawn pattern
+                        EnemyFactory.BuildPattern(currentPatern.PatternId, enemyList);
+
+                        // move to next pattern
+                        ++mPatternIdx;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Data container for a given level.
+    /// </summary>
+    public class LevelData
+    {
+        public LevelData()
+        {
+            Name = string.Empty;
+            EnemyWaves = null;
+        }
+
+        [XmlAttribute("Name")]
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public List<EnemyWave> EnemyWaves
+        {
+            get;
+            set;
+        }
+    }
+
+    public class Level
     {
         List<Background> backgrounds = new List<Background>();
         List<Player> players = new List<Player>();
@@ -14,97 +118,24 @@ namespace OuterSpaceCathedral
         List<Bullet> playerBullets = new List<Bullet>();
         List<Bullet> enemyBullets = new List<Bullet>();
         List<Effect> mEffects = new List<Effect>();
-        
-        static int mEnemyWave = 2;
+        LevelData mLevelData = null;
 
-        private static Enemy BuildCircularEnemy(Vector2 initialPosition, float radius, float initialRotationDegrees)
+        /// <summary>
+        /// Load a level data instance from an xml file.
+        /// </summary>
+        private static LevelData LoadLevelData(string levelPath)
         {
-            float targetX = radius * (float)Math.Cos( initialRotationDegrees * Math.PI / 180.0f );
-            float targetY = radius * (float)Math.Sin( initialRotationDegrees * Math.PI / 180.0f );
-            Vector2 target = initialPosition + new Vector2(targetX, targetY);
-
-            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>()
+            try
             {
-                new EnemyMoveToLocationStrategy(initialPosition, target, 100),
-                new EnemyParentedMovementStrategy( new EnemyFixedMovementStrategy(initialPosition), new EnemyCircularMovementStrategy(180, initialRotationDegrees, radius) ),
-            };
-            
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
-        }
-
-        private Enemy BuildLinearEnemy( Vector2 initialPosition, Vector2 targetPosition, float toTargetSpeed, Vector2 linearVelocity, float goTime)
-        {
-            float distToTravel = (targetPosition - initialPosition).Length();
-            float timeToTarget = distToTravel / toTargetSpeed;            
-            float waitTime = goTime - timeToTarget;
-
-            // move to position, wait, then go...
-            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>()
+                XmlSerializer xmlDeserializer = new XmlSerializer(typeof(LevelData));
+                using ( TextReader textReader = new StreamReader(levelPath) )
+                {
+                    return (LevelData)xmlDeserializer.Deserialize(textReader);
+                }
+            }
+            catch ( System.Exception)
             {
-                new EnemyMoveToLocationStrategy(initialPosition, targetPosition, toTargetSpeed),
-                new EnemyTimeDelayedMovementStrategy(waitTime),
-                new EnemyLinearMovementStrategy(initialPosition, linearVelocity)
-            };
-
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
-        }
-
-        private Enemy BuildWaveEnemy( Vector2 initialPosition )
-        {
-            Vector2 linearVelocity = new Vector2(-100, 0);
-            Vector2 waveDisplacement = new Vector2(0, 35);
-
-            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>()
-            {
-                new EnemyParentedMovementStrategy( new EnemyLinearMovementStrategy(initialPosition, linearVelocity), new EnemyWaveMovementStrategy(waveDisplacement, 360, 0) )
-            };
-            
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
-        }
-
-        private void BuildEnemyWave(int enemyWaveIdx)
-        {
-            switch ( enemyWaveIdx % 3 )
-            {
-                case 0:
-                    {
-                        int skSpread = 75;
-
-                        // circular
-                        Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth/2, GameConstants.RenderTargetHeight/2 );
-
-                        for ( int i = 0; i < 8; ++i )
-                        {
-                            enemies.Add( BuildCircularEnemy( initialPosition, 75, 360/8 * i ) );
-                        }
-                    }
-                    break;
-
-                case 1:
-                    {
-                        // linear
-                        Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, 32 );                        
-                        Vector2 enemyVelocity = new Vector2(-200, 0);
-                        float enemyToTargetSpeed = 100;
-                        int enemyCount = 8;
-                        int maxDistance = ( enemyCount - 1 ) * 32;
-                        float waitTime = Math.Abs( maxDistance / enemyToTargetSpeed );
-                        for ( int i = 0; i < enemyCount; ++i )
-                        {
-                            enemies.Add( BuildLinearEnemy( initialPosition, initialPosition + new Vector2(0, 32 * i), enemyToTargetSpeed, enemyVelocity, waitTime) );
-                        }
-                    }
-                    break;
-
-                case 2:
-                    {
-                        for ( int i = 0; i < 8; ++i )
-                        {
-                            Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
-                            enemies.Add( BuildWaveEnemy(initialPosition) );
-                        }
-                    }
-                    break;
+                return null;
             }
         }
         
@@ -115,7 +146,7 @@ namespace OuterSpaceCathedral
             players.Add(new Player(PlayerIndex.Three));
             players.Add(new Player(PlayerIndex.Four));
 
-            BuildEnemyWave(mEnemyWave);
+            mLevelData = Level.LoadLevelData("Content/levels/testLevel.xml");
 
             backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
             //backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
@@ -124,6 +155,12 @@ namespace OuterSpaceCathedral
 
         public virtual void Update(float deltaTime)
         {
+            // Update Level
+            if ( mLevelData != null )
+            {
+                mLevelData.EnemyWaves[0].Update(deltaTime, enemies);
+            }
+
             //Update Objects
             backgrounds.ForEach( x => x.Update(deltaTime) );
             players.ForEach( x => x.Update(deltaTime) );
@@ -140,17 +177,6 @@ namespace OuterSpaceCathedral
             enemies.RemoveAll(x => x.ReadyForRemoval());
             playerBullets.RemoveAll(x => x.ReadyForRemoval());
             mEffects.RemoveAll(x => x.ReadyForRemoval());
-
-            // TEMP TEMP TEMP, to be removed
-            if ( enemies.Count == 0 )
-            {
-                // clear all bullets so we can see the next pattern...
-                playerBullets.ForEach( x => x.RemoveObject() );
-                playerBullets.RemoveAll( x => x.ReadyForRemoval() );
-
-                ++mEnemyWave;
-                BuildEnemyWave(mEnemyWave);
-            }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

@@ -8,7 +8,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Utility class for managing animation key frame updates.
     /// </summary>
-    class AnimFrameManager
+    public class AnimFrameManager
     {
         private int                 mFrameIndex;
         private List<Rectangle>     mFrames;
@@ -46,7 +46,7 @@ namespace OuterSpaceCathedral
         }
     };
 
-    class GameObject
+    public class GameObject
     {
         protected Vector2 position;             //Object's center in the world
         protected Rectangle sourceRectangle;    //Rectangle Location of object's art in the spriteSheet

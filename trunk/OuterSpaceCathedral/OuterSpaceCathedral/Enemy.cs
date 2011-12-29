@@ -8,7 +8,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Movement strategy interface.
     /// </summary>
-    interface IEnemyMovementStrategy
+    public interface IEnemyMovementStrategy
     {
         Vector2     Position { get; set; } // get/set the current position
         bool        Complete { get; }      // is the movement complete?
@@ -19,7 +19,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Compositing utility for movement strategies. Allows enemy to queue up movements.
     /// </summary>
-    internal class EnemyCompositeMovementStrategy : IEnemyMovementStrategy
+    public class EnemyCompositeMovementStrategy : IEnemyMovementStrategy
     {
         private List<IEnemyMovementStrategy> mStrategies = null;
         private int                          mStrategyIndex = 0;
@@ -69,7 +69,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Parenting movement class. Allows for movement relative to another movement.
     /// </summary>
-    internal class EnemyParentedMovementStrategy : IEnemyMovementStrategy
+    public class EnemyParentedMovementStrategy : IEnemyMovementStrategy
     {
         private IEnemyMovementStrategy  mGlobalMovement;
         private IEnemyMovementStrategy  mLocalMovement;
@@ -104,7 +104,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Movement strategy to cause enemy to wait for a certain amount of time.
     /// </summary>
-    internal class EnemyTimeDelayedMovementStrategy : IEnemyMovementStrategy
+    public class EnemyTimeDelayedMovementStrategy : IEnemyMovementStrategy
     {
         private float mTimeDelay = 0.0f;
 
@@ -132,7 +132,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Simple 'Move to Point' strategy.
     /// </summary>
-    internal class EnemyMoveToLocationStrategy : IEnemyMovementStrategy
+    public class EnemyMoveToLocationStrategy : IEnemyMovementStrategy
     {
         private Vector2 mPosition;
         private Vector2 mTarget;
@@ -181,7 +181,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Fixed movement strategy. Does not move position.
     /// </summary>
-    internal class EnemyFixedMovementStrategy : IEnemyMovementStrategy
+    public class EnemyFixedMovementStrategy : IEnemyMovementStrategy
     {
         private Vector2 mPosition;
 
@@ -210,7 +210,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Linear movement strategy.
     /// </summary>
-    internal class EnemyLinearMovementStrategy : IEnemyMovementStrategy
+    public class EnemyLinearMovementStrategy : IEnemyMovementStrategy
     {
         private Vector2 mPosition;
         private Vector2 mVelocity;
@@ -241,7 +241,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Movement strategy which circles around a starting point.
     /// </summary>
-    internal class EnemyCircularMovementStrategy : IEnemyMovementStrategy
+    public class EnemyCircularMovementStrategy : IEnemyMovementStrategy
     {
         private Vector2                 mPosition;
         private float                   mRotationRateDegrees;
@@ -280,7 +280,7 @@ namespace OuterSpaceCathedral
     /// <summary>
     /// Movement strategy that waves on a sin curve along the wave displacement vector.
     /// </summary>
-    internal class EnemyWaveMovementStrategy : IEnemyMovementStrategy
+    public class EnemyWaveMovementStrategy : IEnemyMovementStrategy
     {
         private Vector2                 mPosition;
         private Vector2                 mWaveDisplacement;
@@ -316,7 +316,7 @@ namespace OuterSpaceCathedral
         }
     }
 
-    internal class Enemy : GameObject
+    public class Enemy : GameObject
     {
         private const int skSpriteWidth  = 32;
         private const int skSpriteHeight = 32;

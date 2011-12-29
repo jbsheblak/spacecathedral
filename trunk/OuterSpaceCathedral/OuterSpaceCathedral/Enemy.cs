@@ -10,10 +10,10 @@ namespace OuterSpaceCathedral
     /// </summary>
     interface IEnemyMovementStrategy
     {
-        Vector2     Position { get; set; }
-        bool        Complete { get; }
+        Vector2     Position { get; set; } // get/set the current position
+        bool        Complete { get; }      // is the movement complete?
 
-        void        Update(float deltaTime);
+        void        Update(float deltaTime); // update the movement
     }
 
     /// <summary>
@@ -40,6 +40,9 @@ namespace OuterSpaceCathedral
             get { return false; }
         }
         
+        /// <summary>
+        /// The current executing movement strategy.
+        /// </summary>
         private IEnemyMovementStrategy CurrentStrategy
         {
             get { return mStrategies[mStrategyIndex]; }
@@ -60,6 +63,69 @@ namespace OuterSpaceCathedral
                     CurrentStrategy.Position = curPosition;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Parenting movement class. Allows for movement relative to another movement.
+    /// </summary>
+    internal class EnemyParentedMovementStrategy : IEnemyMovementStrategy
+    {
+        private IEnemyMovementStrategy  mGlobalMovement;
+        private IEnemyMovementStrategy  mLocalMovement;
+        private Vector2                 mPosition;
+        
+        public EnemyParentedMovementStrategy(IEnemyMovementStrategy globalMovement, IEnemyMovementStrategy localMovement)
+        {
+            mGlobalMovement = globalMovement;
+            mLocalMovement  = localMovement;
+            mPosition       = Vector2.Zero;
+        }
+
+        public Vector2 Position
+        {
+            get { return mPosition; }
+            set { mPosition = value; }
+        }
+
+        public bool Complete
+        {
+            get { return mGlobalMovement.Complete && mLocalMovement.Complete; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mGlobalMovement.Update(deltaTime);
+            mLocalMovement.Update(deltaTime);
+            mPosition = mGlobalMovement.Position + mLocalMovement.Position;
+        }
+    }
+
+    /// <summary>
+    /// Movement strategy to cause enemy to wait for a certain amount of time.
+    /// </summary>
+    internal class EnemyTimeDelayedMovementStrategy : IEnemyMovementStrategy
+    {
+        private float mTimeDelay = 0.0f;
+
+        public EnemyTimeDelayedMovementStrategy(float timeDelay)
+        {
+            mTimeDelay = timeDelay;
+        }
+
+        public Vector2 Position
+        {
+            get; set;
+        }
+
+        public bool Complete
+        {
+            get { return mTimeDelay == 0.0f; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mTimeDelay = Math.Max(0.0f, mTimeDelay - deltaTime);
         }
     }
 
@@ -111,21 +177,17 @@ namespace OuterSpaceCathedral
             return ( ( target - pos ) < 0 ) ? Math.Max(target, newPos) : Math.Min(target, newPos);
         }
     }
-    
+
     /// <summary>
-    /// Movement strategy which circles around a starting point.
+    /// Fixed movement strategy. Does not move position.
     /// </summary>
-    internal class EnemyCircularMovementStrategy : IEnemyMovementStrategy
+    internal class EnemyFixedMovementStrategy : IEnemyMovementStrategy
     {
         private Vector2 mPosition;
-        private Vector2 mCenter;
-        private float   mRotationRateDegrees;
 
-        public EnemyCircularMovementStrategy(Vector2 initialPosition, float rotationRateDegrees)
+        public EnemyFixedMovementStrategy(Vector2 initialPosition)
         {
-            mCenter                 = initialPosition;
-            mPosition               = initialPosition;
-            mRotationRateDegrees    = rotationRateDegrees;
+            mPosition = initialPosition;
         }
 
         public Vector2 Position
@@ -141,18 +203,116 @@ namespace OuterSpaceCathedral
 
         public void Update(float deltaTime)
         {
-            float radRate = (float)(mRotationRateDegrees * Math.PI / 180.0f);
-            float radRot = radRate * deltaTime;
+            // No movement.
+        }
+    }
 
-            float cosRot = (float)Math.Cos(radRot);
-            float sinRot = (float)Math.Sin(radRot);
+    /// <summary>
+    /// Linear movement strategy.
+    /// </summary>
+    internal class EnemyLinearMovementStrategy : IEnemyMovementStrategy
+    {
+        private Vector2 mPosition;
+        private Vector2 mVelocity;
 
-            Vector2 localPosition = mPosition - mCenter;
-            
-            float rotLocalX = cosRot * localPosition.X - sinRot * localPosition.Y;
-            float rotLocalY = sinRot * localPosition.X + cosRot * localPosition.Y;
+        public EnemyLinearMovementStrategy(Vector2 initialPosition, Vector2 velocity)
+        {
+            mPosition = initialPosition;
+            mVelocity = velocity;
+        }
 
-            mPosition = new Vector2(rotLocalX, rotLocalY) + mCenter;
+        public Vector2 Position
+        {
+            get { return mPosition; }
+            set { mPosition = value; }
+        }
+
+        public bool Complete
+        {
+            get { return false; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mPosition += mVelocity * deltaTime;
+        }
+    }
+    
+    /// <summary>
+    /// Movement strategy which circles around a starting point.
+    /// </summary>
+    internal class EnemyCircularMovementStrategy : IEnemyMovementStrategy
+    {
+        private Vector2                 mPosition;
+        private float                   mRotationRateDegrees;
+        private float                   mRotationDegrees;
+        private float                   mRadius;
+
+        public EnemyCircularMovementStrategy(float rotationRateDegrees, float startRotation, float startRadius)
+        {   
+            mPosition               = Vector2.Zero;
+            mRotationRateDegrees    = rotationRateDegrees;
+            mRotationDegrees        = startRotation;
+            mRadius                 = startRadius;
+        }
+
+        public Vector2 Position
+        {
+            get { return mPosition; }
+            set { mPosition = value; }
+        }
+
+        public bool Complete
+        {
+            get { return false; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mRotationDegrees += mRotationRateDegrees * deltaTime;
+
+            // rotation relative to (1,0)
+            float radRot = (float)(mRotationDegrees * Math.PI / 180.0f);
+            mPosition = mRadius * ( new Vector2( (float)Math.Cos(radRot), (float)Math.Sin(radRot) ) );
+        }
+    }
+
+    /// <summary>
+    /// Movement strategy that waves on a sin curve along the wave displacement vector.
+    /// </summary>
+    internal class EnemyWaveMovementStrategy : IEnemyMovementStrategy
+    {
+        private Vector2                 mPosition;
+        private Vector2                 mWaveDisplacement;
+        private float                   mRotationRateDegrees;
+        private float                   mRotationDegrees;
+
+        public EnemyWaveMovementStrategy(Vector2 waveDisplacement, float rotationRateDegrees, float startRotation)
+        {   
+            mPosition               = Vector2.Zero;
+            mRotationRateDegrees    = rotationRateDegrees;
+            mRotationDegrees        = startRotation;
+            mWaveDisplacement       = waveDisplacement;
+        }
+
+        public Vector2 Position
+        {
+            get { return mPosition; }
+            set { mPosition = value; }
+        }
+
+        public bool Complete
+        {
+            get { return false; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mRotationDegrees += mRotationRateDegrees * deltaTime;
+
+            // rotation relative to (1,0)
+            float radRot = (float)(mRotationDegrees * Math.PI / 180.0f);
+            mPosition = mWaveDisplacement * (float)Math.Sin(radRot);
         }
     }
 

@@ -76,8 +76,8 @@ namespace OuterSpaceCathedral
             mEffects.ForEach( x => x.Update(deltaTime) );
 
             //Check collisions
-            CheckCollisions(enemies, playerBullets);
-            CheckCollisions(players, enemies);
+            CheckCollisions(enemies, playerBullets, true);
+            CheckCollisions(players, enemies, false);
 
             //Remove dead objects
             players.RemoveAll(x => x.ReadyForRemoval());
@@ -95,30 +95,11 @@ namespace OuterSpaceCathedral
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            foreach (Background background in backgrounds)
-            {
-                background.Draw(spriteBatch);
-            }
-
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Draw(spriteBatch);
-            }
-
-            foreach ( Effect effect in mEffects )
-            {
-                effect.Draw(spriteBatch);
-            }
-
-            foreach (Bullet bullet in playerBullets)
-            {
-                bullet.Draw(spriteBatch);
-            }
-
-            foreach (Player player in players)
-            {
-                player.Draw(spriteBatch);
-            }
+            backgrounds.ForEach( x => x.Draw(spriteBatch) );
+            enemies.ForEach( x => x.Draw(spriteBatch) );
+            mEffects.ForEach( x => x.Draw(spriteBatch) );
+            playerBullets.ForEach( x => x.Draw(spriteBatch) );
+            players.ForEach( x => x.Draw(spriteBatch) );
         }
 
         public List<Bullet> PlayerBullets
@@ -140,7 +121,7 @@ namespace OuterSpaceCathedral
         /// Check to see if a list of target objects intersect a list of dangerous objects.
         /// Intersecting target objects will be removed.
         /// </summary>
-        private void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects)
+        private void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects, bool removeDangerObjectOnImpact)
         {
             foreach ( GameObject target in targetObjects )
             {
@@ -150,6 +131,10 @@ namespace OuterSpaceCathedral
                     if ( target.PositionRectangle.Intersects(danger.PositionRectangle) )
                     {
                         target.RemoveObject();
+                        if ( removeDangerObjectOnImpact )
+                        {
+                            danger.RemoveObject();
+                        }
                         break;
                     }
                 }

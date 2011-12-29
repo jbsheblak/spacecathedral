@@ -7,8 +7,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\bin\x86\Debug\Content\textures\spriteSheet.xnb</Output>
-      <Time>2011-12-29T00:47:45.5792863-06:00</Time>
+      <Output>D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\bin\x86\Debug\Content\textures\spriteSheet.xnb</Output>
+      <Time>2011-12-29T00:47:45-06:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
@@ -16,10 +16,10 @@
       <TargetProfile>HiDef</TargetProfile>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\</RootDirectory>
+      <LoggerRootDirectory>D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\</LoggerRootDirectory>
+      <IntermediateDirectory>D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedral\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
@@ -48,7 +48,7 @@
       </Assembly>
       <Assembly>
         <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2011-04-09T23:17:10.1374689-05:00</Value>
+        <Value>2011-05-08T16:48:58.9645391-05:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>

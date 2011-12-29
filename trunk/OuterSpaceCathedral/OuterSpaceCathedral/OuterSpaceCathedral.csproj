@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Background.cs" />
+    <Compile Include="Effect.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="SolidColorBackground.cs" />
     <Compile Include="ScrollingBackground.cs" />

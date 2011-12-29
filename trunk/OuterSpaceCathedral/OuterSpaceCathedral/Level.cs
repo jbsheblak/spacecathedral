@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 namespace OuterSpaceCathedral
 {
@@ -12,7 +13,8 @@ namespace OuterSpaceCathedral
         List<Enemy> enemies = new List<Enemy>();
         List<Bullet> playerBullets = new List<Bullet>();
         List<Bullet> enemyBullets = new List<Bullet>();
-
+        List<Effect> mEffects = new List<Effect>();
+        
         static int mTempEnemyIndex = 0;
         static Vector2 mEnemyVelocity = new Vector2(0, 100);
 
@@ -33,55 +35,21 @@ namespace OuterSpaceCathedral
         public virtual void Update(float deltaTime)
         {
             //Update Objects
-            foreach (Background background in backgrounds)
-            {
-                background.Update(deltaTime);
-            }
-
-            foreach (Player player in players)
-            {
-                player.Update(deltaTime);
-            }
-
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Update(deltaTime);
-            }
-
-            foreach (Bullet bullet in playerBullets)
-            {
-                bullet.Update(deltaTime);
-            }
+            backgrounds.ForEach( x => x.Update(deltaTime) );
+            players.ForEach( x => x.Update(deltaTime) );
+            enemies.ForEach( x => x.Update(deltaTime) );
+            playerBullets.ForEach( x => x.Update(deltaTime) );
+            mEffects.ForEach( x => x.Update(deltaTime) );
 
             //Check collisions
             CheckCollisions(enemies, playerBullets);
             CheckCollisions(players, enemies);
 
-            //Remove objects
-            for (int i = players.Count - 1; i >= 0; i--)
-            {
-                if (players[i].ReadyForRemoval())
-                {
-                    players.RemoveAt(i);
-                }
-            }
-
-            for (int i = enemies.Count - 1; i >= 0; i--)
-            {
-                if (enemies[i].ReadyForRemoval())
-                {
-                    enemies.RemoveAt(i);
-                }
-            }
-
-            for (int i = playerBullets.Count - 1; i >= 0; i--)
-            {
-                if (playerBullets[i].ReadyForRemoval())
-                {
-                    playerBullets.RemoveAt(i);
-                }
-            }
-
+            //Remove dead objects
+            players.RemoveAll(x => x.ReadyForRemoval());
+            enemies.RemoveAll(x => x.ReadyForRemoval());
+            playerBullets.RemoveAll(x => x.ReadyForRemoval());
+            mEffects.RemoveAll(x => x.ReadyForRemoval());
 
             // TEMP TEMP TEMP, to be removed
             if ( enemies.Count == 0 )
@@ -103,6 +71,11 @@ namespace OuterSpaceCathedral
                 enemy.Draw(spriteBatch);
             }
 
+            foreach ( Effect effect in mEffects )
+            {
+                effect.Draw(spriteBatch);
+            }
+
             foreach (Bullet bullet in playerBullets)
             {
                 bullet.Draw(spriteBatch);
@@ -122,13 +95,18 @@ namespace OuterSpaceCathedral
             }
         }
 
+        public void AddEffect(Effect effect)
+        {
+            mEffects.Add(effect);
+        }
+
         #region Private
 
         /// <summary>
         /// Check to see if a list of target objects intersect a list of dangerous objects.
         /// Intersecting target objects will be removed.
         /// </summary>
-        void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects)
+        private void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects)
         {
             foreach ( GameObject target in targetObjects )
             {

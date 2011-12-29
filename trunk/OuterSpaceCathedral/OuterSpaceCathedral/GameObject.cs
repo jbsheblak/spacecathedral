@@ -5,6 +5,47 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OuterSpaceCathedral
 {
+    /// <summary>
+    /// Utility class for managing animation key frame updates.
+    /// </summary>
+    class AnimFrameManager
+    {
+        private int                 mFrameIndex;
+        private List<Rectangle>     mFrames;
+        private float               mTimePerFrame;
+        private float               mTimeAccumulation;
+
+        public AnimFrameManager(float timePerFrame, List<Rectangle> frameRectangles)
+        {
+            mFrameIndex = 0;
+            mFrames = frameRectangles;
+            mTimePerFrame = timePerFrame;
+            mTimeAccumulation = 0.0f;
+        }
+        
+        /// <summary>
+        /// Tick the anim manager. This may cause the class to move to a new anim frame.
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        public void Update(float deltaTime)
+        {
+            mTimeAccumulation += deltaTime;
+            if ( mTimeAccumulation > mTimePerFrame )
+            {
+                mTimeAccumulation -= mTimePerFrame;
+                mFrameIndex = ( mFrameIndex + 1 ) % mFrames.Count;
+            }
+        }
+
+        /// <summary>
+        /// Sprite sheet rectangle for the current frame.
+        /// </summary>
+        public Rectangle FrameRectangle
+        {
+            get { return mFrames[mFrameIndex]; }
+        }
+    };
+
     class GameObject
     {
         protected Vector2 position;             //Object's center in the world
@@ -23,7 +64,7 @@ namespace OuterSpaceCathedral
             spriteBatch.Draw(GameState.SpriteSheet, PositionRectangle, sourceRectangle, color);
         }
 
-        public void RemoveObject()
+        public virtual void RemoveObject()
         {
             markForRemoval = true;
         }

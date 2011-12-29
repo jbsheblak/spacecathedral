@@ -7,14 +7,14 @@ namespace OuterSpaceCathedral
 {
     internal class Enemy : GameObject
     {
-        private const int skSpriteWidth  = 16;
-        private const int skSpriteHeight = 16;
+        private const int skSpriteWidth  = 32;
+        private const int skSpriteHeight = 32;
         
         private Vector2 mVelocity = Vector2.Zero;
 
         public Enemy(Vector2 initialPosition, Vector2 velocity)
         {
-            sourceRectangle = new Rectangle(0, 0, skSpriteWidth, skSpriteHeight);
+            sourceRectangle = new Rectangle(32, 0, skSpriteWidth, skSpriteHeight);
             position = initialPosition;
             mVelocity = velocity;
         }
@@ -24,6 +24,12 @@ namespace OuterSpaceCathedral
             position += (mVelocity * deltaTime);
 
             RemoveIfOffscreen();
+        }
+
+        public override void RemoveObject()
+        {
+            base.RemoveObject();
+            GameState.Level.AddEffect(new Effect(position));
         }
 
         private void RemoveIfOffscreen()

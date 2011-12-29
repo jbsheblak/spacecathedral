@@ -19,7 +19,7 @@ namespace OuterSpaceCathedral
         public Player(PlayerIndex pi)
         {
             playerIndex = pi;
-            sourceRectangle = new Rectangle(0 + 16 * (int)playerIndex, 0, 16, 16);
+            sourceRectangle = new Rectangle(32 + 32 * (int)playerIndex, 0, 32, 32);
             position = new Vector2(15, 35 + (int)playerIndex * 50);
         }
 

@@ -320,7 +320,9 @@ namespace OuterSpaceCathedral
     {
         private const int skSpriteWidth  = 32;
         private const int skSpriteHeight = 32;
-        
+
+        private int health = 15;
+
         private IEnemyMovementStrategy mMovementStrategy;
 
         public Enemy(IEnemyMovementStrategy movementStrategy)
@@ -337,6 +339,22 @@ namespace OuterSpaceCathedral
 
             position = mMovementStrategy.Position;
             RemoveIfOffscreen();
+        }
+
+        public override void CollisionReaction()
+        {
+            Damage(1);
+            base.CollisionReaction();
+        }
+
+        public void Damage(int damageStrength)
+        {
+            health -= damageStrength;
+
+            if (health <= 0)
+            {
+                RemoveObject();
+            }
         }
 
         public override void RemoveObject()

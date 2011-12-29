@@ -18,6 +18,39 @@ namespace OuterSpaceCathedral
         static int mTempEnemyIndex = 0;
         static Vector2 mEnemyVelocity = new Vector2(0, 100);
 
+        private static Enemy BuildCircularEnemy(Vector2 initialPosition, Vector2 initialTarget)
+        {
+            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>()
+            {
+                new EnemyMoveToLocationStrategy(initialPosition, initialTarget, 100),
+                new EnemyCircularMovementStrategy(initialPosition, 180)
+            };
+            
+            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
+        }
+
+        private void BuildCircularPack(Vector2 initialPosition)
+        {
+            int skSpread = 75;
+
+            enemies.Add( BuildCircularEnemy( initialPosition, initialPosition + new Vector2(-skSpread,  0) ) );
+            enemies.Add( BuildCircularEnemy( initialPosition, initialPosition + new Vector2(+skSpread,  0) ) );
+            enemies.Add( BuildCircularEnemy( initialPosition, initialPosition + new Vector2( 0, -skSpread) ) );
+            enemies.Add( BuildCircularEnemy( initialPosition, initialPosition + new Vector2( 0, +skSpread) ) );
+        }
+
+        private static Enemy BuildEnemy(Vector2 initialPosition)
+        {
+            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>()
+            {
+                new EnemyMoveToLocationStrategy(initialPosition, initialPosition + new Vector2(0, 25), 20),
+                new EnemyCircularMovementStrategy(initialPosition, 180)
+            };
+            
+            IEnemyMovementStrategy strat = new EnemyCompositeMovementStrategy(strats);
+            return new Enemy(strat);
+        }
+
         public Level()
         {
             players.Add(new Player(PlayerIndex.One));
@@ -25,7 +58,8 @@ namespace OuterSpaceCathedral
             players.Add(new Player(PlayerIndex.Three));
             players.Add(new Player(PlayerIndex.Four));
 
-            enemies.Add(new Enemy(new Vector2( GameConstants.RenderTargetWidth/2, 0 ), mEnemyVelocity ) );
+            BuildCircularPack(new Vector2( GameConstants.RenderTargetWidth/2, GameConstants.RenderTargetHeight/2 ));
+            //enemies.Add(BuildEnemy(new Vector2( GameConstants.RenderTargetWidth/2, GameConstants.RenderTargetHeight/2 ) ) );
 
             backgrounds.Add(new SolidColorBackground(Color.CornflowerBlue));
             backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
@@ -55,7 +89,7 @@ namespace OuterSpaceCathedral
             if ( enemies.Count == 0 )
             {
                 ++mTempEnemyIndex;
-                enemies.Add( new Enemy( new Vector2( (mTempEnemyIndex % 5) * GameConstants.RenderTargetWidth / 5, 0 ), mEnemyVelocity ) );
+                enemies.Add( BuildEnemy( new Vector2( (mTempEnemyIndex % 5) * GameConstants.RenderTargetWidth / 5, GameConstants.RenderTargetHeight/2 ) ) );
             }
         }
 

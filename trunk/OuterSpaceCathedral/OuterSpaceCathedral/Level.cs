@@ -48,6 +48,7 @@ namespace OuterSpaceCathedral
         {
             Name = string.Empty;
             EnemyPatterns = null;
+            StartCondition = null;
         }
 
         [XmlAttribute("Name")]
@@ -57,10 +58,22 @@ namespace OuterSpaceCathedral
             set;
         }
         
+        [XmlAttribute("StartCondition")]
+        public string StartCondition
+        {
+            get;
+            set;
+        }
+
         public List<EnemyPattern> EnemyPatterns
         {
             get;
             set;
+        }
+
+        public bool ArePatternsComplete()
+        {
+            return mPatternIdx >= EnemyPatterns.Count;
         }
 
         public void Update(float deltaTime, List<Enemy> enemyList)
@@ -90,6 +103,9 @@ namespace OuterSpaceCathedral
     /// </summary>
     public class LevelData
     {
+        private int     mWaveIdx   = -1;
+        private float   mTimeOffset = 0;
+
         public LevelData()
         {
             Name = string.Empty;
@@ -107,6 +123,49 @@ namespace OuterSpaceCathedral
         {
             get;
             set;
+        }
+
+        public void Update(float deltaTime, List<Enemy> enemiesList)
+        {
+            mTimeOffset += deltaTime;
+
+            if ( EnemyWaves != null )
+            {
+                if ( mWaveIdx < EnemyWaves.Count )
+                {
+                    // check for next wave condition
+                    if ( mWaveIdx < EnemyWaves.Count - 1 )
+                    {
+                        EnemyWave nextWave = EnemyWaves[mWaveIdx+1];
+                     
+                        bool startNextWave = (nextWave.StartCondition == null);
+                        if ( nextWave.StartCondition != null )
+                        {
+                            switch ( nextWave.StartCondition )
+                            {
+                                case "PrevWaveComplete":
+                                    {   
+                                        bool prevWaveComplete = ( mWaveIdx >= 0 ) ? EnemyWaves[mWaveIdx].ArePatternsComplete() : true;
+                                        startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );
+                                    }
+                                    break;
+                            }
+                        }
+
+                        if ( startNextWave )
+                        {
+                            ++mWaveIdx;
+                        }
+                    }
+
+                    // update current wave
+                    if ( mWaveIdx >= 0 && mWaveIdx < EnemyWaves.Count )
+                    {
+                        EnemyWave currentWave = EnemyWaves[mWaveIdx];
+                        currentWave.Update(deltaTime, enemiesList);
+                    }
+                }
+            }
         }
     }
 
@@ -158,7 +217,7 @@ namespace OuterSpaceCathedral
             // Update Level
             if ( mLevelData != null )
             {
-                mLevelData.EnemyWaves[0].Update(deltaTime, enemies);
+                mLevelData.Update(deltaTime, enemies);
             }
 
             //Update Objects

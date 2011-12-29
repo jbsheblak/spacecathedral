@@ -31,5 +31,11 @@ namespace OuterSpaceCathedral
                     break;
             }
         }
+
+        public override void RemoveObject()
+        {
+            EffectsBuilder.BuildBulletHitEvaporation(position);
+            base.RemoveObject();
+        }
     }
 }

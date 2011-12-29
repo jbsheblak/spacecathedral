@@ -117,9 +117,9 @@ namespace OuterSpaceCathedral
 
             BuildEnemyWave(mEnemyWave);
 
-            backgrounds.Add(new SolidColorBackground(Color.CornflowerBlue));
-            backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
-            backgrounds.Add(new ScrollingBackground(new Vector2(0, 100)));
+            backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
+            //backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
+            //backgrounds.Add(new ScrollingBackground(new Vector2(0, 100)));
         }
 
         public virtual void Update(float deltaTime)

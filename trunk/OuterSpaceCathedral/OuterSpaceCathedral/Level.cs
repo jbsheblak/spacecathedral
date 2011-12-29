@@ -13,12 +13,16 @@ namespace OuterSpaceCathedral
         List<Bullet> playerBullets = new List<Bullet>();
         List<Bullet> enemyBullets = new List<Bullet>();
 
+        static int mTempEnemyIndex = 0;
+
         public Level()
         {
             players.Add(new Player(PlayerIndex.One));
             players.Add(new Player(PlayerIndex.Two));
             players.Add(new Player(PlayerIndex.Three));
             players.Add(new Player(PlayerIndex.Four));
+
+            enemies.Add(new Enemy(new Vector2( GameConstants.RenderTargetWidth/2, 0 ) ) );
 
             backgrounds.Add(new SolidColorBackground(Color.CornflowerBlue));
             backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
@@ -48,6 +52,9 @@ namespace OuterSpaceCathedral
                 bullet.Update(deltaTime);
             }
 
+            //Check collisions
+            CheckBulletCollisions(enemies, playerBullets);
+
             //Remove objects
             for (int i = players.Count - 1; i >= 0; i--)
             {
@@ -71,6 +78,14 @@ namespace OuterSpaceCathedral
                 {
                     playerBullets.RemoveAt(i);
                 }
+            }
+
+
+            // TEMP TEMP TEMP, to be removed
+            if ( enemies.Count == 0 )
+            {
+                ++mTempEnemyIndex;
+                enemies.Add( new Enemy( new Vector2( (mTempEnemyIndex % 5) * GameConstants.RenderTargetWidth / 5, 0 ) ) );
             }
         }
 
@@ -104,5 +119,31 @@ namespace OuterSpaceCathedral
                 return playerBullets;
             }
         }
+
+        #region Private
+
+        /// <summary>
+        /// Check if a list of bullets collides with a list of target objects.
+        /// All colliding targets will be marked for removal.
+        /// </summary>
+        /// <param name="targetObjects">Non-null list of target objects.</param>
+        /// <param name="bullets">Non-null list of bullet objects.</param>
+        void CheckBulletCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> bullets)
+        {
+            foreach ( GameObject target in targetObjects )
+            {
+                foreach ( GameObject bullet in bullets )
+                {
+                    // check for bound intersection
+                    if ( target.PositionRectangle.Intersects(bullet.PositionRectangle) )
+                    {
+                        target.RemoveObject();
+                        break;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

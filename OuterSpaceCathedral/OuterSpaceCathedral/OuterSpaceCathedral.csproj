@@ -110,6 +110,7 @@
     <Compile Include="Background.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectsBuilder.cs" />
+    <Compile Include="EnemyFactory.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="SolidColorBackground.cs" />
     <Compile Include="ScrollingBackground.cs" />

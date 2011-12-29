@@ -19,5 +19,18 @@ namespace OuterSpaceCathedral
 
             GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1/15f ,animFrames), 0.333f));
         }
+
+        public static void BuildBulletHitEvaporation(Vector2 position)
+        {
+            List<Rectangle> animFrames = new List<Rectangle>()
+            {
+                new Rectangle(176, 0, 8, 8),
+                new Rectangle(184, 0, 8, 8),
+                new Rectangle(176, 8, 8, 8),
+                new Rectangle(184, 8, 8, 8),
+            };
+
+            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1 / 30f, animFrames), 0.1333f));
+        }
     }
 }

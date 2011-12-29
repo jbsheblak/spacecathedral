@@ -342,7 +342,7 @@ namespace OuterSpaceCathedral
         public override void RemoveObject()
         {
             base.RemoveObject();
-            GameState.Level.AddEffect(new Effect(position));
+            EffectsBuilder.BuildExplosion(position);
         }
 
         private void RemoveIfOffscreen()

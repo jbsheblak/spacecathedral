@@ -13,19 +13,10 @@ namespace OuterSpaceCathedral
         private AnimFrameManager mAnimMgr = null;
         private float            mLifeTime = 0;
         
-        public Effect(Vector2 initialPosition)
+        public Effect(Vector2 initialPosition, AnimFrameManager animFrameManager, float lifeTime)
         {
-            List<Rectangle> animFrames = new List<Rectangle>()
-            {
-                GameConstants.CalcRectFor32x32Sprite(1, 0),
-                GameConstants.CalcRectFor32x32Sprite(1, 1),
-                GameConstants.CalcRectFor32x32Sprite(1, 2),
-                GameConstants.CalcRectFor32x32Sprite(1, 3),
-                GameConstants.CalcRectFor32x32Sprite(1, 4),
-            };
-
-            mAnimMgr = new AnimFrameManager(1/15.0f, animFrames);       
-            mLifeTime = 0.333f;
+            mAnimMgr = animFrameManager;// new AnimFrameManager(1 / 15.0f, animFrames);       
+            mLifeTime = lifeTime;
 
             sourceRectangle = mAnimMgr.FrameRectangle;
             position = initialPosition;

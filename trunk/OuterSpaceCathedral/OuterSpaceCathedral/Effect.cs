@@ -17,12 +17,15 @@ namespace OuterSpaceCathedral
         {
             List<Rectangle> animFrames = new List<Rectangle>()
             {
-                GameConstants.CalcRectFor32x32Sprite(0, 2),
+                GameConstants.CalcRectFor32x32Sprite(1, 0),
+                GameConstants.CalcRectFor32x32Sprite(1, 1),
                 GameConstants.CalcRectFor32x32Sprite(1, 2),
+                GameConstants.CalcRectFor32x32Sprite(1, 3),
+                GameConstants.CalcRectFor32x32Sprite(1, 4),
             };
 
-            mAnimMgr = new AnimFrameManager(1/10.0f, animFrames);       
-            mLifeTime = 4.0f;
+            mAnimMgr = new AnimFrameManager(1/15.0f, animFrames);       
+            mLifeTime = 0.333f;
 
             sourceRectangle = mAnimMgr.FrameRectangle;
             position = initialPosition;

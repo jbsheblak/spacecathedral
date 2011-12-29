@@ -34,7 +34,7 @@ namespace OuterSpaceCathedral
 
         public override void RemoveObject()
         {
-            EffectsBuilder.BuildBulletHitEvaporation(position);
+            EffectsBuilder.BuildBulletHitEvaporation(position, color);
             base.RemoveObject();
         }
     }

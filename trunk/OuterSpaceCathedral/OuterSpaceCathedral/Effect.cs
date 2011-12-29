@@ -13,13 +13,14 @@ namespace OuterSpaceCathedral
         private AnimFrameManager mAnimMgr = null;
         private float            mLifeTime = 0;
         
-        public Effect(Vector2 initialPosition, AnimFrameManager animFrameManager, float lifeTime)
+        public Effect(Vector2 initialPosition, AnimFrameManager animFrameManager, float lifeTime, Color color)
         {
-            mAnimMgr = animFrameManager;// new AnimFrameManager(1 / 15.0f, animFrames);       
+            mAnimMgr = animFrameManager;
             mLifeTime = lifeTime;
 
             sourceRectangle = mAnimMgr.FrameRectangle;
             position = initialPosition;
+            this.color = color;
         }
 
         public override void Update(float deltaTime)

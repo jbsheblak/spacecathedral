@@ -324,17 +324,32 @@ namespace OuterSpaceCathedral
         private int health = 15;
 
         private IEnemyMovementStrategy mMovementStrategy;
+        private AnimFrameManager animFrameManager;
 
         public Enemy(IEnemyMovementStrategy movementStrategy)
         {
-            sourceRectangle = new Rectangle(32, 0, skSpriteWidth, skSpriteHeight);
+            sourceRectangle = new Rectangle(0, 64, skSpriteWidth, skSpriteHeight);
 
             mMovementStrategy = movementStrategy;
             position = mMovementStrategy.Position;
+
+            List<Rectangle> animFrames = new List<Rectangle>()
+            {
+                GameConstants.CalcRectFor32x32Sprite(2, 0),
+                GameConstants.CalcRectFor32x32Sprite(2, 0),
+                GameConstants.CalcRectFor32x32Sprite(2, 0),
+                GameConstants.CalcRectFor32x32Sprite(2, 1),
+                GameConstants.CalcRectFor32x32Sprite(2, 2),
+                GameConstants.CalcRectFor32x32Sprite(2, 1),
+            };
+
+            animFrameManager = new AnimFrameManager(1 / 10f, animFrames);
         }
 
         public override void Update(float deltaTime)
-        {   
+        {
+            animFrameManager.Update(deltaTime);
+            sourceRectangle = animFrameManager.FrameRectangle;
             mMovementStrategy.Update(deltaTime);
 
             position = mMovementStrategy.Position;

@@ -9,7 +9,7 @@ namespace OuterSpaceCathedral
     {
         public SolidColorBackground(Color color)
         {
-            sourceRectangle = new Rectangle(80, 0, 8, 8);
+            sourceRectangle = new Rectangle(0, 0, 32, 32);
             this.color = color;
         }
 

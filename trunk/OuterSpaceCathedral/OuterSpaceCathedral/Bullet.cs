@@ -12,7 +12,7 @@ namespace OuterSpaceCathedral
         public Bullet(Vector2 initialPosition)
         {
             position = initialPosition;
-            sourceRectangle = new Rectangle(64, 0, 4, 4);
+            sourceRectangle = new Rectangle(160, 0, 4, 4);
         }
 
         public override void Update(float deltaTime)

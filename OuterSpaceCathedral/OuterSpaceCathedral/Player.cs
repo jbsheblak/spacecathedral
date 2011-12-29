@@ -20,8 +20,7 @@ namespace OuterSpaceCathedral
         {
             playerIndex = pi;
             sourceRectangle = new Rectangle(0 + 16 * (int)playerIndex, 0, 16, 16);
-
-            position = new Vector2(60 + 120 * (int)playerIndex, 200);
+            position = new Vector2(15, 35 + (int)playerIndex * 50);
         }
 
         public override void Update(float deltaTime)
@@ -55,13 +54,15 @@ namespace OuterSpaceCathedral
 
         public void DefaultFire(Vector2 playerMoveSpeed)
         {
-            //playerMoveSpeed.Y = 0;
+        #if true
+            playerMoveSpeed = Vector2.Zero;
+        #endif
 
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position, new Vector2(0, -300) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(-3, 0), new Vector2(-22.5f, -300) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(3, 0), new Vector2(22.5f, -300) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(-6, 0), new Vector2(-45, -300) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(6, 0), new Vector2(45, -300) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(position,                       new Vector2(300,  0)     + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0, -3),  new Vector2(300, -22.5f) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0,  3),  new Vector2(300,  22.5f) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0, -6),  new Vector2(300, -45)    + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0,  6),  new Vector2(300,  45)    + playerMoveSpeed, playerIndex));
             
             fireIntervalCounterElapsed = 0f;
         }

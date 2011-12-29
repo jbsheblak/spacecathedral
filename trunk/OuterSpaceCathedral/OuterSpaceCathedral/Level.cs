@@ -190,7 +190,7 @@ namespace OuterSpaceCathedral
                     // check for bound intersection
                     if ( target.PositionRectangle.Intersects(danger.PositionRectangle) )
                     {
-                        target.RemoveObject();
+                        target.CollisionReaction();
                         if ( removeDangerObjectOnImpact )
                         {
                             danger.RemoveObject();

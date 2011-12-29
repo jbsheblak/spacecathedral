@@ -23,6 +23,13 @@ namespace OuterSpaceCathedral
             position = new Vector2(15, 35 + (int)playerIndex * 50);
         }
 
+        public override void CollisionReaction()
+        {
+            RemoveObject();
+
+            base.CollisionReaction();
+        }
+
         public override void Update(float deltaTime)
         {
             gamePadState = GamePad.GetState(playerIndex);

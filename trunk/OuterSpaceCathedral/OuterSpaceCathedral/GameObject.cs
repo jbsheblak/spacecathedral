@@ -64,6 +64,10 @@ namespace OuterSpaceCathedral
             spriteBatch.Draw(GameState.SpriteSheet, PositionRectangle, sourceRectangle, color);
         }
 
+        public virtual void CollisionReaction()
+        {
+        }
+
         public virtual void RemoveObject()
         {
             markForRemoval = true;

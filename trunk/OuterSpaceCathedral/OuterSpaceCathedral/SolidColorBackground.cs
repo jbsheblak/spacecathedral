@@ -15,7 +15,7 @@ namespace OuterSpaceCathedral
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(GameState.SpriteSheet, new Rectangle(0, 0, 480, 270), sourceRectangle, color);
+            spriteBatch.Draw(GameState.SpriteSheet, GameConstants.RenderTargetRect, sourceRectangle, color);
 
             //base.Draw(spriteBatch);
         }

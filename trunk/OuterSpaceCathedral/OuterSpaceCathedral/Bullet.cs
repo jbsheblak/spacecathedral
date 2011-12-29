@@ -19,7 +19,8 @@ namespace OuterSpaceCathedral
         {
             position += velocity * deltaTime;
 
-            if (!new Rectangle(0, 0, 480, 270).Intersects(PositionRectangle))
+            // check if bullet is still onscreen
+            if ( !GameConstants.RenderTargetRect.Intersects(PositionRectangle) )
             {
                 RemoveObject();
             }

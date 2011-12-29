@@ -21,7 +21,7 @@ namespace OuterSpaceCathedral
         {
             positionOffset += velocity * deltaTime;
 
-            position.Y = positionOffset.Y % 270;
+            position.Y = positionOffset.Y % GameConstants.RenderTargetHeight;
 
             base.Update(deltaTime);
         }

@@ -293,6 +293,8 @@ namespace OuterSpaceCathedral
             RemoveAll(enemies, x => x.ReadyForRemoval());
             RemoveAll(playerBullets, x => x.ReadyForRemoval());
             RemoveAll(mEffects, x => x.ReadyForRemoval());
+
+            ElapsedLevelTime += deltaTime;
         }
 
         public void RemoveAll<A>(List<A> gameObjects, Predicate<A> predicate) where A : GameObject
@@ -332,6 +334,8 @@ namespace OuterSpaceCathedral
         {
             mEffects.Add(effect);
         }
+
+        public float ElapsedLevelTime { get; private set; }
 
         #region Private
 

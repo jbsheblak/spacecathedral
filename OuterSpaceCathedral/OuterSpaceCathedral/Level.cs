@@ -215,7 +215,7 @@ namespace OuterSpaceCathedral
             mLevelData = Level.LoadLevelData("Content/levels/testLevel.xml");
 
             backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
-            //backgrounds.Add(new ScrollingBackground(new Vector2(0, 200)));
+            backgrounds.Add(new ScrollingBackground(new Vector2(-500, 0)));
             //backgrounds.Add(new ScrollingBackground(new Vector2(0, 100)));
         }
 

@@ -14,6 +14,7 @@ namespace OuterSpaceCathedral
         {
             this.velocity = velocity;
             this.playerIndex = playerIndex;
+            sourceRectangle = new Rectangle(160, 0, 4, 4);
 
             switch (playerIndex)
             {

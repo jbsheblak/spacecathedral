@@ -50,6 +50,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="fonts\klobitPixels.spritefont">
+      <Name>klobitPixels</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="levels\testLevel.xml">
       <Name>testLevel</Name>
       <Importer>XmlImporter</Importer>

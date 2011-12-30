@@ -39,6 +39,7 @@ namespace OuterSpaceCathedral
         {
             if (!invincible)
             {
+                EffectsBuilder.BuildPlayerDeathExplosion(position);
                 RemoveObject();
             }
 

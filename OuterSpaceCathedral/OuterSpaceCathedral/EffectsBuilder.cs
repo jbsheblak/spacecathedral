@@ -20,6 +20,19 @@ namespace OuterSpaceCathedral
             GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1/15f ,animFrames), 0.333f, Color.White));
         }
 
+        public static void BuildPlayerDeathExplosion(Vector2 position)
+        {
+            List<Rectangle> animFrames = new List<Rectangle>()
+            {
+                GameConstants.CalcRectFor32x32Sprite(0,  7),
+                GameConstants.CalcRectFor32x32Sprite(0,  8),
+                GameConstants.CalcRectFor32x32Sprite(0,  9),
+                GameConstants.CalcRectFor32x32Sprite(0, 10),
+            };
+
+            GameState.Level.AddEffect(new Effect(position, new AnimFrameManager(1 / 15f, animFrames), 0.266f, Color.White));
+        }
+
         public static void BuildBulletHitEvaporation(Vector2 position, Color bulletColor)
         {
             List<Rectangle> animFrames = new List<Rectangle>()

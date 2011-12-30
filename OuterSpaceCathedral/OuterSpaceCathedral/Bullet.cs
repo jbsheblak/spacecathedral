@@ -19,7 +19,7 @@ namespace OuterSpaceCathedral
 
         public static Bullet BuildEnemyBullet(Vector2 initialPosition, Vector2 velocity)
         {
-            return new Bullet(initialPosition, velocity, Color.White, new Rectangle(160, 4, 4, 4));
+            return new Bullet(initialPosition, velocity, Color.White, new Rectangle(164, 0, 6, 6));
         }
 
         public Bullet(Vector2 initialPosition, Vector2 velocity, Color bulletColor, Rectangle spriteRect)

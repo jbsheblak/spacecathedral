@@ -19,6 +19,7 @@ namespace OuterSpaceCathedral
         public static int       RenderTargetWidth   { get { return RenderTargetRect.Width; } }
         public static int       RenderTargetHeight  { get { return RenderTargetRect.Height; } }
         public static Vector2   RenderTargetCenter  { get { return new Vector2(RenderTargetWidth/2, RenderTargetHeight/2); } }
+        public static Vector2   RenderTargetMax     { get { return new Vector2(RenderTargetWidth,   RenderTargetHeight  ); } }
 
         public static Rectangle CalcRectFor32x32Sprite( int row, int col )
         {

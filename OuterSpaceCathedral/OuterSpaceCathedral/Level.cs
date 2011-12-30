@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -178,13 +179,15 @@ namespace OuterSpaceCathedral
 
     public class Level
     {
+        const int skMaxPlayers = 4;
+        
         List<Background> backgrounds = new List<Background>();
-        List<Player> players = new List<Player>();
+        List<Player> players = new List<Player>() { null, null, null, null };
         List<Enemy> enemies = new List<Enemy>();
         List<Bullet> playerBullets = new List<Bullet>();
         List<Bullet> enemyBullets = new List<Bullet>();
         List<Effect> mEffects = new List<Effect>();
-        LevelData mLevelData = null;
+        LevelData mLevelData    = null;
 
         /// <summary>
         /// Load a level data instance from an xml file.
@@ -223,12 +226,10 @@ namespace OuterSpaceCathedral
 
         private Level(LevelData levelData)
         {
-            players.Add(new Player(PlayerIndex.One));
-            players.Add(new Player(PlayerIndex.Two));
-            players.Add(new Player(PlayerIndex.Three));
-            players.Add(new Player(PlayerIndex.Four));
-
             mLevelData = levelData;
+
+            // activate player 1
+            players[0] = new Player(PlayerIndex.One);
 
             backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
             backgrounds.Add(new ScrollingBackground(new Vector2(-500, 0)));
@@ -243,19 +244,41 @@ namespace OuterSpaceCathedral
                 mLevelData.Update(deltaTime, enemies);
             }
 
+            // Check for player activations
+            for ( int i = 0; i < skMaxPlayers; ++i )
+            {
+                if ( players[i] == null )
+                {
+                    GamePadState gpad = GameState.GetGamePadState( (PlayerIndex)i );
+                    if ( gpad.Buttons.A == ButtonState.Pressed )
+                    {
+                        players[i] = new Player( (PlayerIndex)i );
+                    }
+                }
+            }
+
+            List<Player> activePlayers = GetActivePlayers();
+
             //Update Objects
             backgrounds.ForEach( x => x.Update(deltaTime) );
-            players.ForEach( x => x.Update(deltaTime) );
+            activePlayers.ForEach( x => x.Update(deltaTime) );
             enemies.ForEach( x => x.Update(deltaTime) );
             playerBullets.ForEach( x => x.Update(deltaTime) );
             mEffects.ForEach( x => x.Update(deltaTime) );
 
             //Check collisions
             CheckCollisions(enemies, playerBullets, true);
-            CheckCollisions(players, enemies, false);
+            CheckCollisions(activePlayers, enemies, false);
 
             //Remove dead objects
-            players.RemoveAll(x => x.ReadyForRemoval());
+            for ( int i = 0; i < players.Count; ++i )
+            {
+                if ( players[i] != null && players[i].ReadyForRemoval() )
+                {
+                    players[i] = null;
+                }
+            }
+
             enemies.RemoveAll(x => x.ReadyForRemoval());
             playerBullets.RemoveAll(x => x.ReadyForRemoval());
             mEffects.RemoveAll(x => x.ReadyForRemoval());
@@ -263,11 +286,15 @@ namespace OuterSpaceCathedral
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            List<Player> activePlayers = GetActivePlayers();
+
             backgrounds.ForEach( x => x.Draw(spriteBatch) );
             enemies.ForEach( x => x.Draw(spriteBatch) );
             mEffects.ForEach( x => x.Draw(spriteBatch) );
             playerBullets.ForEach( x => x.Draw(spriteBatch) );
-            players.ForEach( x => x.Draw(spriteBatch) );
+            activePlayers.ForEach( x => x.Draw(spriteBatch) );
+
+            DrawRejoinText(spriteBatch);
         }
 
         public List<Bullet> PlayerBullets
@@ -305,6 +332,67 @@ namespace OuterSpaceCathedral
                         }
                         break;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get a list of all of the currently active players.
+        /// </summary>
+        /// <returns></returns>
+        private List<Player> GetActivePlayers()
+        {
+            // Gather active players
+            List<Player> activePlayers = new List<Player>();
+            foreach ( Player p in players )
+            {
+                if ( p != null )
+                {
+                    activePlayers.Add(p);
+                }
+            }
+
+            return activePlayers;
+        }
+
+        /// <summary>
+        /// Draw the text that prompts the players to rejoin the game.
+        /// </summary>
+        private void DrawRejoinText(SpriteBatch spriteBatch)
+        {
+            const string rejoinText = "Press A";
+
+            Color [] skPlayerColors = new Color[skMaxPlayers] { Color.LightYellow, Color.Orange, Color.Violet, Color.Cyan };
+
+            // draw rejoin text
+            
+            const int skPadding = 15;
+            Vector2 rejoinTextSize = GameState.PixelFont.MeasureString(rejoinText);
+            for ( int i = 0; i < skMaxPlayers; ++i )
+            {
+                if ( players[i] == null )
+                {
+                    Vector2 textPos = Vector2.Zero;
+                    switch ( i )
+                    {
+                        case 0:
+                            textPos = new Vector2( skPadding, skPadding );
+                            break;
+
+                        case 1:
+                            textPos = new Vector2( GameConstants.RenderTargetWidth - skPadding - rejoinTextSize.X, skPadding );
+                            break;
+
+                        case 2:
+                            textPos = new Vector2( skPadding, GameConstants.RenderTargetHeight - skPadding - rejoinTextSize.Y );
+                            break;
+
+                        case 3:
+                            textPos = GameConstants.RenderTargetMax - rejoinTextSize - new Vector2(skPadding, skPadding);
+                            break;
+                    }
+
+                    spriteBatch.DrawString(GameState.PixelFont, rejoinText, textPos, skPlayerColors[i]);
                 }
             }
         }

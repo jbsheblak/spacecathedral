@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace OuterSpaceCathedral
 {
@@ -13,11 +14,16 @@ namespace OuterSpaceCathedral
             Game
         };
         
+        const  int          skDebugControlMod = 5;
+        const  int          skDefaultDebugControl = skDebugControlMod - 1;
+
         static Mode         mGameMode;
         static Texture2D    spriteSheet;
  		static SpriteFont   pixelFont;
         static Level        level;
         static FrontEnd     mFrontEnd;
+        static int          mDebugControl = skDefaultDebugControl; // used to override which gamepad we control (DEBUG)
+        static bool         mChangingDebugControl = false;
 
         public static FrontEnd FrontEnd
         {
@@ -37,11 +43,41 @@ namespace OuterSpaceCathedral
             switch ( mGameMode )
             {
                 case Mode.FrontEnd:
-                    mFrontEnd.Update(deltaTime);
+                    {
+                        mFrontEnd.Update(deltaTime);
+                    }
                     break;
 
                 case Mode.Game:
-                    level.Update(deltaTime);
+                    {
+                        // allow player one to back out of the level
+                        // (skip the re-reroute)
+                        GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
+                        if ( gamePad.Buttons.Back == ButtonState.Pressed )
+                        {
+                            GameState.GameMode = Mode.FrontEnd;
+                            return;
+                        }
+
+                    #if DEBUG
+                        {
+                            // check for debug control changes
+                            GamePadState debugPad = GamePad.GetState(PlayerIndex.One);
+                            bool wantsToChangeDebugControl = ( debugPad.Buttons.RightShoulder == ButtonState.Pressed );
+                            if ( wantsToChangeDebugControl != mChangingDebugControl )
+                            {
+                                if ( wantsToChangeDebugControl )
+                                {
+                                    mDebugControl = ( mDebugControl + 1 ) % skDebugControlMod;
+                                }
+                                mChangingDebugControl = wantsToChangeDebugControl;
+                            }
+                        }
+                    #endif
+
+
+                        level.Update(deltaTime);
+                    }
                     break;
             }
         }
@@ -58,6 +94,31 @@ namespace OuterSpaceCathedral
                     level.Draw(spriteBatch);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Get the GamePadState for a given player index.
+        /// </summary>
+        public static GamePadState GetGamePadState(PlayerIndex playerIndex)
+        {
+        #if DEBUG
+            // if we have a non-default debug control, reroute controls
+            if ( mDebugControl != skDefaultDebugControl )
+            {
+                // if the player index matches the debug control, route ctrl 1 through it.
+                // if request for player0 comes in, route through something assumed unused
+                if ( (int)playerIndex == mDebugControl )
+                {
+                    return GamePad.GetState(PlayerIndex.One);
+                }
+                else if ( (int)playerIndex == 0 )
+                {
+                    return GamePad.GetState(PlayerIndex.Four);
+                }
+            }
+        #endif
+
+            return GamePad.GetState(playerIndex);
         }
 
         public static Texture2D SpriteSheet

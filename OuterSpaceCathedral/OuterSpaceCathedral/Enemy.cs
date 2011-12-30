@@ -539,17 +539,17 @@ namespace OuterSpaceCathedral
         }
 
         public void Update ( Enemy parent, float deltaTime )
-        {
+        {   
             if ( mTimeUntilFire <= 0.0f )
             {
+                // reset for next fire
                 mTimeUntilFire += mPeriodTime;
 
                 ++mFirePatternIndex;
                 mFirePattern >>= 1;
 
                 if ( mFirePatternIndex == mFirePatternCount )
-                {
-                    // reset fire pattern
+                {   
                     mFirePatternIndex = 0;
                     mFirePattern = mFirePatternMask;
                 }

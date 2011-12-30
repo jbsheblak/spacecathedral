@@ -38,6 +38,7 @@ namespace OuterSpaceCathedral
                 case "uncluttered_line":                UnclutteredLine(movementStrategies); break;
                 case "flying_v":                        FlyingV(movementStrategies); break;
                 case "snake_wave":                      SnakeWave(movementStrategies); break;
+                case "lone_linear_destroyer":           LoneDestroyer(movementStrategies); break;
             }
 
             // build attack pattern
@@ -46,6 +47,7 @@ namespace OuterSpaceCathedral
             {
                 case "attack1234":                      attackDelegate = new BuildAttackDelegate(Build_1_2_3_4_Pattern); break;
                 case "1sec_periodic":                   attackDelegate = new BuildAttackDelegate(Build_1_sec_periodic); break;
+                case "circular_gap":                    attackDelegate = new BuildAttackDelegate(Build_Circular_Gap); break;
             }   
 
             // build unit description
@@ -156,6 +158,15 @@ namespace OuterSpaceCathedral
             }
         }
         
+        // lone destroyer that moves across screen
+        private static void LoneDestroyer( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;            
+            Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 );
+            
+            movementStrategies.Add( BuildLinearMove(headPosition, linearVelocity) );
+        }
+
         #endregion
 
         #region Movement Strategy Builders
@@ -262,6 +273,17 @@ namespace OuterSpaceCathedral
             float periodTime        = 1.0f;
 
             return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicAttackRateStrategy(periodTime, 0.0f) );
+        }
+
+        // circular pattern with gaps for evasion
+        private static IEnemyAttackStrategy Build_Circular_Gap( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.005f;
+            float rotationRate      = 360;
+            int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 };
+            
+            return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern) );
         }
 
         #endregion

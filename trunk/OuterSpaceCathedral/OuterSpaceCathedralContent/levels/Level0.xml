@@ -14,9 +14,12 @@
       <EnemyPatterns>
         <!--<EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />-->
 
-        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="snake_wave"              TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="circular_gap" PatternId="lone_linear_destroyer"      TimeOffset="0" />
+        
+        
+        <!--<EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="snake_wave"              TimeOffset="0" />
         <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="line_up_then_move"       TimeOffset="10" />        
-        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="wave_line"               TimeOffset="20" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="wave_line"               TimeOffset="20" />-->
       </EnemyPatterns>      
     </EnemyWave>
 

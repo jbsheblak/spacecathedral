@@ -281,7 +281,7 @@ namespace OuterSpaceCathedral
             float fireVelocity      = DefaultFireSpeed;
             float periodTime        = 0.005f;
             float rotationRate      = 360;
-            int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 };
+            int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             
             return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern) );
         }

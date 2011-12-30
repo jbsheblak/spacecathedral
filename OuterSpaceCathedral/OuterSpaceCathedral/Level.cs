@@ -182,6 +182,7 @@ namespace OuterSpaceCathedral
         const int skMaxPlayers = 4;
         
         List<Background> backgrounds = new List<Background>();
+        List<Background> foregrounds = new List<Background>();
         List<Player> players = new List<Player>() { null, null, null, null };
         List<Enemy> enemies = new List<Enemy>();
         List<Bullet> playerBullets = new List<Bullet>();
@@ -231,9 +232,19 @@ namespace OuterSpaceCathedral
             // activate player 1
             players[0] = new Player(PlayerIndex.One);
 
-            backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
-            backgrounds.Add(new ScrollingBackground(new Vector2(-500, 0)));
-            //backgrounds.Add(new ScrollingBackground(new Vector2(0, 100)));
+            // ADD BACKGROUNDS
+            //Sky
+            backgrounds.Add(new SolidColorBackground(new Color(0.05f, 0.21f, 0.32f)));
+
+            //Background Clouds
+            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 300, 960, 270), new Vector2(-200, 0), new Color(0.4f, 0.6f, 0.7f) * 0.35f));
+            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 350, 960, 270), new Vector2(-150, 0), new Color(0.4f, 0.6f, 0.7f) * 0.15f));
+
+            //City
+            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 270 * 2, 960, 270), new Vector2(-350, 0), Color.DarkGray * 0.75f));
+            
+            //Foreground CLouds
+            foregrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 150, 960, 270), new Vector2(-500, 0), Color.White * 0.5f));
         }
 
         public virtual void Update(float deltaTime)
@@ -265,6 +276,7 @@ namespace OuterSpaceCathedral
             enemies.ForEach( x => x.Update(deltaTime) );
             playerBullets.ForEach( x => x.Update(deltaTime) );
             mEffects.ForEach( x => x.Update(deltaTime) );
+            foregrounds.ForEach(x => x.Update(deltaTime));
 
             //Check collisions
             CheckCollisions(enemies, playerBullets, true);
@@ -278,10 +290,20 @@ namespace OuterSpaceCathedral
                     players[i] = null;
                 }
             }
+            RemoveAll(enemies, x => x.ReadyForRemoval());
+            RemoveAll(playerBullets, x => x.ReadyForRemoval());
+            RemoveAll(mEffects, x => x.ReadyForRemoval());
+        }
 
-            enemies.RemoveAll(x => x.ReadyForRemoval());
-            playerBullets.RemoveAll(x => x.ReadyForRemoval());
-            mEffects.RemoveAll(x => x.ReadyForRemoval());
+        public void RemoveAll<A>(List<A> gameObjects, Predicate<A> predicate) where A : GameObject
+        {
+            for (int i = gameObjects.Count - 1; i >= 0; --i)
+            {
+                if (predicate(gameObjects[i]))
+                {
+                    gameObjects.RemoveAt(i);
+                }
+            }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -293,6 +315,7 @@ namespace OuterSpaceCathedral
             mEffects.ForEach( x => x.Draw(spriteBatch) );
             playerBullets.ForEach( x => x.Draw(spriteBatch) );
             activePlayers.ForEach( x => x.Draw(spriteBatch) );
+            foregrounds.ForEach(x => x.Draw(spriteBatch));
 
             DrawRejoinText(spriteBatch);
         }
@@ -316,7 +339,7 @@ namespace OuterSpaceCathedral
         /// Check to see if a list of target objects intersect a list of dangerous objects.
         /// Intersecting target objects will be removed.
         /// </summary>
-        private void CheckCollisions(IEnumerable<GameObject> targetObjects, IEnumerable<GameObject> dangerObjects, bool removeDangerObjectOnImpact)
+        private void CheckCollisions<A, B>(IEnumerable<A> targetObjects, IEnumerable<B> dangerObjects, bool removeDangerObjectOnImpact) where A : GameObject where B : GameObject
         {
             foreach ( GameObject target in targetObjects )
             {

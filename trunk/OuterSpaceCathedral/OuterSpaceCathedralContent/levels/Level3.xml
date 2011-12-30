@@ -12,13 +12,13 @@
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line"        TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="1sec_periodic" PatternId="uncluttered_line"        TimeOffset="0" />
       </EnemyPatterns>      
     </EnemyWave>
 
     <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="1sec_periodic" PatternId="move_center_then_circle" TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
     

@@ -321,7 +321,7 @@ namespace OuterSpaceCathedral
         private const int skSpriteWidth  = 32;
         private const int skSpriteHeight = 32;
 
-        private int health = 15;
+        private int health = 25;
 
         private IEnemyMovementStrategy  mMovementStrategy;
         private AnimFrameManager        mAnimFrameManager;

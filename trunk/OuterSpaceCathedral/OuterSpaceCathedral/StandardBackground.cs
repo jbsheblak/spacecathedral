@@ -7,6 +7,6 @@ namespace OuterSpaceCathedral
 {
     class StandardBackground : Background
     {
-
+        //public override
     }
 }

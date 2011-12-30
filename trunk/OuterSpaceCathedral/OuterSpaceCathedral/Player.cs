@@ -9,12 +9,16 @@ namespace OuterSpaceCathedral
     class Player : GameObject
     {
         const float maxShotAngle = 80f;
-        
+        const float playerBounceSpeed = 10f;
+        const float playerBounceDistance = 4f;
+
         PlayerIndex playerIndex;
         float movementSpeed = 200;
         Vector2 invertY = new Vector2(1, -1);
         GamePadState oldGamePadState, gamePadState;
         float fireInterval = 0.1f;
+
+        Vector2 nonFloatPosition;
 
         float fireIntervalCounterElapsed = 0f;
 
@@ -46,14 +50,17 @@ namespace OuterSpaceCathedral
                 DefaultFire(movement);
             }
 
-            position += movement * deltaTime;
-            
+            //position += movement * deltaTime;
+            nonFloatPosition += movement * deltaTime;
+
             int halfWidth  = sourceRectangle.Width  / 2;
             int halfHeight = sourceRectangle.Height / 2;
 
             // clamp position to be onscreen
-            position.X = Math.Max( halfWidth,  Math.Min( position.X, GameConstants.RenderTargetWidth  - halfWidth  ) );
-            position.Y = Math.Max( halfHeight, Math.Min( position.Y, GameConstants.RenderTargetHeight - halfHeight ) );
+            nonFloatPosition.X = Math.Max(halfWidth, Math.Min(nonFloatPosition.X, GameConstants.RenderTargetWidth - halfWidth));
+            nonFloatPosition.Y = Math.Max(halfHeight, Math.Min(nonFloatPosition.Y, GameConstants.RenderTargetHeight - halfHeight));
+
+            position = nonFloatPosition + new Vector2(0, (float)Math.Sin(GameState.Level.ElapsedLevelTime * playerBounceSpeed) * playerBounceDistance);
 
             if (fireIntervalCounterElapsed < fireInterval)
             {
@@ -69,11 +76,11 @@ namespace OuterSpaceCathedral
             playerMoveSpeed = Vector2.Zero;
         #endif
 
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position                     , new Vector2(300,                 0 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0, -3), new Vector2(300, -maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0,  3), new Vector2(300,  maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0, -6), new Vector2(300, -maxShotAngle     * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(position + new Vector2(0,  6), new Vector2(300,  maxShotAngle     * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition, new Vector2(320, 0 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, -3), new Vector2(310, -maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, 3), new Vector2(310, maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, -6), new Vector2(300, -maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, 6), new Vector2(300, maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
             
             fireIntervalCounterElapsed = 0f;
         }

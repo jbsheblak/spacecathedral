@@ -25,5 +25,18 @@ namespace OuterSpaceCathedral
         {
             return new Rectangle(col * 32, row * 32, 32, 32);
         }
+        
+        public static Color GetColorForPlayer(PlayerIndex playerIndex)
+        {
+            switch ( playerIndex )
+            {
+                case PlayerIndex.One:       return Color.LightYellow;
+                case PlayerIndex.Two:       return Color.Orange;
+                case PlayerIndex.Three:     return Color.Violet;
+                case PlayerIndex.Four:      return Color.Cyan;
+                default:                    return Color.White;
+            }
+        }
+
     }
 }

@@ -275,11 +275,13 @@ namespace OuterSpaceCathedral
             activePlayers.ForEach( x => x.Update(deltaTime) );
             enemies.ForEach( x => x.Update(deltaTime) );
             playerBullets.ForEach( x => x.Update(deltaTime) );
+            enemyBullets.ForEach( x => x.Update(deltaTime) );
             mEffects.ForEach( x => x.Update(deltaTime) );
             foregrounds.ForEach(x => x.Update(deltaTime));
 
             //Check collisions
             CheckCollisions(enemies, playerBullets, true);
+            CheckCollisions(activePlayers, enemyBullets, true);
             CheckCollisions(activePlayers, enemies, false);
 
             //Remove dead objects
@@ -292,6 +294,7 @@ namespace OuterSpaceCathedral
             }
             RemoveAll(enemies, x => x.ReadyForRemoval());
             RemoveAll(playerBullets, x => x.ReadyForRemoval());
+            RemoveAll(enemyBullets, x => x.ReadyForRemoval());
             RemoveAll(mEffects, x => x.ReadyForRemoval());
 
             ElapsedLevelTime += deltaTime;
@@ -316,6 +319,7 @@ namespace OuterSpaceCathedral
             enemies.ForEach( x => x.Draw(spriteBatch) );
             mEffects.ForEach( x => x.Draw(spriteBatch) );
             playerBullets.ForEach( x => x.Draw(spriteBatch) );
+            enemyBullets.ForEach( x => x.Draw(spriteBatch) );
             activePlayers.ForEach( x => x.Draw(spriteBatch) );
             foregrounds.ForEach(x => x.Draw(spriteBatch));
 
@@ -327,6 +331,14 @@ namespace OuterSpaceCathedral
             get
             {
                 return playerBullets;
+            }
+        }
+
+        public List<Bullet> EnemyBullets
+        {
+            get
+            {
+                return enemyBullets;
             }
         }
 
@@ -389,8 +401,6 @@ namespace OuterSpaceCathedral
         {
             const string rejoinText = "Press A";
 
-            Color [] skPlayerColors = new Color[skMaxPlayers] { Color.LightYellow, Color.Orange, Color.Violet, Color.Cyan };
-
             // draw rejoin text
             
             const int skPadding = 15;
@@ -419,7 +429,7 @@ namespace OuterSpaceCathedral
                             break;
                     }
 
-                    spriteBatch.DrawString(GameState.PixelFont, rejoinText, textPos, skPlayerColors[i]);
+                    spriteBatch.DrawString(GameState.PixelFont, rejoinText, textPos, GameConstants.GetColorForPlayer( (PlayerIndex)i ));
                 }
             }
         }

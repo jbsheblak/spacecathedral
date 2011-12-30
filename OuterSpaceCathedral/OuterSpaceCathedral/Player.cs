@@ -76,11 +76,11 @@ namespace OuterSpaceCathedral
             playerMoveSpeed = Vector2.Zero;
         #endif
 
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition, new Vector2(320, 0 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, -3), new Vector2(310, -maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, 3), new Vector2(310, maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, -6), new Vector2(300, -maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
-            GameState.Level.PlayerBullets.Add(new DefaultBullet(nonFloatPosition + new Vector2(0, 6), new Vector2(300, maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition, new Vector2(320, 0 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition + new Vector2(0, -3), new Vector2(310, -maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition + new Vector2(0, 3), new Vector2(310, maxShotAngle / 2 * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition + new Vector2(0, -6), new Vector2(300, -maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
+            GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition + new Vector2(0, 6), new Vector2(300, maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
             
             fireIntervalCounterElapsed = 0f;
         }

@@ -78,6 +78,11 @@ namespace OuterSpaceCathedral
             return markForRemoval;
         }
 
+        public Vector2 Position
+        {
+            get { return position; }
+        }
+
         public Rectangle PositionRectangle
         {
             get

@@ -13,7 +13,7 @@ namespace OuterSpaceCathedral
         }
 
         private static readonly Vector2 ScreenRightMiddle;
-
+        
         public static void BuildPattern(string actorId, string patternId, List<Enemy> enemiesList)
         {
             List<IEnemyMovementStrategy> movementStrategies = new List<IEnemyMovementStrategy>();
@@ -61,39 +61,21 @@ namespace OuterSpaceCathedral
             }
 
             // build unit description
-            List<Rectangle> animFrames = null;
-            float frameTime = 1.0f;
-            int health = 0;
+            BuildEnemyDelegate buildEnemy = null;
 
             switch (actorId)
             {
                 case "leaf_tron":
-                    {
-                        health = 25;
-                        frameTime = 1/10.0f;
-                        animFrames = new List<Rectangle>()
-                        {
-                            GameConstants.CalcRectFor32x32Sprite(2, 0),
-                            GameConstants.CalcRectFor32x32Sprite(2, 0),
-                            GameConstants.CalcRectFor32x32Sprite(2, 0),
-                            GameConstants.CalcRectFor32x32Sprite(2, 1),
-                            GameConstants.CalcRectFor32x32Sprite(2, 2),
-                            GameConstants.CalcRectFor32x32Sprite(2, 1),
-                        };
-                    }
+                    buildEnemy = new BuildEnemyDelegate(BuildLeafTron);
                     break;
             }
 
             // build enemies
-            if ( animFrames != null )
+            if ( buildEnemy != null )
             {
-                foreach ( IEnemyMovementStrategy movement in movementStrategies )
+                for ( int i = 0; i < movementStrategies.Count; ++i )
                 {
-                    Enemy enemy = new Enemy();
-                    enemy.MovementStrategy = movement;
-                    enemy.FrameManager = new AnimFrameManager(frameTime, animFrames);
-                    enemy.Health = health;
-                    enemiesList.Add(enemy);
+                    enemiesList.Add( buildEnemy(i, movementStrategies.Count, movementStrategies[i]) );
                 }
             }
         }
@@ -175,5 +157,34 @@ namespace OuterSpaceCathedral
         #endregion
 
         #endregion Movement Builders
+
+        #region Enemy Builder Delegates
+
+        private delegate Enemy BuildEnemyDelegate( int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy);
+
+        private static Enemy BuildLeafTron( int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy )
+        {
+            float fireVelocity  = 320;
+            float periodTime    = 1.0f;
+            int   health        = 25;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(   1/10.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 0),
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 0),
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 0),
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 1),
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 2),
+                                                                        GameConstants.CalcRectFor32x32Sprite(2, 1),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        #endregion Enemy Builder Delegates
     }
 }

@@ -116,7 +116,6 @@
     <Compile Include="SolidColorBackground.cs" />
     <Compile Include="ScrollingBackground.cs" />
     <Compile Include="Bullet.cs" />
-    <Compile Include="DefaultBullet.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Player.cs" />

@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace OuterSpaceCathedral
 {
+    #region Enemy Movement Strategies
+
     /// <summary>
     /// Movement strategy interface.
     /// </summary>
@@ -316,13 +318,190 @@ namespace OuterSpaceCathedral
         }
     }
 
+    #endregion Enemy Movement Strategies
+
+    #region Enemy Attack Strategies
+
+    /// <summary>
+    /// Strategy pattern which dictates where an how an enemy attacks.
+    /// </summary>
+    public interface IEnemyAttackStrategy
+    {
+        bool Complete { get; }
+
+        void Update( Enemy parent, float deltaTime );
+    }
+
+    /// <summary>
+    /// Strategy to determine where to fire attacks.
+    /// </summary>
+    public interface IEnemyAttackTargetStrategy
+    {
+        void        Update( Enemy parent, float deltaTime );
+        Vector2     GetPosition( Enemy parent );
+        Vector2     GetVelocity( Enemy parent );
+    }
+
+    /// <summary>
+    /// Strategy to determine when to fire attacks.
+    /// </summary>
+    public interface IEnemyAttackRateStrategy
+    {
+        void        Update ( Enemy parent, float deltaTime );
+        bool        ShouldFire( Enemy parent );
+    }
+
+    /// <summary>
+    /// Composition class for attack strategies.
+    /// </summary>
+    public class EnemyCompositeAttackStrategy
+    {
+        private List<IEnemyAttackStrategy> mStrategies = null;
+        private int                        mStrategyIndex = 0;
+
+        bool Complete 
+        { 
+            get { return false; }
+        }
+        
+        public void Update( Enemy parent, float deltaTime )
+        {
+            // update the current strategy
+            mStrategies[mStrategyIndex].Update(parent, deltaTime);
+
+            // check for completion
+            if ( mStrategies[mStrategyIndex].Complete )
+            {
+                // move to next stategy, but not past last
+                mStrategyIndex = Math.Min( mStrategyIndex + 1, mStrategies.Count - 1 );
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Attack strategy to cause enemy to wait for a certain amount of time.
+    /// </summary>
+    public class EnemyTimeDelayedAttackStrategy : IEnemyAttackStrategy
+    {
+        private float mTimeDelay = 0.0f;
+
+        public EnemyTimeDelayedAttackStrategy(float timeDelay)
+        {
+            mTimeDelay = timeDelay;
+        }
+        
+        public bool Complete
+        {
+            get { return mTimeDelay == 0.0f; }
+        }
+
+        public void Update(Enemy parent, float deltaTime)
+        {
+            mTimeDelay = Math.Max(0.0f, mTimeDelay - deltaTime);
+        }
+    }
+
+    /// <summary>
+    /// Basic attack strategy which combines an attack and rate strategy.
+    /// </summary>
+    public class EnemyAttackStrategy : IEnemyAttackStrategy
+    {
+        private IEnemyAttackTargetStrategy mTargetStrategy = null;
+        private IEnemyAttackRateStrategy   mRateStrategy = null;
+
+        public EnemyAttackStrategy(IEnemyAttackTargetStrategy targetStrategy, IEnemyAttackRateStrategy rateStrategy)
+        {
+            mTargetStrategy = targetStrategy;
+            mRateStrategy = rateStrategy;
+        }
+
+        public bool Complete
+        {
+            get { return false; }
+        }
+
+        public void Update(Enemy parent, float deltaTime)
+        {
+            mTargetStrategy.Update(parent, deltaTime);
+            mRateStrategy.Update(parent, deltaTime);
+
+            if ( mRateStrategy.ShouldFire(parent) )
+            {
+                parent.FireBullet( mTargetStrategy.GetPosition(parent), mTargetStrategy.GetVelocity(parent) );
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fixed target strategy. Fires from parent to the left
+    /// </summary>
+    public class EnemyFixedAttackTargetStrategy : IEnemyAttackTargetStrategy
+    {
+        private float mFireVelocity;
+
+        public EnemyFixedAttackTargetStrategy(float fireVelocity)
+        {
+            mFireVelocity = fireVelocity;
+        }
+
+        public void Update( Enemy parent, float deltaTime )
+        {
+        }
+
+        public Vector2 GetPosition( Enemy parent )
+        {
+            return parent.Position;
+        }
+
+        public Vector2 GetVelocity( Enemy parent )
+        {
+            return new Vector2(-mFireVelocity, 0);
+        }
+    }
+
+    /// <summary>
+    /// Attack Rate strategy that fires on a period curve.
+    /// </summary>
+    public class EnemyPeriodicAttackRateStrategy : IEnemyAttackRateStrategy
+    {
+        private float mPeriodTime;
+        private float mTimeUntilFire;
+
+        public EnemyPeriodicAttackRateStrategy( float periodTime, float periodOffset )
+        {
+            mPeriodTime = periodTime;
+            mTimeUntilFire = periodTime - periodOffset;
+        }
+
+        public void Update ( Enemy parent, float deltaTime )
+        {
+            if ( mTimeUntilFire <= 0.0f )
+            {
+                mTimeUntilFire += mPeriodTime;
+            }
+
+            mTimeUntilFire -= deltaTime;
+        }
+        
+        public bool ShouldFire( Enemy parent )
+        {
+            return mTimeUntilFire <= 0.0f;
+        }
+    }
+
+    #endregion Enemy Attack Strategies
+
+    /// <summary>
+    /// Base enemy class.
+    /// </summary>
     public class Enemy : GameObject
     {
         private const int skSpriteWidth  = 32;
         private const int skSpriteHeight = 32;
         
-        private IEnemyMovementStrategy  mMovementStrategy;
-        private AnimFrameManager        mAnimFrameManager;
+        private IEnemyMovementStrategy  mMovementStrategy = null;
+        private IEnemyAttackStrategy    mAttackStrategy = null;
+        private AnimFrameManager        mAnimFrameManager = null;
         private int                     mHealth = 0;
 
         /// <summary>
@@ -332,6 +511,15 @@ namespace OuterSpaceCathedral
         {
             get { return mMovementStrategy; }
             set { mMovementStrategy = value; }
+        }
+
+        /// <summary>
+        /// Strategy that determines where and how enemy attacks.
+        /// </summary>
+        public IEnemyAttackStrategy AttackStrategy
+        {
+            get { return mAttackStrategy; }
+            set { mAttackStrategy = value; }
         }
 
         /// <summary>
@@ -352,9 +540,12 @@ namespace OuterSpaceCathedral
             set { mHealth = value; }
         }
 
-        public Enemy()
+        public Enemy(IEnemyMovementStrategy movement, IEnemyAttackStrategy attack, AnimFrameManager frames, int health)
         {
-            sourceRectangle = new Rectangle(0, 64, skSpriteWidth, skSpriteHeight);
+            mMovementStrategy = movement;
+            mAttackStrategy = attack;
+            mAnimFrameManager = frames;
+            mHealth = health;
         }
 
         public override void Update(float deltaTime)
@@ -371,7 +562,11 @@ namespace OuterSpaceCathedral
                 position = mMovementStrategy.Position;
             }
 
-            position = mMovementStrategy.Position;
+            if (mAttackStrategy != null)
+            {
+                mAttackStrategy.Update(this, deltaTime);
+            }
+
             RemoveIfOffscreen();
         }
 
@@ -389,6 +584,11 @@ namespace OuterSpaceCathedral
             {
                 RemoveObject();
             }
+        }
+
+        public void FireBullet(Vector2 position, Vector2 velocity)
+        {
+            GameState.Level.EnemyBullets.Add(Bullet.BuildEnemyBullet(position, velocity));
         }
 
         public override void RemoveObject()

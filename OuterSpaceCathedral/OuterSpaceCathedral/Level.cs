@@ -373,10 +373,10 @@ namespace OuterSpaceCathedral
             List<Player> activePlayers = GetActivePlayers();
 
             backgrounds.ForEach( x => x.Draw(spriteBatch) );
+            enemyBullets.ForEach(x => x.Draw(spriteBatch));
             enemies.ForEach( x => x.Draw(spriteBatch) );
             mEffects.ForEach( x => x.Draw(spriteBatch) );
-            playerBullets.ForEach( x => x.Draw(spriteBatch) );
-            enemyBullets.ForEach( x => x.Draw(spriteBatch) );
+            playerBullets.ForEach( x => x.Draw(spriteBatch) ); 
             activePlayers.ForEach( x => x.Draw(spriteBatch) );
             foregrounds.ForEach(x => x.Draw(spriteBatch));
 
@@ -518,8 +518,11 @@ namespace OuterSpaceCathedral
             switch ( artId )
             {
                 case "city_clouds_background":      return new Rectangle(0, 1024 + 300, 960, 270);
+                case "city_clouds_background2":     return new Rectangle(0, 1024 + 350, 960, 270);
                 case "city_background":             return new Rectangle(0, 1024 + 270 * 2, 960, 270);
                 case "clouds_foreground":           return new Rectangle(0, 1024 + 150, 960, 270);
+                case "hills_background":            return new Rectangle(960, 1294, 960, 270);
+
 
                 default:
                     throw new Exception("Failed to find art piece for id");

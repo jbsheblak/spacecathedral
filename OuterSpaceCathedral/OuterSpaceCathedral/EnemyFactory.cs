@@ -24,6 +24,7 @@ namespace OuterSpaceCathedral
                 case "move_center_then_circle":         MoveCenterThenCircle(movementStrategies); break;
                 case "line_up_then_move":               LineUpThenMove(movementStrategies); break;
                 case "wave_line":                       WaveLine(movementStrategies); break;
+                case "uncluttered_line":                UnclutteredLine(movementStrategies); break;
                 case "flying_v":                        FlyingV(movementStrategies); break;
             }
 
@@ -83,6 +84,20 @@ namespace OuterSpaceCathedral
             {
                 Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
                 movementStrategies.Add( BuildWave(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
+            }
+        }
+
+        // vertical line of wave movers
+        private static void UnclutteredLine(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = new Vector2(-100, 0);
+            Vector2 waveDisplacement = new Vector2(0, 35);
+            float rotRateDegrees = 180.0f;
+
+            for (int i = 0; i < 8; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256 * i, GameUtility.Random.Next(1, 8) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
             }
         }
 

@@ -63,11 +63,13 @@ namespace OuterSpaceCathedral
             // build unit description
             List<Rectangle> animFrames = null;
             float frameTime = 1.0f;
+            int health = 0;
 
             switch (actorId)
             {
                 case "leaf_tron":
                     {
+                        health = 25;
                         frameTime = 1/10.0f;
                         animFrames = new List<Rectangle>()
                         {
@@ -90,6 +92,7 @@ namespace OuterSpaceCathedral
                     Enemy enemy = new Enemy();
                     enemy.MovementStrategy = movement;
                     enemy.FrameManager = new AnimFrameManager(frameTime, animFrames);
+                    enemy.Health = health;
                     enemiesList.Add(enemy);
                 }
             }

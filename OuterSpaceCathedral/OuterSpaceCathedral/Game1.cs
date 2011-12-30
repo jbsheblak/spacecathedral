@@ -68,8 +68,7 @@ namespace OuterSpaceCathedral
             SpriteFont pixelFont = Content.Load<SpriteFont>("fonts\\klobitPixels");
 
             GameState.Initialize(spriteSheet, pixelFont);
-            GameState.ChangeLevel(new Level());
-
+            GameState.GameMode = GameState.Mode.FrontEnd;
         }
 
         /// <summary>
@@ -94,8 +93,8 @@ namespace OuterSpaceCathedral
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            GameState.Level.Update(deltaTime);
-
+            GameState.Update(deltaTime);
+            
             base.Update(gameTime);
         }
 
@@ -110,9 +109,7 @@ namespace OuterSpaceCathedral
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
-            GameState.Level.Draw(spriteBatch);
-
-            //spriteBatch.Draw(spriteSheet, new Rectangle(0, 0, 1024, 1024), Color.White);
+            GameState.Draw(spriteBatch);
 
             spriteBatch.End();
 

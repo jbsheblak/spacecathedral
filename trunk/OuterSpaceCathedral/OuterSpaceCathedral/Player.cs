@@ -36,7 +36,7 @@ namespace OuterSpaceCathedral
 
         public override void Update(float deltaTime)
         {
-            gamePadState = GamePad.GetState(playerIndex);
+            gamePadState = GameState.GetGamePadState(playerIndex);
 
             Vector2 movement = gamePadState.ThumbSticks.Left * invertY * movementSpeed;
 

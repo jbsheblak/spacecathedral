@@ -68,6 +68,9 @@ namespace OuterSpaceCathedral
                 case "leaf_tron":
                     buildEnemy = new BuildEnemyDelegate(BuildLeafTron);
                     break;
+                case "anime_punch":
+                    buildEnemy = new BuildEnemyDelegate(BuildAnimePunch);
+                    break;
             }
 
             // build enemies
@@ -186,6 +189,32 @@ namespace OuterSpaceCathedral
 
             IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), 
                                                                    new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 } ) );
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildAnimePunch(int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy)
+        {
+            float fireVelocity = 320;
+            float periodTime = 0.1f;
+            int health = 50;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1 / 10.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(96, 64, 64, 48),
+                                                                        new Rectangle(160, 64, 64, 48),
+                                                                        new Rectangle(224, 64, 64, 48),
+                                                                        new Rectangle(160, 64, 64, 48),
+                                                                    }
+                                                                );
+
+
+
+            //IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
+
+            IEnemyAttackStrategy attack = new EnemyAttackStrategy(new EnemyFixedAttackTargetStrategy(fireVelocity),
+                                                                   new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int[] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 }));
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }

@@ -17,60 +17,22 @@ namespace OuterSpaceCathedral
         public static void BuildPattern(string actorId, string patternId, List<Enemy> enemiesList)
         {
             List<IEnemyMovementStrategy> movementStrategies = new List<IEnemyMovementStrategy>();
+
+            // build movement patterns
             switch ( patternId )
             {
-                case "move_center_then_circle":
-                    {
-                        const int enemyCount = 8;
-                        for ( int i = 0; i < enemyCount; ++i )
-                        {
-                            movementStrategies.Add( BuildMoveToLocationThenCircle(ScreenRightMiddle, GameConstants.RenderTargetCenter, 75, 360/enemyCount * i) );
-                        }
-                    }
-                    break;
-
-                case "line_up_then_move":
-                    {
-                        // linear
-                        Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, 32 );                        
-                        Vector2 enemyVelocity = new Vector2(-200, 0);
-                        float enemyToTargetSpeed = 100;
-                        int enemyCount = 8;
-                        int maxDistance = ( enemyCount - 1 ) * 32;
-                        float waitTime = Math.Abs( maxDistance / enemyToTargetSpeed );
-                        for ( int i = 0; i < enemyCount; ++i )
-                        {
-                            movementStrategies.Add( BuildLineUpThenMove( initialPosition, initialPosition + new Vector2(0, 32 * i), enemyToTargetSpeed, enemyVelocity, waitTime) );
-                        }
-                    }
-                    break;
-
-                case "wave_line":
-                    {
-                        Vector2 linearVelocity = new Vector2(-100, 0);
-                        Vector2 waveDisplacement = new Vector2(0, 35);
-                        float rotRateDegrees = 180.0f;
-
-                        for ( int i = 0; i < 8; ++i )
-                        {
-                            Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
-                            movementStrategies.Add( BuildWave(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
-                        }
-                    }
-                    break;
+                case "move_center_then_circle":         MoveCenterThenCircle(movementStrategies); break;
+                case "line_up_then_move":               LineUpThenMove(movementStrategies); break;
+                case "wave_line":                       WaveLine(movementStrategies); break;
+                case "flying_v":                        FlyingV(movementStrategies); break;
             }
 
             // build unit description
             BuildEnemyDelegate buildEnemy = null;
-
             switch (actorId)
             {
-                case "leaf_tron":
-                    buildEnemy = new BuildEnemyDelegate(BuildLeafTron);
-                    break;
-                case "anime_punch":
-                    buildEnemy = new BuildEnemyDelegate(BuildAnimePunch);
-                    break;
+                case "leaf_tron":           buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
+                case "anime_punch":         buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
             }
 
             // build enemies
@@ -83,7 +45,69 @@ namespace OuterSpaceCathedral
             }
         }
 
-        #region Movement Builders
+        #region Movement Pattern Builders
+
+        // move to the center of screen, then split and rotation around center
+        private static void MoveCenterThenCircle( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            const int enemyCount = 8;
+            for ( int i = 0; i < enemyCount; ++i )
+            {
+                movementStrategies.Add( BuildMoveToLocationThenCircle(ScreenRightMiddle, GameConstants.RenderTargetCenter, 75, 360/enemyCount * i) );
+            }
+        }
+
+        // move to the center of screen, then split and rotation around center
+        private static void LineUpThenMove( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, 32 );                        
+            Vector2 enemyVelocity = new Vector2(-200, 0);
+            float enemyToTargetSpeed = 100;
+            int enemyCount = 8;
+            int maxDistance = ( enemyCount - 1 ) * 32;
+            float waitTime = Math.Abs( maxDistance / enemyToTargetSpeed );
+            for ( int i = 0; i < enemyCount; ++i )
+            {
+                movementStrategies.Add( BuildLineUpThenMove( initialPosition, initialPosition + new Vector2(0, 32 * i), enemyToTargetSpeed, enemyVelocity, waitTime) );
+            }
+        }
+       
+        // vertical line of wave movers
+        private static void WaveLine( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 linearVelocity = new Vector2(-100, 0);
+            Vector2 waveDisplacement = new Vector2(0, 35);
+            float rotRateDegrees = 180.0f;
+
+            for ( int i = 0; i < 8; ++i )
+            {
+                Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
+                movementStrategies.Add( BuildWave(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
+            }
+        }
+
+        // Might Ducks flying v
+        private static void FlyingV( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 linearVelocity = new Vector2(-100, 0);
+
+            float xSpacing = 50;
+            float ySpacing = 25;
+
+            Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 );
+
+                    // can't stop the flying v
+                    movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(2.0f * xSpacing, 2.0f * ySpacing), linearVelocity ) );    
+                movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(1.0f * xSpacing, 1.0f * ySpacing), linearVelocity ) );
+            movementStrategies.Add( BuildLinearMove( headPosition, linearVelocity) );
+                movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(1.0f * xSpacing, -1.0f * ySpacing), linearVelocity ) );
+                    movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(2.0f * xSpacing, -2.0f * ySpacing), linearVelocity ) );
+        }
+
+        
+        #endregion
+
+        #region Movement Strategy Builders
 
         private static IEnemyMovementStrategy BuildMoveToLocationThenCircle(Vector2 initialCenter, Vector2 targetCenter, float radius, float initialRotationDegrees)
         {
@@ -115,7 +139,12 @@ namespace OuterSpaceCathedral
 
             return new EnemyCompositeMovementStrategy(strats);
         }
-    
+
+        private static IEnemyMovementStrategy BuildLinearMove( Vector2 initialPosition, Vector2 moveVelocity )
+        {
+            return new EnemyLinearMovementStrategy(initialPosition, moveVelocity);
+        }
+
         private static IEnemyMovementStrategy BuildWave( Vector2 initialLocation, Vector2 linearVelocity, Vector2 waveDisplacement, float rotRateDegrees, float initialRotDegrees )
         {
             // move in wave pattern linearly
@@ -159,7 +188,7 @@ namespace OuterSpaceCathedral
 
         #endregion
 
-        #endregion Movement Builders
+        #endregion Movement Strategy Builders
 
         #region Enemy Builder Delegates
 

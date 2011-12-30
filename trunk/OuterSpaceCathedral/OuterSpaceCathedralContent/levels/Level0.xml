@@ -12,7 +12,9 @@
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <!--<EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />-->
+
+        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"                TimeOffset="0" />
         <EnemyPattern ActorId="leaf_tron" PatternId="line_up_then_move"       TimeOffset="3" />        
         <EnemyPattern ActorId="leaf_tron" PatternId="wave_line"               TimeOffset="8" />
       </EnemyPatterns>      

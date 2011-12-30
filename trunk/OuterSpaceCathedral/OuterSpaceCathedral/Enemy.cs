@@ -681,7 +681,7 @@ namespace OuterSpaceCathedral
 
         private void RemoveIfOffscreen()
         {
-            if ( !GameConstants.RenderTargetRect.Intersects(PositionRectangle) )
+            if ( PositionRectangle.Right < GameConstants.RenderTargetRect.Left )
             {
                 RemoveObject();
             }

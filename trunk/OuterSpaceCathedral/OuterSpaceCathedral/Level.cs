@@ -381,6 +381,10 @@ namespace OuterSpaceCathedral
             foregrounds.ForEach(x => x.Draw(spriteBatch));
 
             DrawRejoinText(spriteBatch);
+
+        #if DEBUG
+            DrawDebugText(spriteBatch);
+        #endif
         }
 
         public List<Bullet> PlayerBullets
@@ -489,6 +493,19 @@ namespace OuterSpaceCathedral
                     spriteBatch.DrawString(GameState.PixelFont, rejoinText, textPos, GameConstants.GetColorForPlayer( (PlayerIndex)i ));
                 }
             }
+        }
+
+        /// <summary>
+        /// Draw debug stats.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        private void DrawDebugText(SpriteBatch spriteBatch)
+        {
+            Vector2 textPosition = new Vector2( GameConstants.RenderTargetWidth/2, GameState.PixelFont.LineSpacing );
+
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("Enemies:       {0}", enemies.Count), textPosition, Color.Red);       textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("EnemyBullets:  {0}", enemyBullets.Count), textPosition, Color.Red);  textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("PlayerBullets: {0}", playerBullets.Count), textPosition, Color.Red); textPosition.Y += GameState.PixelFont.LineSpacing;
         }
 
         /// <summary>

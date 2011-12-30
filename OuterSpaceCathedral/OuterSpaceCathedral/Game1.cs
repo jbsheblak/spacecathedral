@@ -65,8 +65,9 @@ namespace OuterSpaceCathedral
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             spriteSheet = Content.Load<Texture2D>("textures\\spriteSheet");
+            SpriteFont pixelFont = Content.Load<SpriteFont>("fonts\\klobitPixels");
 
-            GameState.Initialize(spriteSheet);
+            GameState.Initialize(spriteSheet, pixelFont);
             GameState.ChangeLevel(new Level());
 
         }

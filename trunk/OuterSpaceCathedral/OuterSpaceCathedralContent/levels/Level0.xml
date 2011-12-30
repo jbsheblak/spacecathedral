@@ -8,7 +8,10 @@
     <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.50" />
   </ArtPieces>
 
-  <EnemyWaves>
+  <Intro Text="Are YOU rad enough to save the taco stand?" Time="5" Color="1 0 0" />
+  <Outro Text="TACO SECURED" Time="5" Color="1 0 0" />
+
+  <EnemyWaves>  
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>
@@ -30,4 +33,6 @@
     </EnemyWave>
     
   </EnemyWaves>
+  
+  
 </LevelData>

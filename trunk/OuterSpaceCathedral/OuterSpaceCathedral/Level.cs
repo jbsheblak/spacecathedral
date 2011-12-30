@@ -177,13 +177,37 @@ namespace OuterSpaceCathedral
     }
 
     /// <summary>
+    /// Level transition data
+    /// </summary>
+    public class TransitionData
+    {
+        [XmlAttribute("Text")]
+        public string Text
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("Time")]
+        public float Time
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("Color")]
+        public string Color
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// Data container for a given level.
     /// </summary>
     public class LevelData
     {
-        private int     mWaveIdx   = -1;
-        private float   mTimeOffset = 0;
-
         public LevelData()
         {
             Name = string.Empty;
@@ -210,18 +234,76 @@ namespace OuterSpaceCathedral
             set;
         }
 
+        public TransitionData Intro
+        {
+            get;
+            set;
+        }
+
+        public TransitionData Outro
+        {
+            get;
+            set;
+        }
+    }
+
+    public static class ParseUtil
+    {
+        /// <summary>
+        /// Rate a rate string. Expecting form "x y"
+        /// </summary>
+        public static Vector2 ParseRate(string rate)
+        {   
+            if ( rate.Contains(',') )
+            {
+                throw new Exception("Do not put commas in rate string");
+            }
+
+            string [] rateTkns = rate.Split( new char [] { ' ' } );
+            return new Vector2( float.Parse(rateTkns[0]), float.Parse(rateTkns[1]) );
+        }
+
+        /// <summary>
+        /// Parse a color string. Expecting form "r g b" or "r g b a"
+        /// </summary>
+        public static Color ParseColor(string color)
+        {
+            if ( color.Contains(',') )
+            {
+                throw new Exception("Do not put commas in color string");
+            }
+
+            string [] colorTkns = color.Split( new char [] { ' ' } );
+            return new Color( float.Parse(colorTkns[0]), float.Parse(colorTkns[1]), float.Parse(colorTkns[2]), colorTkns.Length > 3 ? float.Parse(colorTkns[3]) : 1.0f );
+        }
+    }
+
+    /// <summary>
+    /// Management of spawing enemy waves.
+    /// </summary>
+    public class EnemyWaveManager
+    {
+        private List<EnemyWave> mEnemyWaves;
+        private int             mWaveIdx   = -1;
+        private float           mTimeOffset = 0;
+
+        public EnemyWaveManager(List<EnemyWave> enemyWaves)
+        {
+            mEnemyWaves = enemyWaves;
+        }
+
         public void Update(float deltaTime, List<Enemy> enemiesList)
         {
             mTimeOffset += deltaTime;
 
-            if ( EnemyWaves != null )
+            if ( mEnemyWaves != null )
             {
-                if ( mWaveIdx < EnemyWaves.Count )
+                if ( mWaveIdx < mEnemyWaves.Count )
                 {
                     // check for next wave condition
-                    if ( mWaveIdx < EnemyWaves.Count - 1 )
+                    if ( mWaveIdx < mEnemyWaves.Count - 1 )
                     {
-                        EnemyWave nextWave = EnemyWaves[mWaveIdx+1];
+                        EnemyWave nextWave = mEnemyWaves[mWaveIdx+1];
                      
                         bool startNextWave = (nextWave.StartCondition == null);
                         if ( nextWave.StartCondition != null )
@@ -230,7 +312,7 @@ namespace OuterSpaceCathedral
                             {
                                 case "PrevWaveComplete":
                                     {   
-                                        bool prevWaveComplete = ( mWaveIdx >= 0 ) ? EnemyWaves[mWaveIdx].ArePatternsComplete() : true;
+                                        bool prevWaveComplete = ( mWaveIdx >= 0 ) ? mEnemyWaves[mWaveIdx].ArePatternsComplete() : true;
                                         startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );
                                     }
                                     break;
@@ -244,13 +326,71 @@ namespace OuterSpaceCathedral
                     }
 
                     // update current wave
-                    if ( mWaveIdx >= 0 && mWaveIdx < EnemyWaves.Count )
+                    if ( mWaveIdx >= 0 && mWaveIdx < mEnemyWaves.Count )
                     {
-                        EnemyWave currentWave = EnemyWaves[mWaveIdx];
+                        EnemyWave currentWave = mEnemyWaves[mWaveIdx];
                         currentWave.Update(deltaTime, enemiesList);
                     }
+
+
+
                 }
             }
+        }
+
+        /// <summary>
+        /// Check if all the waves have completed.
+        /// </summary>
+        /// <returns></returns>
+        public bool AreAllWavesComplete()
+        {
+            // check patterns
+            foreach ( EnemyWave ew in mEnemyWaves )
+            {
+                if ( !ew.ArePatternsComplete() )
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Manages logic through transtions.
+    /// </summary>
+    public class TransitionDataManager
+    {
+        private float           mTimeRemaining;
+        private TransitionData  mData;
+
+        public TransitionDataManager(TransitionData data)
+        {
+            mData = data;
+            mTimeRemaining = data.Time;
+        }
+
+        public bool Complete
+        {
+            get { return mTimeRemaining == 0.0f; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mTimeRemaining = Math.Max(0.0f, mTimeRemaining - deltaTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {   
+            Vector2 textSize = GameState.PixelFont.MeasureString(mData.Text);
+            Vector2 textPos = GameConstants.RenderTargetCenter - new Vector2( textSize.X / 2, 0 );
+            Vector2 shadowPos = textPos + new Vector2(-1, -1);
+            Color textColor = ParseUtil.ParseColor(mData.Color);
+            Color shadowColor = Color.Black;
+            
+            spriteBatch.DrawString(GameState.PixelFont, mData.Text, shadowPos, shadowColor);
+            spriteBatch.DrawString(GameState.PixelFont, mData.Text, textPos,   textColor);
         }
     }
 
@@ -258,6 +398,13 @@ namespace OuterSpaceCathedral
     {
         const int skMaxPlayers = 4;
         
+        public enum State
+        {
+            Intro,
+            Play,
+            Outro
+        };
+
         List<Background> backgrounds = new List<Background>();
         List<Background> foregrounds = new List<Background>();
         List<Player> players = new List<Player>() { null, null, null, null };
@@ -266,25 +413,9 @@ namespace OuterSpaceCathedral
         List<Bullet> enemyBullets = new List<Bullet>();
         List<Effect> mEffects = new List<Effect>();
         LevelData mLevelData    = null;
-
-        /// <summary>
-        /// Load a level data instance from an xml file.
-        /// </summary>
-        private static LevelData LoadLevelData(string levelPath)
-        {
-            try
-            {
-                XmlSerializer xmlDeserializer = new XmlSerializer(typeof(LevelData));
-                using ( TextReader textReader = new StreamReader(levelPath) )
-                {
-                    return (LevelData)xmlDeserializer.Deserialize(textReader);
-                }
-            }
-            catch ( System.Exception)
-            {
-                return null;
-            }
-        }
+        EnemyWaveManager mWaveManager = null;
+        State mState = State.Intro;
+        TransitionDataManager mTransitionManager = null;
         
         /// <summary>
         /// Construct a level instance from a configuration file.
@@ -303,9 +434,20 @@ namespace OuterSpaceCathedral
         }
 
         private Level(LevelData levelData)
-        {
-            mLevelData = levelData;            
+        {   
+            mLevelData = levelData;
+            mWaveManager = new EnemyWaveManager(levelData.EnemyWaves);
             BuildInstancesForLevelData(mLevelData);
+
+            if ( levelData.Intro != null )
+            {
+                mState = State.Intro;
+                mTransitionManager = new TransitionDataManager(levelData.Intro);
+            }
+            else
+            {
+                mState = State.Play;
+            }
 
             // activate player 1
             players[0] = new Player(PlayerIndex.One);
@@ -313,10 +455,31 @@ namespace OuterSpaceCathedral
 
         public virtual void Update(float deltaTime)
         {
-            // Update Level
-            if ( mLevelData != null )
+            if ( mState == State.Play )
             {
-                mLevelData.Update(deltaTime, enemies);
+                // Update Level
+                mWaveManager.Update(deltaTime, enemies);
+
+                // check for play completion
+                if ( mWaveManager.AreAllWavesComplete() && enemies.Count == 0 )
+                {
+                    if ( mLevelData.Outro != null )
+                    {
+                        mState = State.Outro;
+                        mTransitionManager = new TransitionDataManager(mLevelData.Outro);
+                    }
+                    else
+                    {
+                        SetReturnToFrontend();
+                        return;
+                    }
+                }
+            }
+
+            // check if we need to transtion out
+            if ( CheckTransitions(deltaTime) )
+            {
+                return;
             }
 
             // Check for player activations
@@ -388,6 +551,11 @@ namespace OuterSpaceCathedral
             foregrounds.ForEach(x => x.Draw(spriteBatch));
 
             DrawRejoinText(spriteBatch);
+
+            if ( mTransitionManager != null )
+            {
+                mTransitionManager.Draw(spriteBatch);
+            }
 
         #if DEBUG
             DrawDebugText(spriteBatch);
@@ -537,34 +705,6 @@ namespace OuterSpaceCathedral
         }
 
         /// <summary>
-        /// Rate a rate string. Expecting form "x y"
-        /// </summary>
-        private static Vector2 ParseRate(string rate)
-        {   
-            if ( rate.Contains(',') )
-            {
-                throw new Exception("Do not put commas in rate string");
-            }
-
-            string [] rateTkns = rate.Split( new char [] { ' ' } );
-            return new Vector2( float.Parse(rateTkns[0]), float.Parse(rateTkns[1]) );
-        }
-
-        /// <summary>
-        /// Parse a color string. Expecting form "r g b" or "r g b a"
-        /// </summary>
-        private static Color ParseColor(string color)
-        {
-            if ( color.Contains(',') )
-            {
-                throw new Exception("Do not put commas in color string");
-            }
-
-            string [] colorTkns = color.Split( new char [] { ' ' } );
-            return new Color( float.Parse(colorTkns[0]), float.Parse(colorTkns[1]), float.Parse(colorTkns[2]), colorTkns.Length > 3 ? float.Parse(colorTkns[3]) : 1.0f );
-        }
-
-        /// <summary>
         /// Get the art piece layer for identifier.
         /// </summary>
         /// <param name="layer"></param>
@@ -587,21 +727,79 @@ namespace OuterSpaceCathedral
                 {
                     case "solid":
                         {
-                            GetListForArtPiece(artPiece.Layer).Add( new SolidColorBackground( Level.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
+                            GetListForArtPiece(artPiece.Layer).Add( new SolidColorBackground( ParseUtil.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
                         }
                         break;
 
                     case "scrolling":
                         {
                             GetListForArtPiece(artPiece.Layer).Add( new ScrollingBackground( Level.BuildSpriteForArtPiece(artPiece.ArtId), 
-                                                                                             Level.ParseRate(artPiece.Rate),
-                                                                                             Level.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
+                                                                                             ParseUtil.ParseRate(artPiece.Rate),
+                                                                                             ParseUtil.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
                         }
                         break;
                 }
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Load a level data instance from an xml file.
+        /// </summary>
+        private static LevelData LoadLevelData(string levelPath)
+        {
+            try
+            {
+                XmlSerializer xmlDeserializer = new XmlSerializer(typeof(LevelData));
+                using ( TextReader textReader = new StreamReader(levelPath) )
+                {
+                    return (LevelData)xmlDeserializer.Deserialize(textReader);
+                }
+            }
+            catch ( System.Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Mark us for a return to the front end
+        /// </summary>
+        private void SetReturnToFrontend()
+        {
+            GameState.SetGameMode(GameState.Mode.FrontEnd);
+        }
+
+        /// <summary>
+        /// Check on transitions.
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        /// <returns>true if we need to bail out of the level</returns>
+        private bool CheckTransitions(float deltaTime)
+        {
+            if ( mTransitionManager != null )
+            {
+                mTransitionManager.Update(deltaTime);
+                if ( mTransitionManager.Complete )
+                {
+                    mTransitionManager = null;
+                    switch ( mState )
+                    {
+                        case State.Intro:
+                            {   
+                                mState = State.Play;
+                            }
+                            break;
+
+                        case State.Outro:
+                            SetReturnToFrontend();
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        #endregion Private
     }
 }

@@ -68,7 +68,7 @@ namespace OuterSpaceCathedral
             SpriteFont pixelFont = Content.Load<SpriteFont>("fonts\\klobitPixels");
 
             GameState.Initialize(spriteSheet, pixelFont);
-            GameState.GameMode = GameState.Mode.FrontEnd;
+            GameState.SetGameMode(GameState.Mode.FrontEnd);
         }
 
         /// <summary>

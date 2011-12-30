@@ -28,6 +28,7 @@ namespace OuterSpaceCathedral
 
         private List<LevelEntry> mLevelEntries = new List<LevelEntry>();
         private int              mSelectedIdx = 0;
+        private bool             mPrevPressingSelect = true;
         private int              mPrevNagivationDelta = 0;
 
         public FrontEnd()
@@ -38,20 +39,28 @@ namespace OuterSpaceCathedral
             }
         }
 
+        public void ResetKeyCache()
+        {
+            mPrevPressingSelect = true;
+            mPrevNagivationDelta = 0;
+        }
+
         public void Update(float deltaTime)
         {
             GamePadState primaryPadState = GamePad.GetState(0);
 
             // check for level selection
-            if ( primaryPadState.IsButtonDown(Buttons.A) )
-            {
+            bool isSelectButtonDown = primaryPadState.IsButtonDown(Buttons.A);
+            if ( !mPrevPressingSelect && isSelectButtonDown )
+            {   
                 if ( mSelectedIdx < mLevelEntries.Count )
                 {
-                    GameState.GameMode = GameState.Mode.Game;
+                    GameState.SetGameMode(GameState.Mode.Game);
                     GameState.Level = Level.BuildLevelFromFile( mLevelEntries[mSelectedIdx].Path );
                     return;
                 }
             }
+            mPrevPressingSelect = isSelectButtonDown;
 
             // check for menu navigations
             if ( mLevelEntries.Count > 0 )

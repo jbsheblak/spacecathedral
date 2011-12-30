@@ -36,6 +36,13 @@ namespace OuterSpaceCathedral
             set;
         }
 
+        [XmlAttribute("AttackId")]
+        public string AttackId
+        {
+            get;
+            set;
+        }
+
         [XmlAttribute("TimeOffset")]
         public float TimeOffset
         { 
@@ -96,7 +103,7 @@ namespace OuterSpaceCathedral
                     if ( mTimeOffset >= currentPattern.TimeOffset )
                     {
                         // spawn pattern
-                        EnemyFactory.BuildPattern(currentPattern.ActorId, currentPattern.PatternId, enemyList);
+                        EnemyFactory.BuildPattern(currentPattern.ActorId, currentPattern.PatternId, currentPattern.AttackId, enemyList);
 
                         // move to next pattern
                         ++mPatternIdx;

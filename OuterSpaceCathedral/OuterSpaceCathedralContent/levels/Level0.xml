@@ -14,15 +14,15 @@
       <EnemyPatterns>
         <!--<EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />-->
 
-        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"                TimeOffset="0" />
-        <EnemyPattern ActorId="leaf_tron" PatternId="line_up_then_move"       TimeOffset="3" />        
-        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line"               TimeOffset="8" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="snake_wave"              TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="line_up_then_move"       TimeOffset="10" />        
+        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="wave_line"               TimeOffset="20" />
       </EnemyPatterns>      
     </EnemyWave>
 
     <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" AttackId ="attack1234" PatternId="move_center_then_circle" TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
     

@@ -10,11 +10,22 @@ namespace OuterSpaceCathedral
         static EnemyFactory()
         {
             ScreenRightMiddle = new Vector2(GameConstants.RenderTargetWidth - 32, GameConstants.RenderTargetHeight/2);
+            DefaultEnemyMoveVelocity = new Vector2(-100, 0);
+            DefaultFireSpeed = 320;
         }
 
         private static readonly Vector2 ScreenRightMiddle;
+        private static readonly Vector2 DefaultEnemyMoveVelocity;
+        private static readonly float   DefaultFireSpeed;
         
-        public static void BuildPattern(string actorId, string patternId, List<Enemy> enemiesList)
+        /// <summary>
+        /// Build an enemy attack pattern.
+        /// </summary>
+        /// <param name="actorId">Actor identifier for enemies.</param>
+        /// <param name="patternId">Movement pattern identifier.</param>
+        /// <param name="attackId">Attack pattern identifier.</param>
+        /// <param name="enemiesList">List of outgoing enemies.</param>
+        public static void BuildPattern(string actorId, string patternId, string attackId, List<Enemy> enemiesList)
         {
             List<IEnemyMovementStrategy> movementStrategies = new List<IEnemyMovementStrategy>();
 
@@ -26,14 +37,23 @@ namespace OuterSpaceCathedral
                 case "wave_line":                       WaveLine(movementStrategies); break;
                 case "uncluttered_line":                UnclutteredLine(movementStrategies); break;
                 case "flying_v":                        FlyingV(movementStrategies); break;
+                case "snake_wave":                      SnakeWave(movementStrategies); break;
             }
+
+            // build attack pattern
+            BuildAttackDelegate attackDelegate = null;
+            switch ( attackId )
+            {
+                case "attack1234":                      attackDelegate = new BuildAttackDelegate(Build_1_2_3_4_Pattern); break;
+                case "1sec_periodic":                   attackDelegate = new BuildAttackDelegate(Build_1_sec_periodic); break;
+            }   
 
             // build unit description
             BuildEnemyDelegate buildEnemy = null;
             switch (actorId)
             {
-                case "leaf_tron":           buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
-                case "anime_punch":         buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
+                case "leaf_tron":                       buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
+                case "anime_punch":                     buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
             }
 
             // build enemies
@@ -41,7 +61,7 @@ namespace OuterSpaceCathedral
             {
                 for ( int i = 0; i < movementStrategies.Count; ++i )
                 {
-                    enemiesList.Add( buildEnemy(i, movementStrategies.Count, movementStrategies[i]) );
+                    enemiesList.Add( buildEnemy(i, movementStrategies.Count, attackDelegate, movementStrategies[i]) );
                 }
             }
         }
@@ -58,7 +78,7 @@ namespace OuterSpaceCathedral
             }
         }
 
-        // move to the center of screen, then split and rotation around center
+        // line up on right edge of screen then sweep across screen
         private static void LineUpThenMove( List<IEnemyMovementStrategy> movementStrategies )
         {
             Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, 32 );                        
@@ -76,7 +96,7 @@ namespace OuterSpaceCathedral
         // vertical line of wave movers
         private static void WaveLine( List<IEnemyMovementStrategy> movementStrategies )
         {
-            Vector2 linearVelocity = new Vector2(-100, 0);
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
             Vector2 waveDisplacement = new Vector2(0, 35);
             float rotRateDegrees = 180.0f;
 
@@ -87,12 +107,11 @@ namespace OuterSpaceCathedral
             }
         }
 
-        // vertical line of wave movers
+        // uncluttered line of movers
         private static void UnclutteredLine(List<IEnemyMovementStrategy> movementStrategies)
         {
-            Vector2 linearVelocity = new Vector2(-100, 0);
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
             Vector2 waveDisplacement = new Vector2(0, 35);
-            float rotRateDegrees = 180.0f;
 
             for (int i = 0; i < 8; ++i)
             {
@@ -104,12 +123,13 @@ namespace OuterSpaceCathedral
         // Might Ducks flying v
         private static void FlyingV( List<IEnemyMovementStrategy> movementStrategies )
         {
-            Vector2 linearVelocity = new Vector2(-100, 0);
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
 
             float xSpacing = 50;
             float ySpacing = 25;
+            float yOffsetFromCenter = 25;
 
-            Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 );
+            Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 - yOffsetFromCenter );
 
                     // can't stop the flying v
                     movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(2.0f * xSpacing, 2.0f * ySpacing), linearVelocity ) );    
@@ -119,6 +139,22 @@ namespace OuterSpaceCathedral
                     movementStrategies.Add( BuildLinearMove( headPosition + new Vector2(2.0f * xSpacing, -2.0f * ySpacing), linearVelocity ) );
         }
 
+        // line of enemies snaking up/down across screen
+        private static void SnakeWave( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
+            Vector2 waveDisplacement = new Vector2(0, GameConstants.RenderTargetHeight/2);
+            Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 );
+            
+            float xSpacing = 50;
+            float rotSpacing = 25;
+            float rotRateDegrees = 180;
+
+            for ( int i = 0; i < 8; ++i )
+            {
+                movementStrategies.Add( BuildWave(headPosition + new Vector2(i * xSpacing, 0), linearVelocity, waveDisplacement, rotRateDegrees, i * rotSpacing) );
+            }
+        }
         
         #endregion
 
@@ -205,15 +241,38 @@ namespace OuterSpaceCathedral
 
         #endregion Movement Strategy Builders
 
+        #region Attack Pattern Builders
+
+        private delegate IEnemyAttackStrategy BuildAttackDelegate( int enemyIndex, int enemyCount );
+
+        // attack pattern 1 fire, 3 wait, 2 fire, 3 wait, 3 fire, 3 wait, 4 fire
+        private static IEnemyAttackStrategy Build_1_2_3_4_Pattern( int enemyIndex, int enemyCount )
+        {
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.1f;
+            int [] attackPattern    = new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 };
+
+            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern) );
+        }
+
+        // slow period attack pattern
+        private static IEnemyAttackStrategy Build_1_sec_periodic( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 1.0f;
+
+            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicAttackRateStrategy(periodTime, 0.0f) );
+        }
+
+        #endregion
+
         #region Enemy Builder Delegates
 
-        private delegate Enemy BuildEnemyDelegate( int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy);
+        private delegate Enemy BuildEnemyDelegate( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy);
 
-        private static Enemy BuildLeafTron( int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy )
-        {
-            float fireVelocity  = 320;
-            float periodTime    = 0.1f;
-            int   health        = 25;
+        private static Enemy BuildLeafTron( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy )
+        {   
+            int health = 25;
 
             AnimFrameManager animFrameMgr = new AnimFrameManager(   1/10.0f,
                                                                     new List<Rectangle>()
@@ -227,18 +286,17 @@ namespace OuterSpaceCathedral
                                                                     }
                                                                 );
 
-            IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), 
-                                                                   new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 } ) );
-
-            
+            IEnemyAttackStrategy attack = null;
+            if ( buildAttackDelegate != null )
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
 
-        private static Enemy BuildAnimePunch(int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy)
-        {
-            float fireVelocity = 320;
-            float periodTime = 0.1f;
+        private static Enemy BuildAnimePunch(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {   
             int health = 50;
 
             AnimFrameManager animFrameMgr = new AnimFrameManager(1 / 10.0f,
@@ -251,8 +309,11 @@ namespace OuterSpaceCathedral
                                                                     }
                                                                 );
 
-            IEnemyAttackStrategy attack = new EnemyAttackStrategy(new EnemyFixedAttackTargetStrategy(fireVelocity),
-                                                                   new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int[] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 }));
+            IEnemyAttackStrategy attack = null;
+            if ( buildAttackDelegate != null )
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }

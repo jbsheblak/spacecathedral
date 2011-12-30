@@ -205,14 +205,30 @@ namespace OuterSpaceCathedral
             }
         }
         
-        public Level()
+        /// <summary>
+        /// Construct a level instance from a configuration file.
+        /// </summary>
+        /// <param name="levelPath">Path to a level data file to load.</param>
+        /// <returns>Valid level instance on success, null otherwise.</returns>
+        public static Level BuildLevelFromFile(string levelPath)
+        {
+            LevelData levelData = LoadLevelData(levelPath);
+            if ( levelData != null )
+            {
+                return new Level(levelData);
+            }
+
+            return null;
+        }
+
+        private Level(LevelData levelData)
         {
             players.Add(new Player(PlayerIndex.One));
             players.Add(new Player(PlayerIndex.Two));
             players.Add(new Player(PlayerIndex.Three));
             players.Add(new Player(PlayerIndex.Four));
 
-            mLevelData = Level.LoadLevelData("Content/levels/testLevel.xml");
+            mLevelData = levelData;
 
             backgrounds.Add(new SolidColorBackground(new Color(33, 73, 90)));
             backgrounds.Add(new ScrollingBackground(new Vector2(-500, 0)));

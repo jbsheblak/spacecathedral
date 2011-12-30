@@ -28,6 +28,7 @@ namespace OuterSpaceCathedral
 
         private List<LevelEntry> mLevelEntries = new List<LevelEntry>();
         private int              mSelectedIdx = 0;
+        private int              mPrevNagivationDelta = 0;
 
         public FrontEnd()
         {
@@ -44,22 +45,57 @@ namespace OuterSpaceCathedral
             // check for level selection
             if ( primaryPadState.IsButtonDown(Buttons.A) )
             {
-                GameState.GameMode = GameState.Mode.Game;
-                GameState.Level = new Level();
-                return;
+                if ( mSelectedIdx < mLevelEntries.Count )
+                {
+                    GameState.GameMode = GameState.Mode.Game;
+                    GameState.Level = Level.BuildLevelFromFile( mLevelEntries[mSelectedIdx].Path );
+                    return;
+                }
+            }
+
+            // check for menu navigations
+            if ( mLevelEntries.Count > 0 )
+            {   
+                const float sin45 = 0.70710678f;
+
+                int nagivationDelta = 0;
+
+                if ( primaryPadState.DPad.Up == ButtonState.Pressed || primaryPadState.ThumbSticks.Left.Y >= sin45 )
+                {
+                    nagivationDelta = -1;
+                }
+
+                if ( primaryPadState.DPad.Down == ButtonState.Pressed || primaryPadState.ThumbSticks.Left.Y <= -sin45 )
+                {
+                    nagivationDelta = +1;
+                }
+
+                if ( nagivationDelta != mPrevNagivationDelta )
+                {
+                    mSelectedIdx = ( mSelectedIdx + nagivationDelta + mLevelEntries.Count ) % mLevelEntries.Count;
+                    mPrevNagivationDelta = nagivationDelta;
+                }
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Vector2 position = new Vector2(15, 25);
+            // draw the level entries
+            Vector2 levelEntryPosition = new Vector2(15, 25);
 
             for ( int i = 0; i < mLevelEntries.Count; ++i )
             {
                 Color color = ( i == mSelectedIdx ) ? Color.Red : Color.White;
-                spriteBatch.DrawString(GameState.PixelFont, mLevelEntries[i].Label, position, color);
-                position += new Vector2(0, GameState.PixelFont.LineSpacing + 5);
+                spriteBatch.DrawString(GameState.PixelFont, mLevelEntries[i].Label, levelEntryPosition, color);
+                levelEntryPosition += new Vector2(0, GameState.PixelFont.LineSpacing + 5);
             }
+
+            // draw the time
+            string timeString = DateTime.Now.ToString("h:mm:ss tt");
+
+            Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
+            Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
+            spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
         }
     }
 }

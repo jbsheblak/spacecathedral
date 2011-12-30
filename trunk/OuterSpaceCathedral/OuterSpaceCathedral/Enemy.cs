@@ -339,8 +339,7 @@ namespace OuterSpaceCathedral
     public interface IEnemyAttackTargetStrategy
     {
         void        Update( Enemy parent, float deltaTime );
-        Vector2     GetPosition( Enemy parent );
-        Vector2     GetVelocity( Enemy parent );
+        void        GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity );
     }
 
     /// <summary>
@@ -432,7 +431,11 @@ namespace OuterSpaceCathedral
 
             if ( mRateStrategy.ShouldFire(parent) )
             {
-                parent.FireBullet( mTargetStrategy.GetPosition(parent), mTargetStrategy.GetVelocity(parent) );
+                Vector2 position;
+                Vector2 velocity;
+                mTargetStrategy.GetTargetValues(parent, out position, out velocity);
+
+                parent.FireBullet( position, velocity );
             }
         }
     }
@@ -455,6 +458,43 @@ namespace OuterSpaceCathedral
 
         public void Update( Enemy parent, float deltaTime )
         {
+        }
+
+        public void GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity )
+        {
+            position = parent.Position;
+            velocity = new Vector2(-mFireVelocity, 0);
+        }
+    }
+
+    /// <summary>
+    /// Target strategy which circles the enemy.
+    /// </summary>
+    public class EnemyCircularAttackTargetStrategy : IEnemyAttackTargetStrategy
+    {
+        private float mFireVelocity;
+        private float mRotationRad;
+        private float mRotationRadRate;
+
+        public EnemyCircularAttackTargetStrategy(float fireVelocity, float rotRateDegrees, float rotInitialDegrees)
+        {
+            mFireVelocity       = fireVelocity;
+            mRotationRadRate    = (float)(rotRateDegrees    * Math.PI / 180.0f);
+            mRotationRad        = (float)(rotInitialDegrees * Math.PI / 180.0f);
+        }
+
+        public void Update( Enemy parent, float deltaTime )
+        {
+            mRotationRad += mRotationRadRate * deltaTime;
+        }
+
+        public void GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity )
+        {
+            float velX = mFireVelocity * (float)( Math.Cos(mRotationRad) );
+            float velY = mFireVelocity * (float)( Math.Sin(mRotationRad) );
+
+            position = parent.Position;
+            velocity = new Vector2(velX, velY);
         }
 
         public Vector2 GetPosition( Enemy parent )

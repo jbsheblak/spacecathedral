@@ -183,12 +183,10 @@ namespace OuterSpaceCathedral
                                                                     }
                                                                 );
 
-
-            
-            //IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
-
             IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), 
                                                                    new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 } ) );
+
+            
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
@@ -208,10 +206,6 @@ namespace OuterSpaceCathedral
                                                                         new Rectangle(160, 64, 64, 48),
                                                                     }
                                                                 );
-
-
-
-            //IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
 
             IEnemyAttackStrategy attack = new EnemyAttackStrategy(new EnemyFixedAttackTargetStrategy(fireVelocity),
                                                                    new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int[] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 }));

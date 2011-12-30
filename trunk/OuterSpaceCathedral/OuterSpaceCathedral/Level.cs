@@ -107,6 +107,69 @@ namespace OuterSpaceCathedral
     }
 
     /// <summary>
+    /// art piece in level.
+    /// </summary>
+    public class ArtPiece
+    {
+        public ArtPiece()
+        {
+            Color = "1 1 1 1";
+            ColorMod = 1;
+            Layer = "background";
+        }
+
+        [XmlAttribute("Name")]
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("Type")]
+        public string Type
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("ArtId")]
+        public string ArtId
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("Layer")]
+        public string Layer
+        {
+            get;
+            set;
+        }
+                
+        
+        [XmlAttribute("Rate")]
+        public string Rate
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("Color")]
+        public string Color
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("ColorMod")]
+        public float  ColorMod
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// Data container for a given level.
     /// </summary>
     public class LevelData
@@ -118,6 +181,7 @@ namespace OuterSpaceCathedral
         {
             Name = string.Empty;
             EnemyWaves = null;
+            ArtPieces = null;
         }
 
         [XmlAttribute("Name")]
@@ -128,6 +192,12 @@ namespace OuterSpaceCathedral
         }
 
         public List<EnemyWave> EnemyWaves
+        {
+            get;
+            set;
+        }
+
+        public List<ArtPiece> ArtPieces
         {
             get;
             set;
@@ -227,24 +297,11 @@ namespace OuterSpaceCathedral
 
         private Level(LevelData levelData)
         {
-            mLevelData = levelData;
+            mLevelData = levelData;            
+            BuildInstancesForLevelData(mLevelData);
 
             // activate player 1
             players[0] = new Player(PlayerIndex.One);
-
-            // ADD BACKGROUNDS
-            //Sky
-            backgrounds.Add(new SolidColorBackground(new Color(0.05f, 0.21f, 0.32f)));
-
-            //Background Clouds
-            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 300, 960, 270), new Vector2(-200, 0), new Color(0.4f, 0.6f, 0.7f) * 0.35f));
-            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 350, 960, 270), new Vector2(-150, 0), new Color(0.4f, 0.6f, 0.7f) * 0.15f));
-
-            //City
-            backgrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 270 * 2, 960, 270), new Vector2(-350, 0), Color.DarkGray * 0.75f));
-            
-            //Foreground CLouds
-            foregrounds.Add(new ScrollingBackground(new Rectangle(0, 1024 + 150, 960, 270), new Vector2(-500, 0), Color.White * 0.5f));
         }
 
         public virtual void Update(float deltaTime)
@@ -430,6 +487,90 @@ namespace OuterSpaceCathedral
                     }
 
                     spriteBatch.DrawString(GameState.PixelFont, rejoinText, textPos, GameConstants.GetColorForPlayer( (PlayerIndex)i ));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Build the sprite rectangle for a specified art piece.
+        /// </summary>
+        /// <param name="artId">string identifier for the art piece.</param>
+        /// <returns>Valid sprite rectangle.</returns>
+        private static Rectangle BuildSpriteForArtPiece(string artId)
+        {
+            switch ( artId )
+            {
+                case "city_clouds_background":      return new Rectangle(0, 1024 + 300, 960, 270);
+                case "city_background":             return new Rectangle(0, 1024 + 270 * 2, 960, 270);
+                case "clouds_foreground":           return new Rectangle(0, 1024 + 150, 960, 270);
+
+                default:
+                    throw new Exception("Failed to find art piece for id");
+            }
+        }
+
+        /// <summary>
+        /// Rate a rate string. Expecting form "x y"
+        /// </summary>
+        private static Vector2 ParseRate(string rate)
+        {   
+            if ( rate.Contains(',') )
+            {
+                throw new Exception("Do not put commas in rate string");
+            }
+
+            string [] rateTkns = rate.Split( new char [] { ' ' } );
+            return new Vector2( float.Parse(rateTkns[0]), float.Parse(rateTkns[1]) );
+        }
+
+        /// <summary>
+        /// Parse a color string. Expecting form "r g b" or "r g b a"
+        /// </summary>
+        private static Color ParseColor(string color)
+        {
+            if ( color.Contains(',') )
+            {
+                throw new Exception("Do not put commas in color string");
+            }
+
+            string [] colorTkns = color.Split( new char [] { ' ' } );
+            return new Color( float.Parse(colorTkns[0]), float.Parse(colorTkns[1]), float.Parse(colorTkns[2]), colorTkns.Length > 3 ? float.Parse(colorTkns[3]) : 1.0f );
+        }
+
+        /// <summary>
+        /// Get the art piece layer for identifier.
+        /// </summary>
+        /// <param name="layer"></param>
+        /// <returns></returns>
+        private List<Background> GetListForArtPiece(string layer)
+        {
+            return layer == "background" ? backgrounds : foregrounds;
+        }
+
+        /// <summary>
+        /// Build all instance data for a level.
+        /// </summary>
+        /// <param name="levelData"></param>
+        private void BuildInstancesForLevelData(LevelData levelData)
+        {
+            // build art pieces
+            foreach ( ArtPiece artPiece in levelData.ArtPieces )
+            {
+                switch ( artPiece.Type )
+                {
+                    case "solid":
+                        {
+                            GetListForArtPiece(artPiece.Layer).Add( new SolidColorBackground( Level.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
+                        }
+                        break;
+
+                    case "scrolling":
+                        {
+                            GetListForArtPiece(artPiece.Layer).Add( new ScrollingBackground( Level.BuildSpriteForArtPiece(artPiece.ArtId), 
+                                                                                             Level.ParseRate(artPiece.Rate),
+                                                                                             Level.ParseColor(artPiece.Color) * artPiece.ColorMod ) );
+                        }
+                        break;
                 }
             }
         }

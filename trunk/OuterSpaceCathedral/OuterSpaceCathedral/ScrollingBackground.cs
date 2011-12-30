@@ -10,12 +10,12 @@ namespace OuterSpaceCathedral
         Vector2 velocity = new Vector2(-200, 0);
         Vector2 positionOffset;
 
-        public ScrollingBackground(Vector2 velocity)
+        public ScrollingBackground(Rectangle sourceRectangle, Vector2 velocity, Color color)
         {
             position = GameConstants.RenderTargetCenter;
             this.velocity = velocity;
-            sourceRectangle = new Rectangle(0, 754, 960, 540);
-            this.color = color * 0.6f;
+            this.sourceRectangle = sourceRectangle;
+            this.color = color;
         }
 
         public override void Update(float deltaTime)
@@ -23,7 +23,7 @@ namespace OuterSpaceCathedral
             positionOffset += velocity * deltaTime;
             
             position.X = positionOffset.X % GameConstants.RenderTargetWidth + GameConstants.RenderTargetWidth;
-            position.Y = 270;
+            //position.Y = 270;
 
             base.Update(deltaTime);
         }

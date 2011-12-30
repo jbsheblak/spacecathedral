@@ -14,8 +14,9 @@ namespace OuterSpaceCathedral
 
         private static readonly Vector2 ScreenRightMiddle;
 
-        public static void BuildPattern(string patternId, List<Enemy> enemiesList)
+        public static void BuildPattern(string actorId, string patternId, List<Enemy> enemiesList)
         {
+            List<IEnemyMovementStrategy> movementStrategies = new List<IEnemyMovementStrategy>();
             switch ( patternId )
             {
                 case "move_center_then_circle":
@@ -23,7 +24,7 @@ namespace OuterSpaceCathedral
                         const int enemyCount = 8;
                         for ( int i = 0; i < enemyCount; ++i )
                         {
-                            enemiesList.Add( BuildMoveToLocationThenCircleEnemy(ScreenRightMiddle, GameConstants.RenderTargetCenter, 75, 360/enemyCount * i) );
+                            movementStrategies.Add( BuildMoveToLocationThenCircle(ScreenRightMiddle, GameConstants.RenderTargetCenter, 75, 360/enemyCount * i) );
                         }
                     }
                     break;
@@ -39,7 +40,7 @@ namespace OuterSpaceCathedral
                         float waitTime = Math.Abs( maxDistance / enemyToTargetSpeed );
                         for ( int i = 0; i < enemyCount; ++i )
                         {
-                            enemiesList.Add( BuildLineUpThenMoveEnemy( initialPosition, initialPosition + new Vector2(0, 32 * i), enemyToTargetSpeed, enemyVelocity, waitTime) );
+                            movementStrategies.Add( BuildLineUpThenMove( initialPosition, initialPosition + new Vector2(0, 32 * i), enemyToTargetSpeed, enemyVelocity, waitTime) );
                         }
                     }
                     break;
@@ -53,14 +54,50 @@ namespace OuterSpaceCathedral
                         for ( int i = 0; i < 8; ++i )
                         {
                             Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
-                            enemiesList.Add( BuildWaveEnemy(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
+                            movementStrategies.Add( BuildWave(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
                         }
                     }
                     break;
             }
+
+            // build unit description
+            List<Rectangle> animFrames = null;
+            float frameTime = 1.0f;
+
+            switch (actorId)
+            {
+                case "leaf_tron":
+                    {
+                        frameTime = 1/10.0f;
+                        animFrames = new List<Rectangle>()
+                        {
+                            GameConstants.CalcRectFor32x32Sprite(2, 0),
+                            GameConstants.CalcRectFor32x32Sprite(2, 0),
+                            GameConstants.CalcRectFor32x32Sprite(2, 0),
+                            GameConstants.CalcRectFor32x32Sprite(2, 1),
+                            GameConstants.CalcRectFor32x32Sprite(2, 2),
+                            GameConstants.CalcRectFor32x32Sprite(2, 1),
+                        };
+                    }
+                    break;
+            }
+
+            // build enemies
+            if ( animFrames != null )
+            {
+                foreach ( IEnemyMovementStrategy movement in movementStrategies )
+                {
+                    Enemy enemy = new Enemy();
+                    enemy.MovementStrategy = movement;
+                    enemy.FrameManager = new AnimFrameManager(frameTime, animFrames);
+                    enemiesList.Add(enemy);
+                }
+            }
         }
-        
-        private static Enemy BuildMoveToLocationThenCircleEnemy(Vector2 initialCenter, Vector2 targetCenter, float radius, float initialRotationDegrees)
+
+        #region Movement Builders
+
+        private static IEnemyMovementStrategy BuildMoveToLocationThenCircle(Vector2 initialCenter, Vector2 targetCenter, float radius, float initialRotationDegrees)
         {
             // calculate radial position
             float targetX = radius * (float)Math.Cos( initialRotationDegrees * Math.PI / 180.0f );
@@ -73,10 +110,10 @@ namespace OuterSpaceCathedral
             MoveToLocation(strats, targetCenter,  radialPosition, 100);
             MovingRotateAboutPoint(strats, new Vector2(-100, 0), targetCenter, 180, initialRotationDegrees, radius);
 
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
+            return new EnemyCompositeMovementStrategy(strats);
         }
 
-        private static Enemy BuildLineUpThenMoveEnemy( Vector2 lineUpStartPosition, Vector2 lineUpTargetPosition, float lineUpSpeed, Vector2 moveVelocity, float goTime)
+        private static IEnemyMovementStrategy BuildLineUpThenMove( Vector2 lineUpStartPosition, Vector2 lineUpTargetPosition, float lineUpSpeed, Vector2 moveVelocity, float goTime)
         {
             float distToTravel = (lineUpTargetPosition - lineUpStartPosition).Length();
             float timeToTarget = distToTravel / lineUpSpeed;            
@@ -88,16 +125,16 @@ namespace OuterSpaceCathedral
             Wait(strats, waitTime);
             MoveLinear(strats, lineUpTargetPosition, moveVelocity);
 
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
+            return new EnemyCompositeMovementStrategy(strats);
         }
     
-        private static Enemy BuildWaveEnemy( Vector2 initialLocation, Vector2 linearVelocity, Vector2 waveDisplacement, float rotRateDegrees, float initialRotDegrees )
+        private static IEnemyMovementStrategy BuildWave( Vector2 initialLocation, Vector2 linearVelocity, Vector2 waveDisplacement, float rotRateDegrees, float initialRotDegrees )
         {
             // move in wave pattern linearly
             List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>();
             MoveWave(strats, initialLocation, linearVelocity, waveDisplacement, rotRateDegrees, initialRotDegrees);
             
-            return new Enemy( new EnemyCompositeMovementStrategy(strats) );
+            return new EnemyCompositeMovementStrategy(strats);
         }
 
         #region Commands
@@ -133,5 +170,7 @@ namespace OuterSpaceCathedral
         }
 
         #endregion
+
+        #endregion Movement Builders
     }
 }

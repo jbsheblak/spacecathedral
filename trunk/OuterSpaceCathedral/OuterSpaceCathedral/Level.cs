@@ -28,6 +28,13 @@ namespace OuterSpaceCathedral
             set; 
         }
 
+        [XmlAttribute("ActorId")]
+        public string ActorId
+        {
+            get;
+            set;
+        }
+
         [XmlAttribute("TimeOffset")]
         public float TimeOffset
         { 
@@ -84,11 +91,11 @@ namespace OuterSpaceCathedral
             {
                 if ( mPatternIdx < EnemyPatterns.Count )
                 {
-                    EnemyPattern currentPatern = EnemyPatterns[mPatternIdx];
-                    if ( mTimeOffset >= currentPatern.TimeOffset )
+                    EnemyPattern currentPattern = EnemyPatterns[mPatternIdx];
+                    if ( mTimeOffset >= currentPattern.TimeOffset )
                     {
                         // spawn pattern
-                        EnemyFactory.BuildPattern(currentPatern.PatternId, enemyList);
+                        EnemyFactory.BuildPattern(currentPattern.ActorId, currentPattern.PatternId, enemyList);
 
                         // move to next pattern
                         ++mPatternIdx;

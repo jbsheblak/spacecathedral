@@ -1,11 +1,12 @@
-<LevelData Name="TestLevel">  
+<LevelData Name="TestLevel">
+  
   <EnemyWaves>
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>
-        <EnemyPattern ActorId="anime_punch" PatternId="move_center_then_circle" TimeOffset="0" />
-        <EnemyPattern ActorId="leaf_tron" PatternId="line_up_then_move"       TimeOffset="3" />        
-        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line"               TimeOffset="8" />
+        <EnemyPattern ActorId="anime_punch"     PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="heart_attacker"  PatternId="line_up_then_move"       TimeOffset="20" />        
+        <EnemyPattern ActorId="day_dream"       PatternId="wave_line"               TimeOffset="30" />
       </EnemyPatterns>      
     </EnemyWave>
 

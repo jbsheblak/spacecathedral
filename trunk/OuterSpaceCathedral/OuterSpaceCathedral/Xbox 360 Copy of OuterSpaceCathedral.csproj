@@ -70,6 +70,7 @@
     <Compile Include="EnemyFactory.cs" />
     <Compile Include="FrontEnd.cs" />
     <Compile Include="GameConstants.cs" />
+    <Compile Include="GameUtility.cs" />
     <Compile Include="SolidColorBackground.cs" />
     <Compile Include="ScrollingBackground.cs" />
     <Compile Include="Bullet.cs" />

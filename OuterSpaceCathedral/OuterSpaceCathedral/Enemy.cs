@@ -323,34 +323,55 @@ namespace OuterSpaceCathedral
 
         private int health = 15;
 
-        private IEnemyMovementStrategy mMovementStrategy;
-        private AnimFrameManager animFrameManager;
+        private IEnemyMovementStrategy  mMovementStrategy;
+        private AnimFrameManager        mAnimFrameManager;
+        private int                     mHealth = 0;
 
-        public Enemy(IEnemyMovementStrategy movementStrategy)
+        /// <summary>
+        /// Strategy that determines how the enemy moves and where it is positioned.
+        /// </summary>
+        public IEnemyMovementStrategy MovementStrategy
+        {
+            get { return mMovementStrategy; }
+            set { mMovementStrategy = value; }
+        }
+
+        /// <summary>
+        /// Key frame manager.
+        /// </summary>
+        public AnimFrameManager FrameManager
+        {
+            get { return mAnimFrameManager; }
+            set { mAnimFrameManager = value; }
+        }
+
+        /// <summary>
+        /// Enemy health status.
+        /// </summary>
+        public int Health
+        {
+            get { return mHealth; }
+            set { mHealth = value; }
+        }
+
+        public Enemy()
         {
             sourceRectangle = new Rectangle(0, 64, skSpriteWidth, skSpriteHeight);
-
-            mMovementStrategy = movementStrategy;
-            position = mMovementStrategy.Position;
-
-            List<Rectangle> animFrames = new List<Rectangle>()
-            {
-                GameConstants.CalcRectFor32x32Sprite(2, 0),
-                GameConstants.CalcRectFor32x32Sprite(2, 0),
-                GameConstants.CalcRectFor32x32Sprite(2, 0),
-                GameConstants.CalcRectFor32x32Sprite(2, 1),
-                GameConstants.CalcRectFor32x32Sprite(2, 2),
-                GameConstants.CalcRectFor32x32Sprite(2, 1),
-            };
-
-            animFrameManager = new AnimFrameManager(1 / 10f, animFrames);
         }
 
         public override void Update(float deltaTime)
         {
-            animFrameManager.Update(deltaTime);
-            sourceRectangle = animFrameManager.FrameRectangle;
-            mMovementStrategy.Update(deltaTime);
+            if (mAnimFrameManager != null)
+            {
+                mAnimFrameManager.Update(deltaTime);
+                sourceRectangle = mAnimFrameManager.FrameRectangle;
+            }
+
+            if (mMovementStrategy != null)
+            {
+                mMovementStrategy.Update(deltaTime);
+                position = mMovementStrategy.Position;
+            }
 
             position = mMovementStrategy.Position;
             RemoveIfOffscreen();
@@ -364,9 +385,9 @@ namespace OuterSpaceCathedral
 
         public void Damage(int damageStrength)
         {
-            health -= damageStrength;
+            mHealth -= damageStrength;
 
-            if (health <= 0)
+            if (mHealth <= 0)
             {
                 RemoveObject();
             }

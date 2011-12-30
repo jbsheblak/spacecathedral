@@ -3,15 +3,15 @@
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>
-        <EnemyPattern PatternId="move_center_then_circle" TimeOffset="0" />
-        <EnemyPattern PatternId="line_up_then_move"       TimeOffset="3" />        
-        <EnemyPattern PatternId="wave_line"               TimeOffset="8" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="line_up_then_move"       TimeOffset="3" />        
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line"               TimeOffset="8" />
       </EnemyPatterns>      
     </EnemyWave>
 
     <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
     

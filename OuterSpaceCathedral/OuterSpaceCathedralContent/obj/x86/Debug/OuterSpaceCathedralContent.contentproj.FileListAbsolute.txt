@@ -1,5 +1,0 @@
-C:\Users\cloudbot\Dropbox\Public\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\cloudbot\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\ResolveAssemblyReference.cache
-D:\Jbs\Churn\DropBoxArchive\Dropbox\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\ResolveAssemblyReference.cache
-D:\projects\spaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\cloudbot\Desktop\OuterSpaceCathedral\OuterSpaceCathedral\OuterSpaceCathedralContent\obj\x86\Debug\ResolveAssemblyReference.cache

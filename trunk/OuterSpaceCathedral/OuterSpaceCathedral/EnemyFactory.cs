@@ -165,7 +165,7 @@ namespace OuterSpaceCathedral
         private static Enemy BuildLeafTron( int enemyIndex, int enemyCount, IEnemyMovementStrategy movementStrategy )
         {
             float fireVelocity  = 320;
-            float periodTime    = 1.0f;
+            float periodTime    = 0.1f;
             int   health        = 25;
 
             AnimFrameManager animFrameMgr = new AnimFrameManager(   1/10.0f,
@@ -180,7 +180,12 @@ namespace OuterSpaceCathedral
                                                                     }
                                                                 );
 
-            IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
+
+            
+            //IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), new EnemyPeriodicAttackRateStrategy(periodTime, (periodTime * enemyIndex) / (enemyCount-1) ) );
+
+            IEnemyAttackStrategy attack = new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity), 
+                                                                   new EnemyPeriodicPatternedAttackRateStrategy(periodTime, new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 } ) );
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }

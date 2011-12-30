@@ -322,6 +322,7 @@ namespace OuterSpaceCathedral
 
     #region Enemy Attack Strategies
 
+    #region Interfaces
     /// <summary>
     /// Strategy pattern which dictates where an how an enemy attacks.
     /// </summary>
@@ -350,6 +351,10 @@ namespace OuterSpaceCathedral
         void        Update ( Enemy parent, float deltaTime );
         bool        ShouldFire( Enemy parent );
     }
+
+    #endregion Interfaces
+
+    #region Attack Strategy Impl
 
     /// <summary>
     /// Composition class for attack strategies.
@@ -432,6 +437,10 @@ namespace OuterSpaceCathedral
         }
     }
 
+    #endregion Attack Strategy Impl
+
+    #region Attack Target Impl
+
     /// <summary>
     /// Fixed target strategy. Fires from parent to the left
     /// </summary>
@@ -458,6 +467,10 @@ namespace OuterSpaceCathedral
             return new Vector2(-mFireVelocity, 0);
         }
     }
+
+    #endregion Attack Target Impl
+
+    #region Attack Rate Impl
 
     /// <summary>
     /// Attack Rate strategy that fires on a period curve.
@@ -489,6 +502,71 @@ namespace OuterSpaceCathedral
         }
     }
 
+    /// <summary>
+    /// A period fire pattern which takes in a masking array.
+    /// Allows you to do things like: fire, fire, fire, wait, wait, fire, fire, fire fire, wait, wait, ...
+    /// </summary>
+    public class EnemyPeriodicPatternedAttackRateStrategy : IEnemyAttackRateStrategy
+    {
+        private float mPeriodTime;          //< how often to attempt to fire
+        private float mTimeUntilFire;       //< time until next fire
+        private int   mFirePatternCount;    //< number of pattern bits
+        private int   mFirePatternIndex;    //< current pattern bit
+        private int   mFirePattern;         //< working fire pattern
+        private int   mFirePatternMask;     //< original fire pattern
+
+        // note: firePattern values assumed to be 0 or 1
+        public EnemyPeriodicPatternedAttackRateStrategy( float periodTime, int [] firePattern )
+        {
+            if ( firePattern == null || firePattern.Length > 32 )
+            {
+                throw new Exception("Pattern too large.");
+            }
+
+            mPeriodTime = periodTime;
+            mTimeUntilFire = periodTime;
+            mFirePatternCount = firePattern.Length;
+            mFirePatternIndex = 0;
+
+            // build fire pattern mask
+            for ( int i = firePattern.Length - 1; i >= 0; --i )
+            {
+                mFirePatternMask <<= 1;
+                mFirePatternMask += firePattern[i];
+            }
+
+            mFirePattern = mFirePatternMask;
+        }
+
+        public void Update ( Enemy parent, float deltaTime )
+        {
+            if ( mTimeUntilFire <= 0.0f )
+            {
+                mTimeUntilFire += mPeriodTime;
+
+                ++mFirePatternIndex;
+                mFirePattern >>= 1;
+
+                if ( mFirePatternIndex == mFirePatternCount )
+                {
+                    // reset fire pattern
+                    mFirePatternIndex = 0;
+                    mFirePattern = mFirePatternMask;
+                }
+            }
+
+            mTimeUntilFire -= deltaTime;
+        }
+        
+        public bool ShouldFire( Enemy parent )
+        {
+            return (mTimeUntilFire <= 0.0f) && ( (mFirePattern & 0x1) != 0 );
+        }
+    }
+
+
+    #endregion Attack Rate Impl
+
     #endregion Enemy Attack Strategies
 
     /// <summary>
@@ -503,43 +581,7 @@ namespace OuterSpaceCathedral
         private IEnemyAttackStrategy    mAttackStrategy = null;
         private AnimFrameManager        mAnimFrameManager = null;
         private int                     mHealth = 0;
-
-        /// <summary>
-        /// Strategy that determines how the enemy moves and where it is positioned.
-        /// </summary>
-        public IEnemyMovementStrategy MovementStrategy
-        {
-            get { return mMovementStrategy; }
-            set { mMovementStrategy = value; }
-        }
-
-        /// <summary>
-        /// Strategy that determines where and how enemy attacks.
-        /// </summary>
-        public IEnemyAttackStrategy AttackStrategy
-        {
-            get { return mAttackStrategy; }
-            set { mAttackStrategy = value; }
-        }
-
-        /// <summary>
-        /// Key frame manager.
-        /// </summary>
-        public AnimFrameManager FrameManager
-        {
-            get { return mAnimFrameManager; }
-            set { mAnimFrameManager = value; }
-        }
-
-        /// <summary>
-        /// Enemy health status.
-        /// </summary>
-        public int Health
-        {
-            get { return mHealth; }
-            set { mHealth = value; }
-        }
-
+        
         public Enemy(IEnemyMovementStrategy movement, IEnemyAttackStrategy attack, AnimFrameManager frames, int health)
         {
             mMovementStrategy = movement;

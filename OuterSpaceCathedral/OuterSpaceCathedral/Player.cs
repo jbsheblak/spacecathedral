@@ -11,6 +11,10 @@ namespace OuterSpaceCathedral
         const float maxShotAngle = 80f;
         const float playerBounceSpeed = 10f;
         const float playerBounceDistance = 4f;
+        const float invincibilityTimeTotal = 1.5f;
+
+        bool invincible = true;
+        float invincibilityTimeElapsed;
 
         PlayerIndex playerIndex;
         float movementSpeed = 200;
@@ -33,7 +37,10 @@ namespace OuterSpaceCathedral
 
         public override void CollisionReaction()
         {
-            RemoveObject();
+            if (!invincible)
+            {
+                RemoveObject();
+            }
 
             base.CollisionReaction();
         }
@@ -65,6 +72,21 @@ namespace OuterSpaceCathedral
             if (fireIntervalCounterElapsed < fireInterval)
             {
                 fireIntervalCounterElapsed += deltaTime;
+            }
+
+            //Handle spawn invincibility
+            if (invincible)
+            {
+                if (invincibilityTimeElapsed >= invincibilityTimeTotal)
+                {
+                    invincible = false;
+                    color = Color.White;
+                }
+                else
+                {
+                    color = Color.White * (((float)Math.Sin(GameState.Level.ElapsedLevelTime * 50) + 1) / 2f);
+                    invincibilityTimeElapsed += deltaTime;
+                }
             }
 
             oldGamePadState = gamePadState;

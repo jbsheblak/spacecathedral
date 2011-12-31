@@ -9,7 +9,7 @@ namespace OuterSpaceCathedral
     {
         static EnemyFactory()
         {
-            ScreenRightMiddle = new Vector2(GameConstants.RenderTargetWidth - 32, GameConstants.RenderTargetHeight/2);
+            ScreenRightMiddle = new Vector2(GameConstants.RenderTargetWidth + 32, GameConstants.RenderTargetHeight/2);
             DefaultEnemyMoveVelocity = new Vector2(-100, 0);
             DefaultFireSpeed = 320;
         }
@@ -33,6 +33,7 @@ namespace OuterSpaceCathedral
             switch ( patternId )
             {
                 case "move_center_then_circle":         MoveCenterThenCircle(movementStrategies); break;
+                case "move_in_shallow_then_circle":     MoveInShallowThenCircle(movementStrategies); break;
                 case "line_up_then_move":               LineUpThenMove(movementStrategies); break;
                 case "wave_line":                       WaveLine(movementStrategies); break;
                 case "wave_line_small":                 WaveLineSmall(movementStrategies); break;
@@ -78,6 +79,7 @@ namespace OuterSpaceCathedral
                 case "countdown_three":                 buildEnemy = new BuildEnemyDelegate(BuildCountdownThree); break;
                 case "countdown_two":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTwo); break;
                 case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
+                case "evil_heart":                      buildEnemy = new BuildEnemyDelegate(BuildHeart); break;
             }
 
             // build enemies
@@ -95,10 +97,21 @@ namespace OuterSpaceCathedral
         // move to the center of screen, then split and rotation around center
         private static void MoveCenterThenCircle( List<IEnemyMovementStrategy> movementStrategies )
         {
+            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, GameConstants.RenderTargetCenter);
+        }
+
+        // move to the center of screen, then split and rotation around center
+        private static void MoveInShallowThenCircle( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, ScreenRightMiddle + new Vector2(-128, 0));
+        }
+
+        private static void MoveToPositionThenCircle( List<IEnemyMovementStrategy> movementStrategies, Vector2 initialPosition, Vector2 moveToPosition )
+        {
             const int enemyCount = 8;
             for ( int i = 0; i < enemyCount; ++i )
             {
-                movementStrategies.Add( BuildMoveToLocationThenCircle(ScreenRightMiddle, GameConstants.RenderTargetCenter, 75, 360/enemyCount * i) );
+                movementStrategies.Add( BuildMoveToLocationThenCircle(initialPosition, moveToPosition, 75, 360/enemyCount * i) );
             }
         }
 
@@ -136,7 +149,7 @@ namespace OuterSpaceCathedral
 
             for ( int i = 0; i < 8; ++i )
             {
-                Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth - 32, (i+1) * 32 );
+                Vector2 initialPosition = new Vector2( GameConstants.RenderTargetWidth + 32, (i+1) * 32 );
                 movementStrategies.Add( BuildWave(initialPosition, linearVelocity, waveDisplacement, rotRateDegrees, 0) );
             }
         }
@@ -236,7 +249,7 @@ namespace OuterSpaceCathedral
 
             float xSpacing = 50;
             float ySpacing = 25;
-            float yOffsetFromCenter = 25;
+            float yOffsetFromCenter = 0;
 
             Vector2 headPosition = new Vector2( GameConstants.RenderTargetWidth + 40, GameConstants.RenderTargetHeight/2 - yOffsetFromCenter );
 
@@ -705,6 +718,29 @@ namespace OuterSpaceCathedral
                                                                     new List<Rectangle>()
                                                                     {
                                                                         new Rectangle(320, 64 + 80 * GameUtility.Random.Next(0, 4), 80, 80),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+
+        private static Enemy BuildHeart(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10;
+            
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1/4.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(0,  96, 16, 16),
+                                                                        new Rectangle(16, 96, 16, 16),
+                                                                        new Rectangle(32, 96, 16, 16),
                                                                     }
                                                                 );
 

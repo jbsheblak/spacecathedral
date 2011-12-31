@@ -8,21 +8,23 @@
     <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.60" />
   </ArtPieces>
 
-  <Intro Text="Are YOU rad enough to save the taco stand?" Time="1" Color="1 0 0" />
-  <Outro Text="TACO SECURED" Time="1" Color="1 0 0" />
+  <Intro Text="Do not trust the hearts." Time="1" Color="1 0 0" />
+  <Outro Text="" Time="1" Color="1 0 0" />
 
   <EnemyWaves>
-
     
     <EnemyWave Name="Warmup_1" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
         <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_easy" TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"         TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"         TimeOffset="12" />
       </EnemyPatterns>
     </EnemyWave>
 
     <EnemyWave Name="Warmup_2" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
         <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_medium" TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"           TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
 
@@ -33,13 +35,33 @@
       </EnemyPatterns>
     </EnemyWave>
 
-    <EnemyWave Name="GuardianShieldHard" StartCondition="PrevWaveComplete">
+    <EnemyWave Name="Circle" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
-        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="gapped_forward_spray"  TimeOffset="1" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"                                            TimeOffset="1" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="4" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="8" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="FlyingV" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"  TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"  TimeOffset="1" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="3" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="4" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="5" />
+
       </EnemyPatterns>
     </EnemyWave>
     
+    <EnemyWave Name="GuardianShieldHard" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
+        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="1" />
+      </EnemyPatterns>
+    </EnemyWave>
+   
 
   </EnemyWaves>
 

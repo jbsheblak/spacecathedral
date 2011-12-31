@@ -100,6 +100,12 @@ namespace OuterSpaceCathedral
                     {
                         AudioManager.PlaySpaceSong();
                     }
+
+                    if ( mSelectedIdx == 1)
+                    {
+                        AudioManager.PlayOceanSong();
+                    }
+
                     if (mSelectedIdx == 2)
                     {
                         AudioManager.PlayMaxSong();

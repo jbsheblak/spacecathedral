@@ -971,7 +971,7 @@ namespace OuterSpaceCathedral
                     {
                         mTransitionStats = null;
                         mState = State.OutroScreen;
-                        mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMax, -GameConstants.ScreenTransitionScaleRate, GameConstants.ScreenTransitionRotationRate);
+                        mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMax, -GameConstants.ScreenTransitionScaleRate, -GameConstants.ScreenTransitionRotationRate);
                     }
                     break;
 

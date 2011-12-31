@@ -445,6 +445,74 @@ namespace OuterSpaceCathedral
         }
     }
 
+    
+    public class EnemyTextureAttackStrategy : IEnemyAttackStrategy
+    {   
+        private IEnemyAttackRateStrategy   mRateStrategy = null;
+        private List< List<bool> >         mFirePatterns = null;
+        Texture2D                          mTexture      = null;
+        int                                mIndex        = 0;
+        float                              mFireVelocity = 0;
+
+        public EnemyTextureAttackStrategy(Texture2D texture, IEnemyAttackRateStrategy rateStrategy, float fireVelocity)
+        {   
+            mRateStrategy = rateStrategy;
+            mFireVelocity = fireVelocity;
+            mTexture = texture;
+            
+            Color [] colorData = new Color[texture.Width * texture.Height];
+            texture.GetData<Color>(colorData);
+
+            // build fire patterns out of the texture
+            mFirePatterns = new List< List<bool> >(texture.Width);
+            for ( int w = 0; w < texture.Width; ++w )
+            {
+                List<bool> patterns = new List<bool>();
+                
+                for ( int h = 0; h < texture.Height; ++h )
+                {
+                    Color c = colorData[ w + h * texture.Width ];
+                    patterns.Add( c == Color.Black );
+                }
+
+                mFirePatterns.Add(patterns);
+            }
+        }
+
+        public bool Complete
+        {
+            get { return false; }
+        }
+
+        public void Update(Enemy parent, float deltaTime)
+        {   
+            mRateStrategy.Update(parent, deltaTime);
+
+            if ( mRateStrategy.ShouldFire(parent) )
+            {
+                List<bool> patterns = mFirePatterns[mIndex];
+                
+                // range from top to bottom
+                for ( int i = 0; i < patterns.Count; ++i )
+                {
+                    if ( patterns[i] )
+                    {
+                        float posTop = GameConstants.RenderTargetHeight/2 - parent.PositionRectangle.Height/2;
+
+                        float posY = ( posTop + ( ( i + 1.0f ) / ( patterns.Count + 1 ) ) * parent.PositionRectangle.Height );
+
+                        Vector2 position = new Vector2( GameConstants.RenderTargetWidth, posY );
+                        Vector2 velocity = new Vector2( -mFireVelocity, 0 );
+
+                        parent.FireBullet( position, velocity );
+                    }
+                }
+
+                mIndex = ( mIndex + 1 ) % mFirePatterns.Count;
+            }
+        }
+    }
+
     #endregion Attack Strategy Impl
 
     #region Attack Target Impl
@@ -503,7 +571,7 @@ namespace OuterSpaceCathedral
             mLineCount = ( mLineCount + 1 ) % mLineThickness;
         }
     }
-
+    
     /// <summary>
     /// Target strategy which circles the enemy.
     /// </summary>

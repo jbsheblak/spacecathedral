@@ -17,7 +17,7 @@ namespace OuterSpaceCathedral
         private static readonly Vector2 ScreenRightMiddle;
         private static readonly Vector2 DefaultEnemyMoveVelocity;
         private static readonly float   DefaultFireSpeed;
-        
+
         /// <summary>
         /// Build an enemy attack pattern.
         /// </summary>
@@ -60,6 +60,7 @@ namespace OuterSpaceCathedral
                 case "circular_gap":                    attackDelegate = new BuildAttackDelegate(Build_Circular_Gap); break;
                 case "heavy_dual_horiz_line":           attackDelegate = new BuildAttackDelegate(Build_Heavy_Dual_Horiz_Line); break;
                 case "gapped_forward_spray":            attackDelegate = new BuildAttackDelegate(Build_Gapped_Forward_Spray); break;
+                case "happy_new_year":                  attackDelegate = new BuildAttackDelegate(Build_Happy_New_Year); break;
             }   
 
             // build unit description
@@ -452,7 +453,8 @@ namespace OuterSpaceCathedral
             
             return new EnemyAttackStrategy( new EnemyLineAttackTargetStrategy(fireVelocity, 2), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 2 );
         }
-                
+
+        // sprays in arc with some gaps
         private static IEnemyAttackStrategy Build_Gapped_Forward_Spray( int enemyIndex, int enemyCount )
         {   
             float fireVelocity      = DefaultFireSpeed;
@@ -463,6 +465,16 @@ namespace OuterSpaceCathedral
             int [] attackPattern    = new int [] { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             
             return new EnemyAttackStrategy( new EnemyArcAttackStrategy(fireVelocity, rotationRate, rotationMax, rotationMin, rotationMax), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
+        }
+
+        // happy new year
+        private static IEnemyAttackStrategy Build_Happy_New_Year( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.05f;
+            int [] attackPattern    = new int [] {1};
+            
+            return new EnemyTextureAttackStrategy( GameState.HappyNewYearsTexture, new EnemyPeriodicAttackRateStrategy(periodTime, 0.0f), fireVelocity );
         }
 
         #endregion

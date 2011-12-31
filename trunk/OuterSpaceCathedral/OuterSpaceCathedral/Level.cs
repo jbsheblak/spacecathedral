@@ -555,6 +555,12 @@ namespace OuterSpaceCathedral
         {
             Scale += mScaleRate * deltaTime;
             Rotation += mRotationRate * deltaTime;
+
+            if ( mScaleRate < 0 )
+            {
+                float fadePercentage = 1.0f - ( GameConstants.ScreenTransitionScaleMax - Scale ) / ( GameConstants.ScreenTransitionScaleMax - GameConstants.ScreenTransitionScaleMin );
+                MediaPlayer.Volume = fadePercentage;
+            }
         }
 
         public bool IsComplete()

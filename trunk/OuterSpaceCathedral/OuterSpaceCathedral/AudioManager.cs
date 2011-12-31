@@ -102,19 +102,30 @@ namespace OuterSpaceCathedral
             playerFireSFXInstance.Stop(false);
         }
 
-        public static void PlayMaxSong()
+        private static void PlaySongAndMaxVolume(Song song)
         {
-            MediaPlayer.Play(max300);
+            MediaPlayer.Play(song);
+            MediaPlayer.Volume = 1.0f;
+        }
+
+        public static void SetSongFade(float fadePercent)
+        {
+            MediaPlayer.Volume = fadePercent;
+        }
+
+        public static void PlayMaxSong()
+        {   
+            PlaySongAndMaxVolume(max300);
         }
 
         public static void PlaySpaceSong()
         {
-            MediaPlayer.Play(outerSpace);
+            PlaySongAndMaxVolume(outerSpace);
         }
 
         public static void PlayOceanSong()
         {
-            MediaPlayer.Play(ocean);
+            PlaySongAndMaxVolume(ocean);
         }
 
         public static void StopAllMusic()

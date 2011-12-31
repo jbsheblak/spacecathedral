@@ -1,11 +1,11 @@
 <LevelData Name="Maintains">
 
   <ArtPieces>
-    <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
-    <ArtPiece Name="clouds0"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-200 0" Color="0.4 0.6 0.7"     ColorMod="0.35" />
-    <ArtPiece Name="clouds1"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-150 0" Color="0.4 0.6 0.7"     ColorMod="0.15" />
-    <ArtPiece Name="city"     Type="scrolling"  Layer="background" ArtId="city_background"        Rate="-350 0" Color="0.66 0.66 0.66"  ColorMod="0.75" />
-    <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.50" />
+    <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.02 0.30 0.58" />
+    <ArtPiece Name="clouds0"  Type="scrolling"  Layer="background" ArtId="city_clouds_background2" Rate="-25 0" Color="0.4 0.6 0.7"     ColorMod="0.35" />
+    <ArtPiece Name="clouds1"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-50 0" Color="1.0 1.0 1.0"     ColorMod="0.70" />
+    <ArtPiece Name="ocean"    Type="scrolling"  Layer="background" ArtId="ocean_background"        Rate="-350 0" Color="1.0 1.0 1.0"     ColorMod="1.00" />
+    <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.60" />
   </ArtPieces>
 
   <Intro Text="Are YOU rad enough to save the taco stand?" Time="1" Color="1 0 0" />

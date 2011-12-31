@@ -144,14 +144,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="levels\LVL0.xml">
-      <Name>LVL0</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="songs\OuterSpace.mp3">
       <Name>OuterSpace</Name>
       <Importer>Mp3Importer</Importer>

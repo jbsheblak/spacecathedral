@@ -49,7 +49,7 @@ namespace OuterSpaceCathedral
             // level unlocks
             mLevelEntries.Add( new LevelEntry("Ocean Ochestra",     "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
             mLevelEntries.Add( new LevelEntry("Cathedral 300",      "content\\levels\\Level2.xml", "23:00:00",   unlockedByDefault) );
-            mLevelEntries.Add( new LevelEntry("SECRET",             "content\\levels\\Level3.xml", "23:55:00",   unlockedByDefault) );
+            mLevelEntries.Add( new LevelEntry("SECRET",             "content\\levels\\Level3.xml", "23:58:00",   unlockedByDefault) );
 
             if ( mLevelEntries.Count > 0 )
             {
@@ -83,6 +83,7 @@ namespace OuterSpaceCathedral
                 GameState.GameMode = GameState.Mode.Game;
                 GameState.Level = Level.BuildLevelFromFile( mLevelEntries[ mLevelEntries.Count - 1 ].Path );
                 AudioManager.PlayCursorSelectSFX();
+                AudioManager.PlayCitySong();
                 return;
             }
 

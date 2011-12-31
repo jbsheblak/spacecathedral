@@ -31,8 +31,6 @@ namespace OuterSpaceCathedral
         private bool             mPrevPressingSelect = true;
         private int              mPrevNagivationDelta = 0;
 
-        private float           mElapsedTime = 0.0f;
-
         public FrontEnd()
         {
             foreach ( string path in Directory.GetFiles( "content\\levels", "*.xml" ) )
@@ -92,8 +90,6 @@ namespace OuterSpaceCathedral
                     mPrevNagivationDelta = nagivationDelta;
                 }
             }
-
-            mElapsedTime += deltaTime;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -114,23 +110,6 @@ namespace OuterSpaceCathedral
             Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
             Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
             spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
-
-            DrawSomeBadassTitleArt(spriteBatch);
-        }
-
-        public void DrawSomeBadassTitleArt(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.9f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.9f) / 10f, SpriteEffects.None, 0);
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.6f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.6f) / 10f, SpriteEffects.None, 0);
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.3f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.3f) / 10f, SpriteEffects.None, 0);
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.8f, (float)Math.Sin(mElapsedTime) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f) / 10f, SpriteEffects.None, 0);
-
-
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 30), new Rectangle(544, 0, 128, 16), Color.White, 0f, new Vector2(64, 8), 2f + ((float)Math.Sin(mElapsedTime * 7) + 2f) / 9f, SpriteEffects.None, 0);
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(450, 30), new Rectangle(544, 16, 128, 16), Color.SkyBlue, 0f, new Vector2(64, 8), 2f + ((float)Math.Sin((mElapsedTime + Math.PI) * 7) + 2f) / 9f, SpriteEffects.None, 0);
-            spriteBatch.Draw(GameState.SpriteSheet, new Vector2(325, 70), new Rectangle(544, 32, 128, 16), Color.Lerp(Color.White, Color.Yellow, ((float)Math.Sign(mElapsedTime * 10) + 1f) / 2f), 0f, new Vector2(64, 8), 2f + ((float)Math.Sin((mElapsedTime + Math.PI / 2f) * 7) + 2f) / 9f, SpriteEffects.None, 0);
-            //spriteBatch.Draw(GameState.SpriteSheet, new Vector2(325, 100), new Rectangle(544, 16, 128, 16), Color.White, 0f, new Vector2(64, 32), 1f + ((float)Math.Sin(mElapsedTime * 7) + 2f) / 3f, SpriteEffects.None, 0);
-            //spriteBatch.Draw(GameState.SpriteSheet, new Rectangle(200, 75, 128, 128), new Rectangle(416, 0, 128, 128), Color.White * 0.5f);
         }
     }
 }

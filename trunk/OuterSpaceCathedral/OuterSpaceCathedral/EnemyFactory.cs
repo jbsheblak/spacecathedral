@@ -201,9 +201,9 @@ namespace OuterSpaceCathedral
 
         private static void DDRInsanityAndImSeriousThisTime(List<IEnemyMovementStrategy> movementStrategies)
         {
-            Vector2 linearVelocity = new Vector2(-2500, 0);
+            Vector2 linearVelocity = new Vector2(-2000, 0);
 
-            for (int i = 0; i < 198; ++i)
+            for (int i = 0; i < 208; ++i)
             {
                 Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 80 + 256 * i, GameUtility.Random.Next(1, 8) * 32);
                 movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));

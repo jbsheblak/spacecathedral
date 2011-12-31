@@ -55,6 +55,8 @@
       </EnemyPatterns>
     </EnemyWave>
 
+    <EnemyWave Name="Celebration" StartCondition="PrevWaveComplete" StartAction="AddCelebrationStub" />
+
     <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
         <EnemyPattern ActorId="leaf_tron" AttackId ="1sec_periodic" PatternId="move_center_then_circle" TimeOffset="0" />

@@ -66,8 +66,9 @@ namespace OuterSpaceCathedral
             spriteSheet = Content.Load<Texture2D>("textures\\spriteSheet");
             transitionMask = Content.Load<Texture2D>("textures\\transitionMask");
             SpriteFont pixelFont = Content.Load<SpriteFont>("fonts\\klobitPixels");
+            Texture2D happyNewYears = Content.Load<Texture2D>("textures\\HappyNewYears");
 
-            GameState.Initialize(spriteSheet, pixelFont);
+            GameState.Initialize(spriteSheet, happyNewYears, pixelFont);
             AudioManager.Initialize(Content);
             GameState.GameMode = GameState.Mode.FrontEnd;
 

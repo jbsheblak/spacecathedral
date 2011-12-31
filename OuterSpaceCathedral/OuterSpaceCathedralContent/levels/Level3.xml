@@ -13,7 +13,7 @@
   </ArtPieces>
 
   <EnemyWaves>
-
+    
     <!-- this is ~25 seconds -->
     <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
@@ -78,7 +78,7 @@
 
     <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="calendar_boss" PatternId="boss"        TimeOffset="0" />
+        <EnemyPattern ActorId="calendar_boss" PatternId="boss" AttackId="happy_new_year"        TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
 

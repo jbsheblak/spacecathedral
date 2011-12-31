@@ -19,6 +19,7 @@ namespace OuterSpaceCathedral
 
         static Mode                 mGameMode;
         static Texture2D            spriteSheet;
+        static Texture2D            happyNewYears;
  		static SpriteFont           pixelFont;
         static Level                level;
         static FrontEnd             mFrontEnd;
@@ -31,9 +32,10 @@ namespace OuterSpaceCathedral
             set;
         }
 
-        public static void Initialize(Texture2D sprites, SpriteFont font)
+        public static void Initialize(Texture2D sprites, Texture2D happyNewYearsTexture, SpriteFont font)
         {
             spriteSheet = sprites;
+            happyNewYears = happyNewYearsTexture;
             mFrontEnd = new FrontEnd();
             pixelFont = font;
         }
@@ -158,6 +160,11 @@ namespace OuterSpaceCathedral
             {
                 return spriteSheet;
             }
+        }
+
+        public static Texture2D HappyNewYearsTexture
+        {
+            get { return happyNewYears; }
         }
 
         public static SpriteFont PixelFont

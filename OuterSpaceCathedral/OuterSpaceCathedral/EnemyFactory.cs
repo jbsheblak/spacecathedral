@@ -113,7 +113,6 @@ namespace OuterSpaceCathedral
         private static void UnclutteredLine(List<IEnemyMovementStrategy> movementStrategies)
         {
             Vector2 linearVelocity = DefaultEnemyMoveVelocity;
-            Vector2 waveDisplacement = new Vector2(0, 35);
 
             for (int i = 0; i < 8; ++i)
             {

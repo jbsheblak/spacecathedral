@@ -90,7 +90,6 @@ namespace OuterSpaceCathedral
         {
             playerFireSFXInstance.Stop(false);
             playingPlayerFireSFX = false;
-            //playerFireSFXInstance.IsLooped = false;
         }
     }
 }

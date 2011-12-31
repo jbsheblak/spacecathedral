@@ -1,4 +1,7 @@
 <LevelData Name="TestLevel">
+
+  <Intro Text="Level1_Intro" Time="5" Color="1 0 0" />
+  <Outro Text="Level1_Outro" Time="5" Color="1 0 0" />
   
   <EnemyWaves>
     

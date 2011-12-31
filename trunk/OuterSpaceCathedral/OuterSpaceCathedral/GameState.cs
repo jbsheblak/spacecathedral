@@ -113,8 +113,11 @@ namespace OuterSpaceCathedral
                     switch ( mGameMode )
                     {
                         case Mode.FrontEnd:
-                            mFrontEnd.ResetKeyCache();
-                            level = null;
+                            {
+                                AudioManager.StopPlayerFireSFX();
+                                mFrontEnd.ResetKeyCache();
+                                level = null;
+                            }
                             break;
                     }
                 }

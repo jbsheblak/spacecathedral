@@ -64,6 +64,7 @@ namespace OuterSpaceCathedral
             Name = string.Empty;
             EnemyPatterns = null;
             StartCondition = null;
+            StartAction = null;
         }
 
         [XmlAttribute("Name")]
@@ -75,6 +76,13 @@ namespace OuterSpaceCathedral
         
         [XmlAttribute("StartCondition")]
         public string StartCondition
+        {
+            get;
+            set;
+        }
+
+        [XmlAttribute("StartAction")]
+        public string StartAction
         {
             get;
             set;
@@ -306,21 +314,42 @@ namespace OuterSpaceCathedral
                         EnemyWave nextWave = mEnemyWaves[mWaveIdx+1];
                      
                         bool startNextWave = (nextWave.StartCondition == null);
-                        if ( nextWave.StartCondition != null )
+                        if ( !string.IsNullOrEmpty(nextWave.StartCondition) )
                         {
-                            switch ( nextWave.StartCondition )
+                            if ( nextWave.StartCondition == "PrevWaveComplete" )
                             {
-                                case "PrevWaveComplete":
-                                    {   
-                                        bool prevWaveComplete = ( mWaveIdx >= 0 ) ? mEnemyWaves[mWaveIdx].ArePatternsComplete() : true;
-                                        startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );
-                                    }
-                                    break;
+                                bool prevWaveComplete = ( mWaveIdx >= 0 ) ? mEnemyWaves[mWaveIdx].ArePatternsComplete() : true;
+                                startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );
+                            }
+                            else if ( nextWave.StartCondition.Contains("TimeQuery") )
+                            {
+                                string [] queryTkns = nextWave.StartCondition.Split( new char [] { '=' } );
+                                string [] timeTkns = queryTkns[1].Split( new char [] { ':' } );
+
+                                int timeQuery = MakeTimeValue( int.Parse(timeTkns[0]), int.Parse(timeTkns[1]), int.Parse(timeTkns[2]) );
+                                int timeNow = MakeTimeValue( DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second );
+
+                                // has the query time passed?
+                                if ( timeNow > timeQuery )
+                                {
+                                    startNextWave = true;
+                                }
                             }
                         }
 
                         if ( startNextWave )
                         {
+                            if ( !string.IsNullOrEmpty(nextWave.StartAction) )
+                            {
+                                if ( nextWave.StartAction == "ClearEnemies" )
+                                {
+                                    foreach ( Enemy e in enemiesList )
+                                    {
+                                        e.Damage(1000000, null);
+                                    }
+                                }
+                            }
+
                             ++mWaveIdx;
                         }
                     }
@@ -351,6 +380,11 @@ namespace OuterSpaceCathedral
             }
             
             return true;
+        }
+
+        private static int MakeTimeValue(int hour, int minute, int second)
+        {
+            return hour * 60 * 60 + minute * 60 + second;
         }
     }
 

@@ -12,6 +12,15 @@
   </ArtPieces>
 
   <EnemyWaves>
+
+    <EnemyWave Name="SecondWave" >
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron" AttackId ="1sec_periodic" PatternId="move_center_then_circle" TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+    
+    <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
+    <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->    
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>

@@ -491,6 +491,7 @@ namespace OuterSpaceCathedral
                     if ( gpad.Buttons.A == ButtonState.Pressed )
                     {
                         players[i] = new Player( (PlayerIndex)i );
+                        AudioManager.PlayPlayerJoinSFX();
                     }
                 }
             }
@@ -581,6 +582,19 @@ namespace OuterSpaceCathedral
         public void AddEffect(Effect effect)
         {
             mEffects.Add(effect);
+        }
+
+        public bool IsPlayerFiring()
+        {
+            foreach (Player player in players)
+            {
+                if (player != null && player.IsFiring)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public float ElapsedLevelTime { get; private set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace OuterSpaceCathedral
 {
@@ -27,6 +28,7 @@ namespace OuterSpaceCathedral
         float fireIntervalCounterElapsed = 0f;
 
         float bulletStreamAngleScalar = 0f;
+        bool isFiring;
 
         public Player(PlayerIndex pi)
         {
@@ -39,6 +41,7 @@ namespace OuterSpaceCathedral
         {
             if (!invincible)
             {
+                AudioManager.PlayPlayerDeathSFX();
                 EffectsBuilder.BuildPlayerDeathExplosion(position);
                 RemoveObject();
             }
@@ -56,6 +59,15 @@ namespace OuterSpaceCathedral
             {
                 bulletStreamAngleScalar = 1 - gamePadState.Triggers.Right;
                 DefaultFire(movement);
+            }
+
+            if (gamePadState.IsButtonDown(Buttons.A))
+            {
+                isFiring = true;
+            }
+            else
+            {
+                isFiring = false;
             }
 
             //position += movement * deltaTime;
@@ -106,6 +118,14 @@ namespace OuterSpaceCathedral
             GameState.Level.PlayerBullets.Add(Bullet.BuildPlayerBullet(nonFloatPosition + new Vector2(0, 6), new Vector2(300, maxShotAngle * bulletStreamAngleScalar) + playerMoveSpeed, playerIndex));
             
             fireIntervalCounterElapsed = 0f;
+        }
+
+        public bool IsFiring
+        {
+            get
+            {
+                return isFiring;
+            }
         }
     }
 }

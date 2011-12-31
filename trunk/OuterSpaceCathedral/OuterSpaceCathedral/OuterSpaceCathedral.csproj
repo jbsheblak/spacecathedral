@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioManager.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="GameUtility.cs" />
     <Compile Include="Effect.cs" />

@@ -395,13 +395,78 @@ namespace OuterSpaceCathedral
         }
     }
 
+    /// <summary>
+    /// Utility class for showing level stats.
+    /// </summary>
     public class TransitionStatsManager
     {
-        private float mTimeRemaining;
+        private float                   mTimeRemaining;
+        private string                  mLine0;
+        private string                  mLine1;
 
         public bool Complete
         {
             get { return mTimeRemaining == 0.0f; }
+        }
+
+        public TransitionStatsManager(PlayerStatsManager data)
+        {   
+            mTimeRemaining = 5.0f;
+
+            string [] playerLabels = new string []
+            {
+                "Player 1",
+                "Player 2",
+                "Player 3",
+                "Player 4",
+            };
+
+            string mostKills        = playerLabels[0];
+            string leastKills       = playerLabels[0];
+            string mostDeaths       = playerLabels[0];
+            string leastDeaths      = playerLabels[0];
+            
+            int mostKillsValue      = data.Players[0].Kills;
+            int leastKillValue      = data.Players[0].Kills;
+            int leastDeathsValue    = data.Players[0].Deaths;
+            int mostDeathsValue     = data.Players[0].Deaths;
+
+            // collect stats
+            for ( int i = 1; i < data.Players.Count; ++i )
+            {
+                PlayerStats ps = data.Players[i];
+
+                if ( ps.Joins > 0 )
+                {
+                    if ( ps.Kills > mostKillsValue )
+                    {
+                        mostKillsValue = ps.Kills;
+                        mostKills = playerLabels[i];
+                    }
+
+                    if ( ps.Kills < leastKillValue )
+                    {
+                        leastKillValue = ps.Kills;
+                        leastKills = playerLabels[i];
+                    }
+
+                    if ( ps.Deaths > mostDeathsValue )
+                    {
+                        mostDeathsValue = ps.Deaths;
+                        mostDeaths = playerLabels[i];
+                    }
+
+                    if ( ps.Deaths < leastDeathsValue )
+                    {
+                        leastDeathsValue = ps.Deaths;
+                        leastDeaths = playerLabels[i];
+                    }
+                }
+            }
+
+            // format text
+            mLine0 = string.Format("Most  Kills: {0}            Least Deaths: {1}", mostKills,  leastDeaths);
+            mLine1 = string.Format("Least Kills: {0}            Most  Deaths: {1}", leastKills, mostDeaths);
         }
 
         public void Update(float deltaTime)
@@ -411,6 +476,17 @@ namespace OuterSpaceCathedral
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            Vector2 textSize = GameState.PixelFont.MeasureString(mLine0);
+            Vector2 textPos0 = GameConstants.RenderTargetCenter - new Vector2( textSize.X / 2, 0 );
+            Vector2 textPos1 = textPos0 + new Vector2( 0, GameState.PixelFont.LineSpacing );
+            Vector2 shadowOffset = new Vector2(-1,-1);
+            Color shadowColor = Color.Black;
+            
+            spriteBatch.DrawString(GameState.PixelFont, mLine0, textPos0 + shadowOffset, shadowColor);
+            spriteBatch.DrawString(GameState.PixelFont, mLine1, textPos1 + shadowOffset, shadowColor);
+
+            spriteBatch.DrawString(GameState.PixelFont, mLine0, textPos0, Color.White);
+            spriteBatch.DrawString(GameState.PixelFont, mLine1, textPos1, Color.Red);
         }
     }
 
@@ -445,6 +521,9 @@ namespace OuterSpaceCathedral
         }
     }
 
+    /// <summary>
+    /// Level Logic and Data
+    /// </summary>
     public class Level
     {
         const int skMaxPlayers = 4;
@@ -471,6 +550,7 @@ namespace OuterSpaceCathedral
         State mState = State.Intro;
         TransitionDataManager mTransitionManager = null;
         ScreenTransition mScreenTransition = null;
+        TransitionStatsManager mTransitionStats = null;
         
         /// <summary>
         /// Construct a level instance from a configuration file.
@@ -499,7 +579,7 @@ namespace OuterSpaceCathedral
             mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMin, GameConstants.ScreenTransitionScaleRate, GameConstants.ScreenTransitionRotationRate);
             
             // activate player 1
-            players[0] = new Player(PlayerIndex.One);
+            AddPlayer( PlayerIndex.One );
         }
 
         public virtual void Update(float deltaTime)
@@ -539,7 +619,7 @@ namespace OuterSpaceCathedral
                     GamePadState gpad = GameState.GetGamePadState( (PlayerIndex)i );
                     if ( gpad.Buttons.Start == ButtonState.Pressed )
                     {
-                        players[i] = new Player( (PlayerIndex)i );
+                        AddPlayer( (PlayerIndex)i );
                         AudioManager.PlayPlayerJoinSFX();
                     }
                 }
@@ -606,6 +686,12 @@ namespace OuterSpaceCathedral
             {
                 mTransitionManager.Draw(spriteBatch);
             }
+
+            if ( mTransitionStats != null )
+            {
+                mTransitionStats.Draw(spriteBatch);
+            }
+
 
         #if DEBUG
             DrawDebugText(spriteBatch);
@@ -874,6 +960,16 @@ namespace OuterSpaceCathedral
                     if ( mTransitionManager.Complete )
                     {
                         mTransitionManager = null;
+                        mState = State.OutroStats;
+                        mTransitionStats = new TransitionStatsManager(PlayerStatsManager);
+                    }
+                    break;
+
+                case State.OutroStats:
+                    mTransitionStats.Update(deltaTime);
+                    if ( mTransitionStats.Complete )
+                    {
+                        mTransitionStats = null;
                         mState = State.OutroScreen;
                         mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMax, -GameConstants.ScreenTransitionScaleRate, GameConstants.ScreenTransitionRotationRate);
                     }
@@ -890,6 +986,16 @@ namespace OuterSpaceCathedral
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// add a player to the game
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        private void AddPlayer(PlayerIndex playerIndex)
+        {
+            players[ (int)playerIndex ] = new Player(playerIndex);
+            PlayerStatsManager.Players[ (int)playerIndex ].Joins += 1;
         }
 
         #endregion Private

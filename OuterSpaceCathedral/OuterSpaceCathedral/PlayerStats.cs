@@ -20,6 +20,7 @@ namespace OuterSpaceCathedral
 
     public class PlayerStats
     {
+        public int Joins { set; get; }
         public int Kills { set; get; }
         public int Deaths { set; get; }
     }

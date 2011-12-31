@@ -101,7 +101,7 @@ namespace OuterSpaceCathedral
         /// Render the trippy front end background
         /// </summary>
         /// <param name="spriteBatch"></param>
-        private void RenderTrippyBackground(SpriteBatch spriteBatch)
+        private void RenderTitleScreen(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(GameState.SpriteSheet, GameConstants.RenderTargetRect, new Rectangle(0, 0, 16, 16), new Color(26, 48, 78));
 
@@ -121,12 +121,12 @@ namespace OuterSpaceCathedral
                 }
             }
 
+            // draw title screen
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.9f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.9f) / 10f, SpriteEffects.None, 0);
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.6f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.6f) / 10f, SpriteEffects.None, 0);
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.25f, (float)Math.Sin(mElapsedTime - 0.3f) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f - 0.3f) / 10f, SpriteEffects.None, 0);
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 175), new Rectangle(416, 0, 128, 128), Color.White * 0.8f, (float)Math.Sin(mElapsedTime) / 3f, new Vector2(64, 64), 1f + ((float)Math.Sin(mElapsedTime * 5) + 2f) / 10f, SpriteEffects.None, 0);
-
-
+            
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(300, 30), new Rectangle(544, 0, 128, 16), Color.White, 0f, new Vector2(64, 8), 2f + ((float)Math.Sin(mElapsedTime * 7) + 2f) / 9f, SpriteEffects.None, 0);
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(450, 30), new Rectangle(544, 16, 128, 16), Color.SkyBlue, 0f, new Vector2(64, 8), 2f + ((float)Math.Sin((mElapsedTime + Math.PI) * 7) + 2f) / 9f, SpriteEffects.None, 0);
             spriteBatch.Draw(GameState.SpriteSheet, new Vector2(325, 70), new Rectangle(544, 32, 128, 16), Color.Lerp(Color.White, Color.Yellow, ((float)Math.Sign(mElapsedTime * 10) + 1f) / 2f), 0f, new Vector2(64, 8), 2f + ((float)Math.Sin((mElapsedTime + Math.PI / 2f) * 7) + 2f) / 9f, SpriteEffects.None, 0);
@@ -148,7 +148,7 @@ namespace OuterSpaceCathedral
                 GraphicsDevice.SetRenderTarget(renderTarget2);
                 GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1.0f, 0);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
-                RenderTrippyBackground(spriteBatch);
+                RenderTitleScreen(spriteBatch);
                 spriteBatch.End();
 
                 // draw game
@@ -223,7 +223,7 @@ namespace OuterSpaceCathedral
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                 if ( GameState.GetGameMode() == GameState.Mode.FrontEnd )
                 {
-                    RenderTrippyBackground(spriteBatch);
+                    RenderTitleScreen(spriteBatch);
                 }
                 GameState.Draw(spriteBatch);
                 spriteBatch.End();

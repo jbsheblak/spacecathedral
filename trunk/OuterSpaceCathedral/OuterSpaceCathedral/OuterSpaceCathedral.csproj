@@ -110,6 +110,7 @@
     <Compile Include="AudioManager.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="CollisionMessage.cs" />
+    <Compile Include="CustomStub.cs" />
     <Compile Include="GameUtility.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectsBuilder.cs" />

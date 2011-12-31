@@ -341,12 +341,25 @@ namespace OuterSpaceCathedral
                         {
                             if ( !string.IsNullOrEmpty(nextWave.StartAction) )
                             {
-                                if ( nextWave.StartAction == "ClearEnemies" )
+                                switch ( nextWave.StartAction )
                                 {
-                                    foreach ( Enemy e in enemiesList )
-                                    {
-                                        e.Damage(1000000, null);
-                                    }
+                                    case "ClearEnemies":
+                                        {
+                                            foreach ( Enemy e in enemiesList )
+                                            {
+                                                e.Damage(1000000, null);
+                                            }
+                                        }
+                                        break;
+
+                                    case "AddCelebrationStub":
+                                        {
+                                            if ( GameState.Level != null )
+                                            {
+                                                GameState.Level.AddCelebration();
+                                            }
+                                        }
+                                        break;
                                 }
                             }
 
@@ -579,6 +592,7 @@ namespace OuterSpaceCathedral
         List<Bullet> playerBullets = new List<Bullet>();
         List<Bullet> enemyBullets = new List<Bullet>();
         List<Effect> mEffects = new List<Effect>();
+        List<CustomStub> mCustomStubs = new List<CustomStub>();
         LevelData mLevelData    = null;
         EnemyWaveManager mWaveManager = null;
         State mState = State.Intro;
@@ -663,6 +677,7 @@ namespace OuterSpaceCathedral
 
             //Update Objects
             backgrounds.ForEach( x => x.Update(deltaTime) );
+            mCustomStubs.ForEach( x => x.Update(deltaTime) );
             activePlayers.ForEach( x => x.Update(deltaTime) );
             enemies.ForEach( x => x.Update(deltaTime) );
             playerBullets.ForEach( x => x.Update(deltaTime) );
@@ -683,6 +698,10 @@ namespace OuterSpaceCathedral
                     players[i] = null;
                 }
             }
+
+            RemoveAll(backgrounds, x => x.ReadyForRemoval());
+            RemoveAll(foregrounds, x => x.ReadyForRemoval());
+            RemoveAll(mCustomStubs, x => x.ReadyForRemoval());
             RemoveAll(enemies, x => x.ReadyForRemoval());
             RemoveAll(playerBullets, x => x.ReadyForRemoval());
             RemoveAll(enemyBullets, x => x.ReadyForRemoval());
@@ -691,22 +710,12 @@ namespace OuterSpaceCathedral
             ElapsedLevelTime += deltaTime;
         }
 
-        public void RemoveAll<A>(List<A> gameObjects, Predicate<A> predicate) where A : GameObject
-        {
-            for (int i = gameObjects.Count - 1; i >= 0; --i)
-            {
-                if (predicate(gameObjects[i]))
-                {
-                    gameObjects.RemoveAt(i);
-                }
-            }
-        }
-
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             List<Player> activePlayers = GetActivePlayers();
 
             backgrounds.ForEach( x => x.Draw(spriteBatch) );
+            mCustomStubs.ForEach( x => x.Draw( spriteBatch ) );
             enemyBullets.ForEach(x => x.Draw(spriteBatch));
             enemies.ForEach( x => x.Draw(spriteBatch) );
             mEffects.ForEach( x => x.Draw(spriteBatch) );
@@ -753,6 +762,11 @@ namespace OuterSpaceCathedral
         public void AddEffect(Effect effect)
         {
             mEffects.Add(effect);
+        }
+
+        public void AddCelebration()
+        {
+            mCustomStubs.Add( new CustomStub("Celebration") );
         }
 
         public bool IsPlayerFiring()
@@ -1030,7 +1044,21 @@ namespace OuterSpaceCathedral
         private void AddPlayer(PlayerIndex playerIndex)
         {
             players[ (int)playerIndex ] = new Player(playerIndex);
-            PlayerStatsManager.Players[ (int)playerIndex ].Joins += 1;
+            PlayerStatsManager.Players[ (int)playerIndex ].Joins += 1;        
+        }
+
+        /// <summary>
+        /// Remove all instaces based on a specified predicate.
+        /// </summary>
+        public void RemoveAll<A>(List<A> gameObjects, Predicate<A> predicate) where A : GameObject
+        {
+            for (int i = gameObjects.Count - 1; i >= 0; --i)
+            {
+                if (predicate(gameObjects[i]))
+                {
+                    gameObjects.RemoveAt(i);
+                }
+            }
         }
 
         #endregion Private

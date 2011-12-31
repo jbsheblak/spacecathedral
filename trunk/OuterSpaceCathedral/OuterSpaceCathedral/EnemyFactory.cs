@@ -82,6 +82,7 @@ namespace OuterSpaceCathedral
                 case "countdown_two":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTwo); break;
                 case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
                 case "evil_heart":                      buildEnemy = new BuildEnemyDelegate(BuildHeart); break;
+                case "dreamcast":                       buildEnemy = new BuildEnemyDelegate(BuildDreamcast); break;
                 case "coco":                            buildEnemy = new BuildEnemyDelegate(BuildCoco); break;
                 case "bebop_cola":                      buildEnemy = new BuildEnemyDelegate(BuildBebopCola); break;
             }
@@ -245,8 +246,8 @@ namespace OuterSpaceCathedral
             Vector2 botTarget = botPosition + new Vector2(-128, 0);
             Vector2 bobDisp = new Vector2(0, 5);
 
-            movementStrategies.Add( BuildMoveToLocationThenBob(topPosition, topTarget, bobDisp, 100, 2.0f) );
-            movementStrategies.Add( BuildMoveToLocationThenBob(botPosition, botTarget, bobDisp, 100, 2.0f) );
+            movementStrategies.Add( BuildMoveToLocationThenBob(topPosition, topTarget, bobDisp, 100, 180.0f) );
+            movementStrategies.Add( BuildMoveToLocationThenBob(botPosition, botTarget, bobDisp, 100, 180.0f) );
         }
 
         // one enemy that moves out and hovers
@@ -256,7 +257,7 @@ namespace OuterSpaceCathedral
             Vector2 target = position + new Vector2(-160, 0);            
             Vector2 bobDisp = new Vector2(0, 10);
 
-            movementStrategies.Add( BuildMoveToLocationThenBob(position, target, bobDisp, 100, 2.0f) );
+            movementStrategies.Add( BuildMoveToLocationThenBob(position, target, bobDisp, 100, 180.0f) );
         }
 
         // Might Ducks flying v
@@ -778,6 +779,26 @@ namespace OuterSpaceCathedral
                                                                         new Rectangle(0,  96, 16, 16),
                                                                         new Rectangle(16, 96, 16, 16),
                                                                         new Rectangle(32, 96, 16, 16),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildDreamcast(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager( 1.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(192, 0, 32, 32)
                                                                     }
                                                                 );
 

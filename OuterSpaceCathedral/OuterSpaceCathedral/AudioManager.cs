@@ -154,17 +154,17 @@ namespace OuterSpaceCathedral
 
         public static void PlayCitySong()
         {
-            MediaPlayer.Play(city);
+            PlaySongAndMaxVolume(city);
         }
 
         public static void PlayNewYearSong()
         {
-            MediaPlayer.Play(newYear);
+            PlaySongAndMaxVolume(newYear);
         }
 
         public static void PlayBebopBossSong()
-        {
-            MediaPlayer.Play(bebopBoss);
+        {   
+            PlaySongAndMaxVolume(bebopBoss);
         }
 
         public static void StopAllMusic()

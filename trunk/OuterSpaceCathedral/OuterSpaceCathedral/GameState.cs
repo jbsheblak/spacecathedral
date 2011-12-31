@@ -57,7 +57,7 @@ namespace OuterSpaceCathedral
                         GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
                         if ( gamePad.Buttons.Back == ButtonState.Pressed )
                         {
-                            GameState.SetGameMode(GameState.Mode.FrontEnd);
+                            GameState.GameMode = GameState.Mode.FrontEnd;
                             return;
                         }
 
@@ -97,25 +97,36 @@ namespace OuterSpaceCathedral
                     break;
             }
         }
-
+        
         /// <summary>
-        /// Set a new game mode.
+        /// Current game mode.
         /// </summary>
-        public static void SetGameMode( Mode gameMode )
+        public static Mode GameMode
         {
-            if ( mGameMode != gameMode )
+            get { return mGameMode; }
+            set
             {
-                mGameMode = gameMode;
-
-                switch ( mGameMode )
+                if ( mGameMode != value )
                 {
-                    case Mode.FrontEnd:
-                        mFrontEnd.ResetKeyCache();
-                        level = null;
-                        break;
+                    mGameMode = value;
+
+                    switch ( mGameMode )
+                    {
+                        case Mode.FrontEnd:
+                            mFrontEnd.ResetKeyCache();
+                            level = null;
+                            break;
+                    }
                 }
             }
         }
+
+
+        public static Mode GetGameMode()
+        {
+            return mGameMode;
+        }
+
 
         /// <summary>
         /// Get the GamePadState for a given player index.

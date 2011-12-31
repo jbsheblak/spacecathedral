@@ -331,9 +331,6 @@ namespace OuterSpaceCathedral
                         EnemyWave currentWave = mEnemyWaves[mWaveIdx];
                         currentWave.Update(deltaTime, enemiesList);
                     }
-
-
-
                 }
             }
         }
@@ -394,6 +391,25 @@ namespace OuterSpaceCathedral
         }
     }
 
+    public class TransitionStatsManager
+    {
+        private float mTimeRemaining;
+
+        public bool Complete
+        {
+            get { return mTimeRemaining == 0.0f; }
+        }
+
+        public void Update(float deltaTime)
+        {
+            mTimeRemaining = Math.Max(0.0f, mTimeRemaining - deltaTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+        }
+    }
+
     /// <summary>
     /// Screen Transition Info
     /// </summary>
@@ -435,6 +451,7 @@ namespace OuterSpaceCathedral
             Intro,
             Play,
             Outro,
+            OutroStats,
             OutroScreen,
         };
 
@@ -817,7 +834,7 @@ namespace OuterSpaceCathedral
         /// </summary>
         private void SetReturnToFrontend()
         {
-            GameState.SetGameMode(GameState.Mode.FrontEnd);
+            GameState.GameMode = GameState.Mode.FrontEnd;
         }
 
         /// <summary>

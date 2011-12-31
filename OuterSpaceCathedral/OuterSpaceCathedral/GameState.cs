@@ -117,6 +117,7 @@ namespace OuterSpaceCathedral
                         case Mode.FrontEnd:
                             {
                                 AudioManager.StopPlayerFireSFX();
+                                AudioManager.StopAllMusic();
                                 mFrontEnd.ResetKeyCache();
                                 level = null;
                             }

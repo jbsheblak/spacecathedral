@@ -108,5 +108,10 @@ namespace OuterSpaceCathedral
         {
             MediaPlayer.Play(max300);
         }
+
+        public static void StopAllMusic()
+        {
+            MediaPlayer.Stop();
+        }
     }
 }

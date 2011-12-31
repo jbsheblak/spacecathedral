@@ -621,6 +621,11 @@ namespace OuterSpaceCathedral
         private IEnemyAttackStrategy    mAttackStrategy = null;
         private AnimFrameManager        mAnimFrameManager = null;
         private int                     mHealth = 0;
+
+        private float       hitReactionElapsed = 0;
+        private const float hitReactionTotal   = 0.02f;
+        private bool        playingHitReaction;
+        private const int   hitReactionOffset = 1024;
         
         public Enemy(IEnemyMovementStrategy movement, IEnemyAttackStrategy attack, AnimFrameManager frames, int health)
         {
@@ -649,6 +654,18 @@ namespace OuterSpaceCathedral
                 mAttackStrategy.Update(this, deltaTime);
             }
 
+            if (playingHitReaction)
+            {
+                if (hitReactionElapsed >= hitReactionTotal)
+                {
+                    playingHitReaction = false;
+                }
+                else
+                {
+                    hitReactionElapsed += deltaTime;
+                }
+            }
+
             RemoveIfOffscreen();
         }
 
@@ -661,6 +678,9 @@ namespace OuterSpaceCathedral
         public void Damage(int damageStrength, CollisionMessage collisionMessage)
         {
             mHealth -= damageStrength;
+
+            hitReactionElapsed = 0f;
+            playingHitReaction = true;
 
             if (mHealth <= 0)
             {
@@ -679,6 +699,18 @@ namespace OuterSpaceCathedral
 
                     
                 }
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (playingHitReaction)
+            {
+                spriteBatch.Draw(GameState.SpriteSheet, PositionRectangle, new Rectangle(sourceRectangle.X + hitReactionOffset, sourceRectangle.Y, sourceRectangle.Width, sourceRectangle.Height), color);
+            }
+            else
+            {
+                base.Draw(spriteBatch);
             }
         }
 

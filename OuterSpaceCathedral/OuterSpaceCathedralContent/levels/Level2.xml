@@ -1,23 +1,22 @@
 <LevelData Name="TestLevel">
 
-  <Intro Text="Level2_Intro" Time="5" Color="1 0 0" />
-  <Outro Text="Level2_Outro" Time="5" Color="1 0 0" />
-  
-  <EnemyWaves>
-    
-    <EnemyWave Name="FirstWave">      
-      <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
-        <EnemyPattern ActorId="leaf_tron" PatternId="line_up_then_move"       TimeOffset="3" />        
-        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line"               TimeOffset="8" />
-      </EnemyPatterns>      
-    </EnemyWave>
+  <Intro Text="" Time="5" Color="1 0 0" />
+  <Outro Text="Dance Dance Inquisition" Time="5" Color="1 0 0" />
 
-    <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
+  <ArtPieces>
+    <ArtPiece Name="MAX"  Type="scrolling"  Layer="background" ArtId="cathedral300_background"  Rate="0 0" Color="1 1 1"     ColorMod="1" />
+  </ArtPieces>
+
+  <EnemyWaves>
+
+    <EnemyWave Name="FirstWave" >
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity" TimeOffset="0" />
+      </EnemyPatterns>
+      <EnemyPatterns>
+        <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity_and_im_serious" TimeOffset="54" />
       </EnemyPatterns>
     </EnemyWave>
-    
+
   </EnemyWaves>
 </LevelData>

@@ -10,7 +10,24 @@ namespace OuterSpaceCathedral
         static GameConstants()
         {
             RenderTargetRect = new Rectangle(0, 0, 480, 270);
+            BackBufferRect   = new Rectangle(0, 0, 960, 540);
         }
+
+        /// <summary>
+        /// Screen transition rates
+        /// </summary>
+        public static float     ScreenTransitionRotationRate { get { return 2.0f; } }
+        public static float     ScreenTransitionScaleRate { get { return 4.0f; } }
+        public static float     ScreenTransitionScaleMin { get { return 0.1f; } }
+        public static float     ScreenTransitionScaleMax { get { return 10.0f; } }
+
+        /// <summary>
+        /// Back buffer dimensions
+        /// </summary>
+        public static Rectangle BackBufferRect      { get; private set; }
+        public static int       BackBufferWidth     { get { return BackBufferRect.Width; } }
+        public static int       BackBufferHeight    { get { return BackBufferRect.Height; } }
+        public static Vector2   BackBufferCenter    { get { return new Vector2(BackBufferWidth/2, BackBufferHeight/2); } }
 
         /// <summary>
         /// Rectangle representing render target dimensions.
@@ -37,6 +54,5 @@ namespace OuterSpaceCathedral
                 default:                    return Color.White;
             }
         }
-
     }
 }

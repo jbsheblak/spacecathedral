@@ -14,16 +14,16 @@ namespace OuterSpaceCathedral
             Game
         };
         
-        const  int          skDebugControlMod = 5;
-        const  int          skDefaultDebugControl = skDebugControlMod - 1;
+        const  int                  skDebugControlMod = 5;
+        const  int                  skDefaultDebugControl = skDebugControlMod - 1;
 
-        static Mode         mGameMode;
-        static Texture2D    spriteSheet;
- 		static SpriteFont   pixelFont;
-        static Level        level;
-        static FrontEnd     mFrontEnd;
-        static int          mDebugControl = skDefaultDebugControl; // used to override which gamepad we control (DEBUG)
-        static bool         mChangingDebugControl = false;
+        static Mode                 mGameMode;
+        static Texture2D            spriteSheet;
+ 		static SpriteFont           pixelFont;
+        static Level                level;
+        static FrontEnd             mFrontEnd;
+        static int                  mDebugControl = skDefaultDebugControl; // used to override which gamepad we control (DEBUG)
+        static bool                 mChangingDebugControl = false;
 
         public static FrontEnd FrontEnd
         {

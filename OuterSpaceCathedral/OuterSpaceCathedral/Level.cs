@@ -488,7 +488,7 @@ namespace OuterSpaceCathedral
                 if ( players[i] == null )
                 {
                     GamePadState gpad = GameState.GetGamePadState( (PlayerIndex)i );
-                    if ( gpad.Buttons.A == ButtonState.Pressed )
+                    if ( gpad.Buttons.Start == ButtonState.Pressed )
                     {
                         players[i] = new Player( (PlayerIndex)i );
                         AudioManager.PlayPlayerJoinSFX();
@@ -649,7 +649,7 @@ namespace OuterSpaceCathedral
         /// </summary>
         private void DrawRejoinText(SpriteBatch spriteBatch)
         {
-            const string rejoinText = "Press A";
+            const string rejoinText = "Press Start";
 
             // draw rejoin text
             

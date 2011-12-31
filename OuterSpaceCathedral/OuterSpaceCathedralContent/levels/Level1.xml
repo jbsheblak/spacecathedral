@@ -12,6 +12,13 @@
   <Outro Text="" Time="1" Color="1 0 0" />
 
   <EnemyWaves>
+
+    <EnemyWave Name="BossToss" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="coco"                PatternId="boss"            AttackId="circular_gap"           TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron_miniboss"  PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="0.5" />
+      </EnemyPatterns>
+    </EnemyWave>
     
     <EnemyWave Name="Warmup_1" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
@@ -61,7 +68,7 @@
         <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="1" />
       </EnemyPatterns>
     </EnemyWave>
-   
+
 
   </EnemyWaves>
 

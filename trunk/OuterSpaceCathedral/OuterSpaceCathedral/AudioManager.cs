@@ -21,8 +21,6 @@ namespace OuterSpaceCathedral
 
         private static Song max300, outerSpace, ocean;
 
-        private static bool playingPlayerFireSFX;
-
         public static void Initialize(ContentManager content)
         {
             playerDeathSFX      = content.Load<SoundEffect>("sfx\\playerDeath");
@@ -79,14 +77,14 @@ namespace OuterSpaceCathedral
             {
                 if (GameState.Level.IsPlayerFiring())
                 {
-                    if (!playingPlayerFireSFX)
+                    if (playerFireSFXInstance.State != SoundState.Playing)
                     {
                         StartPlayerFireSFX();
                     }
                 }
                 else
                 {
-                    if (playingPlayerFireSFX)
+                    if (playerFireSFXInstance.State == SoundState.Playing)
                     {
                         StopPlayerFireSFX();
                     }
@@ -97,13 +95,11 @@ namespace OuterSpaceCathedral
         public static void StartPlayerFireSFX()
         {
             playerFireSFXInstance.Play();
-            playingPlayerFireSFX = true;
         }
 
         public static void StopPlayerFireSFX()
         {
             playerFireSFXInstance.Stop(false);
-            playingPlayerFireSFX = false;
         }
 
         public static void PlayMaxSong()

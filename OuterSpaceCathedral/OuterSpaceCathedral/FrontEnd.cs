@@ -57,6 +57,7 @@ namespace OuterSpaceCathedral
                 {
                     GameState.SetGameMode(GameState.Mode.Game);
                     GameState.Level = Level.BuildLevelFromFile( mLevelEntries[mSelectedIdx].Path );
+                    AudioManager.PlayCursorSelectSFX();
                     return;
                 }
             }
@@ -81,6 +82,10 @@ namespace OuterSpaceCathedral
 
                 if ( nagivationDelta != mPrevNagivationDelta )
                 {
+                    if (nagivationDelta != 0)
+                    {
+                        AudioManager.PlayCursorMoveSFX();
+                    }
                     mSelectedIdx = ( mSelectedIdx + nagivationDelta + mLevelEntries.Count ) % mLevelEntries.Count;
                     mPrevNagivationDelta = nagivationDelta;
                 }

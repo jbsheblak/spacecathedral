@@ -665,6 +665,8 @@ namespace OuterSpaceCathedral
             if (mHealth <= 0)
             {
                 RemoveObject();
+                EffectsBuilder.BuildExplosion(position);
+                AudioManager.PlayEnemyDeathSFX();
             }
         }
 
@@ -676,7 +678,6 @@ namespace OuterSpaceCathedral
         public override void RemoveObject()
         {
             base.RemoveObject();
-            EffectsBuilder.BuildExplosion(position);
         }
 
         private void RemoveIfOffscreen()

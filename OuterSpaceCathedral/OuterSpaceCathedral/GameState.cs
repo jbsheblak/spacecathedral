@@ -40,6 +40,8 @@ namespace OuterSpaceCathedral
 
         public static void Update(float deltaTime)
         {
+            AudioManager.Update(deltaTime);
+
             switch ( mGameMode )
             {
                 case Mode.FrontEnd:

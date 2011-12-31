@@ -64,6 +64,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioManager.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectsBuilder.cs" />

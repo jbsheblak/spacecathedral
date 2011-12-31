@@ -21,7 +21,7 @@ namespace OuterSpaceCathedral
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
 
-        private static Song max300, outerSpace, ocean, city;
+        private static Song max300, outerSpace, ocean, city, newYear, bebopBoss;
 
         public static void Initialize(ContentManager content)
         {
@@ -39,6 +39,8 @@ namespace OuterSpaceCathedral
             outerSpace          = content.Load<Song>("songs\\OuterSpace");
             ocean               = content.Load<Song>("songs\\RipTide");
             city                = content.Load<Song>("songs\\City");
+            newYear             = content.Load<Song>("songs\\NewYear");
+            bebopBoss           = content.Load<Song>("songs\\BebopBoss");
 
             enemyDeathSFXInstance = enemyDeathSFX.CreateInstance();
             playerFireSFXInstance = playerFireSFX.CreateInstance();
@@ -146,6 +148,16 @@ namespace OuterSpaceCathedral
         public static void PlayCitySong()
         {
             MediaPlayer.Play(city);
+        }
+
+        public static void PlayNewYearSong()
+        {
+            MediaPlayer.Play(newYear);
+        }
+
+        public static void PlayBebopBossSong()
+        {
+            MediaPlayer.Play(bebopBoss);
         }
 
         public static void StopAllMusic()

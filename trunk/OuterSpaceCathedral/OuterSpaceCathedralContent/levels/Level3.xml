@@ -1,7 +1,7 @@
 <LevelData Name="TestLevel">
 
   <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
-  <Intro Text="A New Year Approaches..." Time="60" Color="1 0.3 0.3" />
+  <Intro Text="A New Year Approaches..." Time="1" Color="1 0.3 0.3" />
   <Outro Text="Happy New Year!"    Time="5" Color="1 0.3 0.3" />  
   
   <ArtPieces>
@@ -41,7 +41,7 @@
     <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
     <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->
     
-    <EnemyWave Name="CountdownWave" StartCondition="TimeQuery=23:59:50">      
+    <EnemyWave Name="CountdownWave" StartCondition="PrevWaveComplete">      
       <EnemyPatterns>
         <EnemyPattern ActorId="countdown_ten" PatternId="single_fast_linear"        TimeOffset="0" />
       </EnemyPatterns>
@@ -75,6 +75,18 @@
     </EnemyWave>
 
     <EnemyWave Name="Celebration" StartCondition="PrevWaveComplete" StartAction="AddCelebrationStub" />
+
+    <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="calendar_boss" PatternId="boss"        TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="bebop_cola" PatternId="boss"        TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
     
   </EnemyWaves>
 </LevelData>

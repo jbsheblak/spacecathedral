@@ -324,13 +324,12 @@ namespace OuterSpaceCathedral
                             else if ( nextWave.StartCondition.Contains("TimeQuery") )
                             {
                                 string [] queryTkns = nextWave.StartCondition.Split( new char [] { '=' } );
-                                string [] timeTkns = queryTkns[1].Split( new char [] { ':' } );
 
-                                int timeQuery = MakeTimeValue( int.Parse(timeTkns[0]), int.Parse(timeTkns[1]), int.Parse(timeTkns[2]) );
-                                int timeNow = MakeTimeValue( DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second );
+                                int timeQuery = GameUtility.GetQueryTimeValue(queryTkns[1]);
+                                int timeNow   = GameUtility.GetCurrentTimeValue();
 
                                 // has the query time passed?
-                                if ( timeNow > timeQuery )
+                                if ( timeNow >= timeQuery )
                                 {
                                     startNextWave = true;
                                 }
@@ -393,11 +392,6 @@ namespace OuterSpaceCathedral
             }
             
             return true;
-        }
-
-        private static int MakeTimeValue(int hour, int minute, int second)
-        {
-            return hour * 60 * 60 + minute * 60 + second;
         }
     }
 

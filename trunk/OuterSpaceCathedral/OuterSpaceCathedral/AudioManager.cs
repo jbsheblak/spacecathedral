@@ -13,6 +13,7 @@ namespace OuterSpaceCathedral
         private static SoundEffect  playerFireSFX;
         private static SoundEffect  cursorMoveSFX;
         private static SoundEffect  cursorSelectSFX;
+        private static SoundEffect  levelUnlockedSFX;
 
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
@@ -21,12 +22,13 @@ namespace OuterSpaceCathedral
 
         public static void Initialize(ContentManager content)
         {
-            playerDeathSFX  = content.Load<SoundEffect>("sfx\\playerDeath");
-            enemyDeathSFX   = content.Load<SoundEffect>("sfx\\enemyDeath");
-            playerJoinSFX   = content.Load<SoundEffect>("sfx\\playerJoin");
-            playerFireSFX   = content.Load<SoundEffect>("sfx\\playerFireLoop");
-            cursorMoveSFX   = content.Load<SoundEffect>("sfx\\cursorMove");
-            cursorSelectSFX = content.Load<SoundEffect>("sfx\\cursorSelect");
+            playerDeathSFX      = content.Load<SoundEffect>("sfx\\playerDeath");
+            enemyDeathSFX       = content.Load<SoundEffect>("sfx\\enemyDeath");
+            playerJoinSFX       = content.Load<SoundEffect>("sfx\\playerJoin");
+            playerFireSFX       = content.Load<SoundEffect>("sfx\\playerFireLoop");
+            cursorMoveSFX       = content.Load<SoundEffect>("sfx\\cursorMove");
+            cursorSelectSFX     = content.Load<SoundEffect>("sfx\\cursorSelect");
+            levelUnlockedSFX    = content.Load<SoundEffect>("sfx\\levelUnlock");
 
             enemyDeathSFXInstance = enemyDeathSFX.CreateInstance();
             playerFireSFXInstance = playerFireSFX.CreateInstance();
@@ -57,6 +59,11 @@ namespace OuterSpaceCathedral
         {
             enemyDeathSFXInstance.Stop();
             enemyDeathSFXInstance.Play();
+        }
+
+        public static void PlayLevelUnlockedSFX()
+        {   
+            levelUnlockedSFX.Play();
         }
 
         public static void Update(float deltaTime)

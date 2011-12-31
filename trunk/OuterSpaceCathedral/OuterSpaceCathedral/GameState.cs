@@ -123,14 +123,7 @@ namespace OuterSpaceCathedral
                 }
             }
         }
-
-
-        public static Mode GetGameMode()
-        {
-            return mGameMode;
-        }
-
-
+        
         /// <summary>
         /// Get the GamePadState for a given player index.
         /// </summary>

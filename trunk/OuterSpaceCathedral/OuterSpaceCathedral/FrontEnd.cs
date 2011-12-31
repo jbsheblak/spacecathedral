@@ -16,14 +16,18 @@ namespace OuterSpaceCathedral
         // single front end entry
         private class LevelEntry
         {
-            public LevelEntry(string label, string path)
+            public LevelEntry(string label, string path, string unlockTime, bool unlocked )
             {
                 Label = label;
                 Path = path;
+                UnlockTime = unlockTime;
+                Unlocked = unlocked;
             }
 
-            public string Label { get; private set; }
-            public string Path  { get; private set; }
+            public string Label         { get; private set; }
+            public string Path          { get; private set; }
+            public string UnlockTime    { get; private set; }
+            public bool   Unlocked      { get;         set; }
         };
 
         private List<LevelEntry> mLevelEntries = new List<LevelEntry>();
@@ -33,16 +37,26 @@ namespace OuterSpaceCathedral
 
         public FrontEnd()
         {
-            foreach ( string path in Directory.GetFiles( "content\\levels", "*.xml" ) )
-            {
-                mLevelEntries.Add(new LevelEntry(Path.GetFileNameWithoutExtension(path), path));
-            }
+            mLevelEntries.Add( new LevelEntry("First Frontier",     "content\\levels\\Level0.xml", string.Empty, true) );
+            
+            bool unlockedByDefault = false;
+
+        #if DEBUG
+            unlockedByDefault = true;
+        #endif
+
+            // level unlocks
+            mLevelEntries.Add( new LevelEntry("City",               "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
+            mLevelEntries.Add( new LevelEntry("Ocean",              "content\\levels\\Level2.xml", "23:00:00",   unlockedByDefault) );
+            mLevelEntries.Add( new LevelEntry("SECRET",             "content\\levels\\Level3.xml", "23:55:00",   unlockedByDefault) );
 
             if ( mLevelEntries.Count > 0 )
             {
                 // load the first level to prime the XmlSerializer cache
                 Level.BuildLevelFromFile( mLevelEntries[0].Path );
             }
+
+            CheckForLevelUnlocks(true);
         }
 
         public void ResetKeyCache()
@@ -54,6 +68,9 @@ namespace OuterSpaceCathedral
         public void Update(float deltaTime)
         {
             GamePadState primaryPadState = GamePad.GetState(0);
+            
+            // check for unlocks
+            CheckForLevelUnlocks(false);
 
             // check for level selection
             bool isSelectButtonDown = primaryPadState.IsButtonDown(Buttons.A);
@@ -87,12 +104,20 @@ namespace OuterSpaceCathedral
                 }
 
                 if ( nagivationDelta != mPrevNagivationDelta )
-                {
-                    if (nagivationDelta != 0)
+                {   
+                    int prevSelectedIdx = mSelectedIdx;
+
+                    do
+                    {
+                        mSelectedIdx = ( mSelectedIdx + nagivationDelta + mLevelEntries.Count ) % mLevelEntries.Count;
+                    }
+                    while ( !mLevelEntries[mSelectedIdx].Unlocked );
+
+                    if ( prevSelectedIdx != mSelectedIdx )
                     {
                         AudioManager.PlayCursorMoveSFX();
                     }
-                    mSelectedIdx = ( mSelectedIdx + nagivationDelta + mLevelEntries.Count ) % mLevelEntries.Count;
+
                     mPrevNagivationDelta = nagivationDelta;
                 }
             }
@@ -105,8 +130,11 @@ namespace OuterSpaceCathedral
 
             for ( int i = 0; i < mLevelEntries.Count; ++i )
             {
-                Color color = ( i == mSelectedIdx ) ? Color.Red : Color.White;
-                spriteBatch.DrawString(GameState.PixelFont, mLevelEntries[i].Label, levelEntryPosition, color);
+                if ( mLevelEntries[i].Unlocked )
+                {
+                    Color color = GetColorForIndex(i);
+                    spriteBatch.DrawString(GameState.PixelFont, mLevelEntries[i].Label, levelEntryPosition, color);
+                }
                 levelEntryPosition += new Vector2(0, GameState.PixelFont.LineSpacing + 5);
             }
 
@@ -116,6 +144,57 @@ namespace OuterSpaceCathedral
             Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
             Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
             spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
+        }
+
+        private Color GetColorForIndex(int idx)
+        {
+            if ( idx == mSelectedIdx )
+            {
+                return Color.Red;
+            }
+            else if ( mLevelEntries[idx].Unlocked )
+            {
+                return Color.White;
+            }
+            else
+            {
+                return Color.LightGray;
+            }
+        }
+
+        /// <summary>
+        /// For for unlocks in our level entries.
+        /// </summary>
+        /// <param name="initialUnlock"></param>
+        private void CheckForLevelUnlocks(bool initialUnlock)
+        {
+            bool playUnlockSound = false;
+
+            int timeNow = GameUtility.GetCurrentTimeValue();
+
+            foreach ( LevelEntry e in mLevelEntries )
+            {
+                if ( !e.Unlocked )
+                {
+                    if ( !string.IsNullOrEmpty(e.UnlockTime) )
+                    {
+                        int timeQuery = GameUtility.GetQueryTimeValue(e.UnlockTime);
+                        if ( timeNow >= timeQuery )
+                        {
+                            e.Unlocked = true;
+                            if ( !initialUnlock )
+                            {
+                                playUnlockSound = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ( playUnlockSound )
+            {
+                AudioManager.PlayLevelUnlockedSFX();
+            }
         }
     }
 }

@@ -394,15 +394,48 @@ namespace OuterSpaceCathedral
         }
     }
 
+    /// <summary>
+    /// Screen Transition Info
+    /// </summary>
+    public class ScreenTransition
+    {
+        private float mScaleRate;
+        private float mRotationRate;
+
+        public ScreenTransition(float startScale, float scaleRate, float rotationRate)
+        {
+            mScaleRate = scaleRate;
+            mRotationRate = rotationRate;
+            Scale = startScale;
+            Rotation = 0;
+        }
+
+        public float Scale      { get; private set; }
+        public float Rotation   { get; private set; }
+
+        public void Update(float deltaTime)
+        {
+            Scale += mScaleRate * deltaTime;
+            Rotation += mRotationRate * deltaTime;
+        }
+
+        public bool IsComplete()
+        {
+            return ( mScaleRate < 0 ) ? Scale < GameConstants.ScreenTransitionScaleMin : Scale > GameConstants.ScreenTransitionScaleMax;
+        }
+    }
+
     public class Level
     {
         const int skMaxPlayers = 4;
         
         public enum State
         {
+            IntroScreen,
             Intro,
             Play,
-            Outro
+            Outro,
+            OutroScreen,
         };
 
         List<Background> backgrounds = new List<Background>();
@@ -416,6 +449,7 @@ namespace OuterSpaceCathedral
         EnemyWaveManager mWaveManager = null;
         State mState = State.Intro;
         TransitionDataManager mTransitionManager = null;
+        ScreenTransition mScreenTransition = null;
         
         /// <summary>
         /// Construct a level instance from a configuration file.
@@ -440,16 +474,9 @@ namespace OuterSpaceCathedral
             BuildInstancesForLevelData(mLevelData);
             PlayerStatsManager = new PlayerStatsManager();
 
-            if ( levelData.Intro != null )
-            {
-                mState = State.Intro;
-                mTransitionManager = new TransitionDataManager(levelData.Intro);
-            }
-            else
-            {
-                mState = State.Play;
-            }
-
+            mState = State.IntroScreen;
+            mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMin, GameConstants.ScreenTransitionScaleRate, GameConstants.ScreenTransitionRotationRate);
+            
             // activate player 1
             players[0] = new Player(PlayerIndex.One);
         }
@@ -601,6 +628,11 @@ namespace OuterSpaceCathedral
         }
 
         public float ElapsedLevelTime { get; private set; }
+
+        public ScreenTransition ScreenTransition
+        {
+            get { return mScreenTransition; }
+        }
 
         #region Private
 
@@ -795,25 +827,45 @@ namespace OuterSpaceCathedral
         /// <returns>true if we need to bail out of the level</returns>
         private bool CheckTransitions(float deltaTime)
         {
-            if ( mTransitionManager != null )
+            switch ( mState )
             {
-                mTransitionManager.Update(deltaTime);
-                if ( mTransitionManager.Complete )
-                {
-                    mTransitionManager = null;
-                    switch ( mState )
-                    {
-                        case State.Intro:
-                            {   
-                                mState = State.Play;
-                            }
-                            break;
-
-                        case State.Outro:
-                            SetReturnToFrontend();
-                            return true;
+                case State.IntroScreen:
+                    mScreenTransition.Update(deltaTime);
+                    if ( mScreenTransition.IsComplete() )
+                    {   
+                        mState = State.Intro;
+                        mTransitionManager = new TransitionDataManager(mLevelData.Intro);
+                        mScreenTransition = null;
                     }
-                }
+                    break;
+                    
+                case State.Intro:
+                    mTransitionManager.Update(deltaTime);
+                    if ( mTransitionManager.Complete )
+                    {
+                        mTransitionManager = null;
+                        mState = State.Play;
+                    }
+                    break;
+
+                case State.Outro:
+                    mTransitionManager.Update(deltaTime);
+                    if ( mTransitionManager.Complete )
+                    {
+                        mTransitionManager = null;
+                        mState = State.OutroScreen;
+                        mScreenTransition = new ScreenTransition(GameConstants.ScreenTransitionScaleMax, -GameConstants.ScreenTransitionScaleRate, GameConstants.ScreenTransitionRotationRate);
+                    }
+                    break;
+
+                case State.OutroScreen:
+                    mScreenTransition.Update(deltaTime);
+                    if ( mScreenTransition.IsComplete() )
+                    {
+                        SetReturnToFrontend();
+                        return true;
+                    }
+                    break;
             }
 
             return false;

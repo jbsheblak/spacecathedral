@@ -21,6 +21,7 @@ namespace OuterSpaceCathedral
         RenderTarget2D renderTarget;
 
         Texture2D spriteSheet;
+        Texture2D transitionMask;
 
         public Game1()
         {
@@ -39,12 +40,8 @@ namespace OuterSpaceCathedral
 
             renderTarget = new RenderTarget2D(GraphicsDevice, GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight);
 
-            graphics.PreferredBackBufferWidth = 960;
-            graphics.PreferredBackBufferHeight = 540;
-
-            //graphics.PreferredBackBufferWidth = 1920;
-            //graphics.PreferredBackBufferHeight = 1080;
-            //graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = GameConstants.BackBufferWidth;
+            graphics.PreferredBackBufferHeight = GameConstants.BackBufferHeight;
 
             this.IsFixedTimeStep = false;
             graphics.SynchronizeWithVerticalRetrace = false;
@@ -65,6 +62,7 @@ namespace OuterSpaceCathedral
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             spriteSheet = Content.Load<Texture2D>("textures\\spriteSheet");
+            transitionMask = Content.Load<Texture2D>("textures\\transitionMask");
             SpriteFont pixelFont = Content.Load<SpriteFont>("fonts\\klobitPixels");
 
             GameState.Initialize(spriteSheet, pixelFont);
@@ -95,7 +93,7 @@ namespace OuterSpaceCathedral
             
             base.Update(gameTime);
         }
-
+        
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -113,12 +111,43 @@ namespace OuterSpaceCathedral
 
             GraphicsDevice.SetRenderTarget(null);
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear( new Color(255, 0, 0, 0) );
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
-            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
-            spriteBatch.End();
-            // TODO: Add your drawing code here
+            if ( GameState.Level != null && GameState.Level.ScreenTransition != null )
+            {   
+                // masked transition draw
+                ScreenTransition screenTransition = GameState.Level.ScreenTransition;
+
+                Vector2 transitionMaskCenter = new Vector2(transitionMask.Width/2, transitionMask.Height/2);
+
+                int transitionWidth  = (int)( transitionMask.Width  * screenTransition.Scale );
+                int transitionHeight = (int)( transitionMask.Height * screenTransition.Scale );
+
+                Vector2 transMaskOrigin = GameConstants.BackBufferCenter;
+                
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+
+                spriteBatch.Draw(transitionMask, new Rectangle( (int)transMaskOrigin.X, (int)transMaskOrigin.Y, transitionWidth, transitionHeight), null, Color.White, screenTransition.Rotation, transitionMaskCenter, SpriteEffects.None, 0.0f ); 
+
+                spriteBatch.End();
+
+                BlendState blend = new BlendState();
+                blend.ColorBlendFunction = BlendFunction.Add;
+                blend.ColorSourceBlend = Blend.DestinationAlpha;
+                blend.ColorDestinationBlend = Blend.Zero;
+                
+                spriteBatch.Begin(SpriteSortMode.Deferred, blend, SamplerState.PointClamp, null, null);
+                spriteBatch.Draw(renderTarget, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                spriteBatch.End();
+            }
+            else
+            {
+                // normal draw
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+                spriteBatch.Draw(renderTarget, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                spriteBatch.End();
+            }
+            
 
             base.Draw(gameTime);
         }

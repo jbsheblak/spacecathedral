@@ -1,8 +1,8 @@
 <LevelData Name="TestLevel">
 
   <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
-  <Intro Text="A New Year Approaches..." Time="1" Color="1 0.3 0.3" />
-  <Outro Text="Happy New Year!"    Time="5" Color="1 0.3 0.3" />  
+  <Intro Text="A New Year Approaches..." Time="70" Color="1 0.3 0.3" />
+  <Outro Text="Happy New Year!"    Time="15" Color="1 0.3 0.3" />  
   
   <ArtPieces>
     <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
@@ -29,17 +29,9 @@
         
       </EnemyPatterns>
     </EnemyWave>
-  
-
-    <!--<EnemyWave Name="BebopColaWave" >
-      <EnemyPatterns>
-        <EnemyPattern ActorId="bebop_cola" AttackId ="1sec_periodic" PatternId="single_fast_linear" TimeOffset="0" />
-      </EnemyPatterns>
-    </EnemyWave>-->
-   
     
     <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
-    <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->
+    <EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />
     
     <EnemyWave Name="CountdownWave" StartCondition="PrevWaveComplete">      
       <EnemyPatterns>
@@ -76,17 +68,18 @@
 
     <EnemyWave Name="Celebration" StartCondition="PrevWaveComplete" StartAction="AddCelebrationStub" />
 
+    <!-- Calendar Boss -->
     <EnemyWave Name="Calendar" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
         <EnemyPattern ActorId="evil_heart_miniboss" PatternId="move_to_boss_then_circle" TimeOffset="0" />
         <EnemyPattern ActorId="calendar_boss"       PatternId="boss" AttackId="happy_new_year"        TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
-    
 
+    <!-- Bebop Cola Boss -->
     <EnemyWave Name="BebopCola" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="bebop_cola" PatternId="boss"        TimeOffset="0" />
+        <EnemyPattern ActorId="bebop_cola" PatternId="boss_bebop" AttackId="circular_gap_bebop" TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
     

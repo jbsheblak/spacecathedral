@@ -50,6 +50,7 @@ namespace OuterSpaceCathedral
                 case "single_fast_linear":              SingleFastLinear(movementStrategies); break;
                 case "dual_guarded":                    DualGuarded(movementStrategies); break;
                 case "boss":                            Boss(movementStrategies); break;
+                case "boss_bebop":                      BossBebop(movementStrategies); break;
             }
 
             // build attack pattern
@@ -59,6 +60,7 @@ namespace OuterSpaceCathedral
                 case "attack1234":                      attackDelegate = new BuildAttackDelegate(Build_1_2_3_4_Pattern); break;
                 case "1sec_periodic":                   attackDelegate = new BuildAttackDelegate(Build_1_sec_periodic); break;
                 case "circular_gap":                    attackDelegate = new BuildAttackDelegate(Build_Circular_Gap); break;
+                case "circular_gap_bebop":              attackDelegate = new BuildAttackDelegate(Build_Circular_Gap_Bebop); break;
                 case "heavy_dual_horiz_line":           attackDelegate = new BuildAttackDelegate(Build_Heavy_Dual_Horiz_Line); break;
                 case "gapped_forward_spray":            attackDelegate = new BuildAttackDelegate(Build_Gapped_Forward_Spray); break;
                 case "happy_new_year":                  attackDelegate = new BuildAttackDelegate(Build_Happy_New_Year); break;
@@ -272,6 +274,16 @@ namespace OuterSpaceCathedral
             movementStrategies.Add( BuildMoveToLocationThenBob(position, target, bobDisp, 100, 180.0f) );
         }
 
+        // one enemy that moves out and hovers
+        private static void BossBebop(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 position = new Vector2(GameConstants.RenderTargetWidth + 64, 1 * GameConstants.RenderTargetHeight / 2);            
+            Vector2 target = position + new Vector2(-160, 0);            
+            Vector2 bobDisp = new Vector2(0, 50);
+
+            movementStrategies.Add( BuildMoveToLocationThenBob(position, target, bobDisp, 100, 240.0f) );
+        }
+
         // Might Ducks flying v
         private static void FlyingV( List<IEnemyMovementStrategy> movementStrategies )
         {
@@ -450,6 +462,17 @@ namespace OuterSpaceCathedral
             float periodTime        = 0.005f;
             float rotationRate      = 360;
             int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            
+            return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
+        }
+
+        // circular pattern with gaps for evasion
+        private static IEnemyAttackStrategy Build_Circular_Gap_Bebop( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.0025f;
+            float rotationRate      = 800;
+            int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
             
             return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
         }

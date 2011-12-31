@@ -12,6 +12,7 @@ namespace OuterSpaceCathedral
         public CustomStub( string customId )
         {
             mCustomId = customId;
+            AudioManager.PlayNewYearSong();
         }
 
         public override void Update(float deltaTime)

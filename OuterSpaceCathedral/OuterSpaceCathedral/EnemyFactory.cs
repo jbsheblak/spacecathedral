@@ -85,6 +85,7 @@ namespace OuterSpaceCathedral
                 case "dreamcast":                       buildEnemy = new BuildEnemyDelegate(BuildDreamcast); break;
                 case "coco":                            buildEnemy = new BuildEnemyDelegate(BuildCoco); break;
                 case "bebop_cola":                      buildEnemy = new BuildEnemyDelegate(BuildBebopCola); break;
+                case "calendar_boss":                   buildEnemy = new BuildEnemyDelegate(BuildCalendarBoss); break;
             }
 
             // build enemies
@@ -849,7 +850,28 @@ namespace OuterSpaceCathedral
                 attack = buildAttackDelegate(enemyIndex, enemyCount);
             }
 
+            AudioManager.PlayBebopBossSong();
             AudioManager.PlayBebopSFX();
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCalendarBoss(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 600;
+            
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1/4.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(208, 192, 64, 64),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }

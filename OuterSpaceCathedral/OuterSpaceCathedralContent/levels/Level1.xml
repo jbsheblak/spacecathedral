@@ -8,17 +8,10 @@
     <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.60" />
   </ArtPieces>
 
-  <Intro Text="Do not trust the hearts." Time="1" Color="1 0 0" />
+  <Intro Text="Do not trust the hearts." Time="5" Color="1 0 0" />
   <Outro Text="" Time="1" Color="1 0 0" />
 
   <EnemyWaves>
-
-    <EnemyWave Name="BossToss" StartCondition="PrevWaveComplete">
-      <EnemyPatterns>
-        <EnemyPattern ActorId="coco"                PatternId="boss"            AttackId="circular_gap"           TimeOffset="0" />
-        <EnemyPattern ActorId="leaf_tron_miniboss"  PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="0.5" />
-      </EnemyPatterns>
-    </EnemyWave>
     
     <EnemyWave Name="Warmup_1" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
@@ -70,6 +63,13 @@
     </EnemyWave>
 
 
+    <EnemyWave Name="BossToss" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="coco"                PatternId="boss"            AttackId="circular_gap"           TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron_miniboss"  PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="0.5" />
+      </EnemyPatterns>
+    </EnemyWave>
+    
   </EnemyWaves>
 
 

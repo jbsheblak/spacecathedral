@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace OuterSpaceCathedral
 {
@@ -18,6 +19,8 @@ namespace OuterSpaceCathedral
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
 
+        private static Song max300;
+
         private static bool playingPlayerFireSFX;
 
         public static void Initialize(ContentManager content)
@@ -29,6 +32,8 @@ namespace OuterSpaceCathedral
             cursorMoveSFX       = content.Load<SoundEffect>("sfx\\cursorMove");
             cursorSelectSFX     = content.Load<SoundEffect>("sfx\\cursorSelect");
             levelUnlockedSFX    = content.Load<SoundEffect>("sfx\\levelUnlock");
+
+            max300              = content.Load<Song>("songs\\Max300");
 
             enemyDeathSFXInstance = enemyDeathSFX.CreateInstance();
             playerFireSFXInstance = playerFireSFX.CreateInstance();
@@ -97,6 +102,11 @@ namespace OuterSpaceCathedral
         {
             playerFireSFXInstance.Stop(false);
             playingPlayerFireSFX = false;
+        }
+
+        public static void PlayMaxSong()
+        {
+            MediaPlayer.Play(max300);
         }
     }
 }

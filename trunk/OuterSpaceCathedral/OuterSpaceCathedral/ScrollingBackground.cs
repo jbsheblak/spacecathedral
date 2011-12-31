@@ -21,8 +21,15 @@ namespace OuterSpaceCathedral
         public override void Update(float deltaTime)
         {
             positionOffset += velocity * deltaTime;
-            
-            position.X = positionOffset.X % GameConstants.RenderTargetWidth + GameConstants.RenderTargetWidth;
+
+            if (velocity.X == 0)
+            {
+                position.X = GameConstants.RenderTargetCenter.X;
+            }
+            else
+            {
+                position.X = positionOffset.X % GameConstants.RenderTargetWidth + GameConstants.RenderTargetWidth;
+            }
             //position.Y = 270;
 
             base.Update(deltaTime);

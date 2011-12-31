@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Microsoft.Xna.Framework.Media;
 
 namespace OuterSpaceCathedral
 {
@@ -896,9 +897,10 @@ namespace OuterSpaceCathedral
                 case "city_clouds_background2":         return new Rectangle(0, 1024 + 350, 960, 270);
                 case "city_background":                 return new Rectangle(0, 1024 + 270 * 2, 960, 270);
                 case "purple_clouds_background":        return new Rectangle(960, 1564, 960, 270);
+                case "stars_background":                return new Rectangle(0, 880, 960, 270);
                 case "clouds_foreground":               return new Rectangle(0, 1024 + 150, 960, 270);
                 case "hills_background":                return new Rectangle(960, 1160, 960, 270);
-
+                case "cathedral300_background":         return new Rectangle(960, 880, 480, 270);
 
                 default:
                     throw new Exception("Failed to find art piece for id");

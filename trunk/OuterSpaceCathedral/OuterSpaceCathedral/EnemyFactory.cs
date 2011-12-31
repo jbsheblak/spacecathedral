@@ -39,6 +39,9 @@ namespace OuterSpaceCathedral
                 case "uncluttered_line":                UnclutteredLine(movementStrategies); break;
                 case "uncluttered_line_easy":           UnclutteredLineEasy(movementStrategies); break;
                 case "uncluttered_line_medium":         UnclutteredLineMedium(movementStrategies); break;
+                case "asteroid_mob":                    AsteroidMob(movementStrategies); break;
+                case "ddr_insanity":                    DDRInsanity(movementStrategies); break;
+                case "ddr_insanity_and_im_serious":     DDRInsanityAndImSeriousThisTime(movementStrategies); break;
                 case "flying_v":                        FlyingV(movementStrategies); break;
                 case "snake_wave":                      SnakeWave(movementStrategies); break;
                 case "lone_linear_destroyer":           LoneDestroyer(movementStrategies); break;
@@ -61,8 +64,10 @@ namespace OuterSpaceCathedral
             BuildEnemyDelegate buildEnemy = null;
             switch (actorId)
             {
+                case "asteroid":                        buildEnemy = new BuildEnemyDelegate(BuildAsteroid); break;
                 case "leaf_tron":                       buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
                 case "anime_punch":                     buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
+                case "random_ddr_arrow":                buildEnemy = new BuildEnemyDelegate(BuildRandomDDRArrow); break;
                 case "countdown_ten":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTen); break;
                 case "countdown_nine":                  buildEnemy = new BuildEnemyDelegate(BuildCountdownNine); break;
                 case "countdown_eight":                 buildEnemy = new BuildEnemyDelegate(BuildCountdownEight); break;
@@ -143,7 +148,7 @@ namespace OuterSpaceCathedral
 
             for (int i = 0; i < 8; ++i)
             {
-                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256 * i, GameUtility.Random.Next(1, 8) * 32);
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 32 + 256 * i, GameUtility.Random.Next(1, 8) * 32);
                 movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
             }
         }
@@ -168,6 +173,39 @@ namespace OuterSpaceCathedral
             for (int i = 0; i < 16; ++i)
             {
                 Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 128 * i, GameUtility.Random.Next(1, 8) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+            }
+        }
+
+        private static void AsteroidMob(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity * 2;
+
+            for (int i = 0; i < 32; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256 + 64 * i, GameUtility.Random.Next(1, 9) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+            }
+        }
+
+        private static void DDRInsanity(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = new Vector2(-1000, 0);
+
+            for (int i = 0; i < 198; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 80 + 256 * i, GameUtility.Random.Next(1, 8) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+            }
+        }
+
+        private static void DDRInsanityAndImSeriousThisTime(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = new Vector2(-2500, 0);
+
+            for (int i = 0; i < 198; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 80 + 256 * i, GameUtility.Random.Next(1, 8) * 32);
                 movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
             }
         }
@@ -623,10 +661,50 @@ namespace OuterSpaceCathedral
         {
             int health = 10000;
 
-            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
                                                                     new List<Rectangle>()
                                                                     {
                                                                         new Rectangle(0, 272, 48, 144),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildAsteroid(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 15;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(224, 32, 32, 32),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildRandomDDRArrow(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 20;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(320, 64 + 80 * GameUtility.Random.Next(0, 4), 80, 80),
                                                                     }
                                                                 );
 

@@ -37,6 +37,12 @@ namespace OuterSpaceCathedral
             {
                 mLevelEntries.Add(new LevelEntry(Path.GetFileNameWithoutExtension(path), path));
             }
+
+            if ( mLevelEntries.Count > 0 )
+            {
+                // load the first level to prime the XmlSerializer cache
+                Level.BuildLevelFromFile( mLevelEntries[0].Path );
+            }
         }
 
         public void ResetKeyCache()

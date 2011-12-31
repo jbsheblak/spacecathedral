@@ -23,8 +23,11 @@ namespace OuterSpaceCathedral
  		static SpriteFont           pixelFont;
         static Level                level;
         static FrontEnd             mFrontEnd;
+
+#if DEBUG
         static int                  mDebugControl = skDefaultDebugControl; // used to override which gamepad we control (DEBUG)
         static bool                 mChangingDebugControl = false;
+#endif
 
         public static FrontEnd FrontEnd
         {

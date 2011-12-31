@@ -15,11 +15,13 @@ namespace OuterSpaceCathedral
         private static SoundEffect  cursorMoveSFX;
         private static SoundEffect  cursorSelectSFX;
         private static SoundEffect  levelUnlockedSFX;
+        private static SoundEffect  bebopColaSFX;
+        private static SoundEffect  countdownSFX;
 
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
 
-        private static Song max300, outerSpace, ocean;
+        private static Song max300, outerSpace, ocean, city;
 
         public static void Initialize(ContentManager content)
         {
@@ -30,10 +32,13 @@ namespace OuterSpaceCathedral
             cursorMoveSFX       = content.Load<SoundEffect>("sfx\\cursorMove");
             cursorSelectSFX     = content.Load<SoundEffect>("sfx\\cursorSelect");
             levelUnlockedSFX    = content.Load<SoundEffect>("sfx\\levelUnlock");
+            bebopColaSFX        = content.Load<SoundEffect>("sfx\\bebop");
+            countdownSFX        = content.Load<SoundEffect>("sfx\\countdown");
 
             max300              = content.Load<Song>("songs\\Max300");
             outerSpace          = content.Load<Song>("songs\\OuterSpace");
             ocean               = content.Load<Song>("songs\\RipTide");
+            city                = content.Load<Song>("songs\\City");
 
             enemyDeathSFXInstance = enemyDeathSFX.CreateInstance();
             playerFireSFXInstance = playerFireSFX.CreateInstance();
@@ -69,6 +74,16 @@ namespace OuterSpaceCathedral
         public static void PlayLevelUnlockedSFX()
         {   
             levelUnlockedSFX.Play();
+        }
+
+        public static void PlayBebopSFX()
+        {   
+            bebopColaSFX.Play();
+        }
+
+        public static void PlayCountdownSFX()
+        {   
+            countdownSFX.Play();
         }
 
         public static void Update(float deltaTime)
@@ -126,6 +141,11 @@ namespace OuterSpaceCathedral
         public static void PlayOceanSong()
         {
             PlaySongAndMaxVolume(ocean);
+        }
+
+        public static void PlayCitySong()
+        {
+            MediaPlayer.Play(city);
         }
 
         public static void StopAllMusic()

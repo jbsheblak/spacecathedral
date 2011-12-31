@@ -110,6 +110,11 @@ namespace OuterSpaceCathedral
                     {
                         AudioManager.PlayMaxSong();
                     }
+
+                    if (mSelectedIdx == 3)
+                    {
+                        AudioManager.PlayCitySong();
+                    }
                     return;
                 }
             }

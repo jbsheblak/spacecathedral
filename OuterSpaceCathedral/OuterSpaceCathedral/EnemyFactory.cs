@@ -83,6 +83,7 @@ namespace OuterSpaceCathedral
                 case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
                 case "evil_heart":                      buildEnemy = new BuildEnemyDelegate(BuildHeart); break;
                 case "coco":                            buildEnemy = new BuildEnemyDelegate(BuildCoco); break;
+                case "bebop_cola":                      buildEnemy = new BuildEnemyDelegate(BuildBebopCola); break;
             }
 
             // build enemies
@@ -230,7 +231,7 @@ namespace OuterSpaceCathedral
         private static void SingleFastLinear(List<IEnemyMovementStrategy> movementStrategies)
         {
             Vector2 linearVelocity = new Vector2(-500, 0);
-            Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256, GameConstants.RenderTargetHeight / 2);
+            Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 64, GameConstants.RenderTargetHeight / 2);
 
             movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
         }
@@ -541,6 +542,8 @@ namespace OuterSpaceCathedral
                 attack = buildAttackDelegate(enemyIndex, enemyCount);
             }
 
+            AudioManager.PlayCountdownSFX();
+
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
 
@@ -789,10 +792,46 @@ namespace OuterSpaceCathedral
 
         private static Enemy BuildCoco(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
         {
-            // TODO : REPLACE
-            return BuildLeafTronGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 400);
+            int health = 300;
+            
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1/4.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(160,  192, 48, 64),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
 
+
+        private static Enemy BuildBebopCola(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 1000;
+            
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1/4.0f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(48, 272, 80, 144),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            AudioManager.PlayBebopSFX();
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
 
         #endregion Enemy Builder Delegates
     }

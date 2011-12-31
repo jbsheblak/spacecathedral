@@ -800,6 +800,22 @@ namespace OuterSpaceCathedral
             mAttackStrategy = attack;
             mAnimFrameManager = frames;
             mHealth = health;
+
+            // scale health based on player count
+            if ( GameState.Level != null )
+            {
+                int joinedPlayerCount = GameState.Level.JoinedPlayersCount;
+                if ( joinedPlayerCount > 1 )
+                {
+                    // add 50% health for each player
+                    switch ( joinedPlayerCount )
+                    {
+                        case 2: mHealth = (int)( mHealth * 1.5f ); break;
+                        case 3: mHealth = (int)( mHealth * 2.0f ); break;
+                        case 4: mHealth = (int)( mHealth * 2.5f ); break;
+                    }
+                }
+            }
         }
 
         public override void Update(float deltaTime)
@@ -863,8 +879,6 @@ namespace OuterSpaceCathedral
                     {
                         GameState.Level.PlayerStatsManager.Players[(int)bf].Kills++;
                     }
-
-                    
                 }
             }
         }

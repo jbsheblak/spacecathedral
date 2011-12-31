@@ -744,6 +744,29 @@ namespace OuterSpaceCathedral
 
         public PlayerStatsManager PlayerStatsManager { private set; get; }
 
+        /// <summary>
+        /// Count of how many players have joined the game for this level.
+        /// </summary>
+        public int JoinedPlayersCount
+        {
+            get
+            {
+                int joinedPlayers = 0;
+                if ( PlayerStatsManager != null && PlayerStatsManager.Players != null )
+                {
+                    foreach ( PlayerStats ps in PlayerStatsManager.Players )
+                    {
+                        if ( ps.Joins > 0 )
+                        {
+                            ++joinedPlayers;
+                        }
+                    }
+                }
+                
+                return joinedPlayers;
+            }
+        }
+
         public List<Bullet> PlayerBullets
         {
             get

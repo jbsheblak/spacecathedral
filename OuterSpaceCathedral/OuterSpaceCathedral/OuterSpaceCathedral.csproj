@@ -109,12 +109,14 @@
   <ItemGroup>
     <Compile Include="AudioManager.cs" />
     <Compile Include="Background.cs" />
+    <Compile Include="CollisionMessage.cs" />
     <Compile Include="GameUtility.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectsBuilder.cs" />
     <Compile Include="EnemyFactory.cs" />
     <Compile Include="FrontEnd.cs" />
     <Compile Include="GameConstants.cs" />
+    <Compile Include="PlayerStats.cs" />
     <Compile Include="SolidColorBackground.cs" />
     <Compile Include="ScrollingBackground.cs" />
     <Compile Include="Bullet.cs" />

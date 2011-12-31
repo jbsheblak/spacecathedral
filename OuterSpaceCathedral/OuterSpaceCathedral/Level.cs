@@ -438,6 +438,7 @@ namespace OuterSpaceCathedral
             mLevelData = levelData;
             mWaveManager = new EnemyWaveManager(levelData.EnemyWaves);
             BuildInstancesForLevelData(mLevelData);
+            PlayerStatsManager = new PlayerStatsManager();
 
             if ( levelData.Intro != null )
             {
@@ -563,6 +564,8 @@ namespace OuterSpaceCathedral
         #endif
         }
 
+        public PlayerStatsManager PlayerStatsManager { private set; get; }
+
         public List<Bullet> PlayerBullets
         {
             get
@@ -614,7 +617,7 @@ namespace OuterSpaceCathedral
                     // check for bound intersection
                     if ( target.PositionRectangle.Intersects(danger.PositionRectangle) )
                     {
-                        target.CollisionReaction();
+                        target.CollisionReaction(danger.CollisionMessage);
                         if ( removeDangerObjectOnImpact )
                         {
                             danger.RemoveObject();
@@ -692,9 +695,11 @@ namespace OuterSpaceCathedral
         {
             Vector2 textPosition = new Vector2( GameConstants.RenderTargetWidth/2, GameState.PixelFont.LineSpacing );
 
-            spriteBatch.DrawString(GameState.PixelFont, string.Format("Enemies:       {0}", enemies.Count), textPosition, Color.Red);       textPosition.Y += GameState.PixelFont.LineSpacing;
-            spriteBatch.DrawString(GameState.PixelFont, string.Format("EnemyBullets:  {0}", enemyBullets.Count), textPosition, Color.Red);  textPosition.Y += GameState.PixelFont.LineSpacing;
-            spriteBatch.DrawString(GameState.PixelFont, string.Format("PlayerBullets: {0}", playerBullets.Count), textPosition, Color.Red); textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("Enemies:         {0}", enemies.Count), textPosition, Color.Red);       textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("EnemyBullets:    {0}", enemyBullets.Count), textPosition, Color.Red);  textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("PlayerBullets:   {0}", playerBullets.Count), textPosition, Color.Red); textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("Player 1 Kills:  {0}", PlayerStatsManager.Players[0].Kills), textPosition, Color.Red); textPosition.Y += GameState.PixelFont.LineSpacing;
+            spriteBatch.DrawString(GameState.PixelFont, string.Format("Player 1 Deaths: {0}", PlayerStatsManager.Players[0].Deaths), textPosition, Color.Red); textPosition.Y += GameState.PixelFont.LineSpacing;
         }
 
         /// <summary>

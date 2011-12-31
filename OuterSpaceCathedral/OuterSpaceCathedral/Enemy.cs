@@ -412,11 +412,13 @@ namespace OuterSpaceCathedral
     {
         private IEnemyAttackTargetStrategy mTargetStrategy = null;
         private IEnemyAttackRateStrategy   mRateStrategy = null;
+        private int                        mShotsPerFire = 0;
 
-        public EnemyAttackStrategy(IEnemyAttackTargetStrategy targetStrategy, IEnemyAttackRateStrategy rateStrategy)
+        public EnemyAttackStrategy(IEnemyAttackTargetStrategy targetStrategy, IEnemyAttackRateStrategy rateStrategy, int shotsPerFire)
         {
             mTargetStrategy = targetStrategy;
             mRateStrategy = rateStrategy;
+            mShotsPerFire = shotsPerFire;
         }
 
         public bool Complete
@@ -431,11 +433,14 @@ namespace OuterSpaceCathedral
 
             if ( mRateStrategy.ShouldFire(parent) )
             {
-                Vector2 position;
-                Vector2 velocity;
-                mTargetStrategy.GetTargetValues(parent, out position, out velocity);
+                for ( int i = 0; i < mShotsPerFire; ++i )
+                {
+                    Vector2 position;
+                    Vector2 velocity;
+                    mTargetStrategy.GetTargetValues(parent, out position, out velocity);
 
-                parent.FireBullet( position, velocity );
+                    parent.FireBullet( position, velocity );
+                }
             }
         }
     }
@@ -468,6 +473,38 @@ namespace OuterSpaceCathedral
     }
 
     /// <summary>
+    /// Fixed target strategy. Fires from parent to the left
+    /// </summary>
+    public class EnemyLineAttackTargetStrategy : IEnemyAttackTargetStrategy
+    {
+        private float mFireVelocity;
+        private int   mLineThickness;
+        private int   mLineCount;
+
+        public EnemyLineAttackTargetStrategy(float fireVelocity, int lineThickness)
+        {
+            mFireVelocity = fireVelocity;
+            mLineThickness = lineThickness;
+            mLineCount = 0;
+        }
+
+        public void Update( Enemy parent, float deltaTime )
+        {
+        }
+
+        public void GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity )
+        {
+            // range from top to bottom
+            float posY = ( parent.PositionRectangle.Top + ( ( mLineCount + 1.0f ) / ( mLineThickness + 1 ) ) * parent.PositionRectangle.Height );
+
+            position = new Vector2( parent.Position.X, posY );
+            velocity = new Vector2(-mFireVelocity, 0);
+
+            mLineCount = ( mLineCount + 1 ) % mLineThickness;
+        }
+    }
+
+    /// <summary>
     /// Target strategy which circles the enemy.
     /// </summary>
     public class EnemyCircularAttackTargetStrategy : IEnemyAttackTargetStrategy
@@ -486,6 +523,68 @@ namespace OuterSpaceCathedral
         public void Update( Enemy parent, float deltaTime )
         {
             mRotationRad += mRotationRadRate * deltaTime;
+        }
+
+        public void GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity )
+        {
+            float velX = mFireVelocity * (float)( Math.Cos(mRotationRad) );
+            float velY = mFireVelocity * (float)( Math.Sin(mRotationRad) );
+
+            position = parent.Position;
+            velocity = new Vector2(velX, velY);
+        }
+
+        public Vector2 GetPosition( Enemy parent )
+        {
+            return parent.Position;
+        }
+
+        public Vector2 GetVelocity( Enemy parent )
+        {
+            return new Vector2(-mFireVelocity, 0);
+        }
+    }
+
+    /// <summary>
+    /// Target strategy goes back and forth on an arc
+    /// </summary>
+    public class EnemyArcAttackStrategy : IEnemyAttackTargetStrategy
+    {
+        private float mFireVelocity;
+        private float mRotationRad;
+        private float mRotationRadRate;
+        private float mRotationRadMin;
+        private float mRotationRadMax;
+
+        public EnemyArcAttackStrategy(float fireVelocity, float rotRateDegrees, float rotInitialDegrees, float rotMinDegrees, float rotMaxDegrees)
+        {
+            mFireVelocity       = fireVelocity;
+            mRotationRadRate    = (float)(rotRateDegrees    * Math.PI / 180.0f);
+            mRotationRad        = (float)(rotInitialDegrees * Math.PI / 180.0f);
+            mRotationRadMin     = (float)(rotMinDegrees     * Math.PI / 180.0f);
+            mRotationRadMax     = (float)(rotMaxDegrees     * Math.PI / 180.0f);
+        }
+
+        public void Update( Enemy parent, float deltaTime )
+        {
+            mRotationRad += mRotationRadRate * deltaTime;
+            
+            if ( mRotationRadRate < 0.0f )
+            {
+                mRotationRad = Math.Max( mRotationRad, mRotationRadMin );
+                if ( mRotationRad == mRotationRadMin )
+                {
+                    mRotationRadRate = -mRotationRadRate;
+                }
+            }
+            else
+            {
+                mRotationRad = Math.Min( mRotationRad, mRotationRadMax );
+                if ( mRotationRad == mRotationRadMax )
+                {
+                    mRotationRadRate = -mRotationRadRate;
+                }
+            }
         }
 
         public void GetTargetValues( Enemy parent, out Vector2 position, out Vector2 velocity )

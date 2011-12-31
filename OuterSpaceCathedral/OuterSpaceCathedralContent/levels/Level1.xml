@@ -1,23 +1,47 @@
-<LevelData Name="TestLevel">
+<LevelData Name="Maintains">
 
-  <Intro Text="Level1_Intro" Time="5" Color="1 0 0" />
-  <Outro Text="Level1_Outro" Time="5" Color="1 0 0" />
-  
+  <ArtPieces>
+    <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
+    <ArtPiece Name="clouds0"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-200 0" Color="0.4 0.6 0.7"     ColorMod="0.35" />
+    <ArtPiece Name="clouds1"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-150 0" Color="0.4 0.6 0.7"     ColorMod="0.15" />
+    <ArtPiece Name="city"     Type="scrolling"  Layer="background" ArtId="city_background"        Rate="-350 0" Color="0.66 0.66 0.66"  ColorMod="0.75" />
+    <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.50" />
+  </ArtPieces>
+
+  <Intro Text="Are YOU rad enough to save the taco stand?" Time="1" Color="1 0 0" />
+  <Outro Text="TACO SECURED" Time="1" Color="1 0 0" />
+
   <EnemyWaves>
+
     
-    <EnemyWave Name="FirstWave">      
+    <EnemyWave Name="Warmup_1" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="anime_punch"     PatternId="move_center_then_circle" TimeOffset="0" />
-        <EnemyPattern ActorId="heart_attacker"  PatternId="line_up_then_move"       TimeOffset="20" />        
-        <EnemyPattern ActorId="day_dream"       PatternId="wave_line"               TimeOffset="30" />
-      </EnemyPatterns>      
+        <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_easy" TimeOffset="0" />
+      </EnemyPatterns>
     </EnemyWave>
 
-    <EnemyWave Name="SecondWave" StartCondition="PrevWaveComplete">
+    <EnemyWave Name="Warmup_2" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_medium" TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="GuardianShield" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
+        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="heavy_dual_horiz_line"  TimeOffset="1" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="GuardianShieldHard" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
+        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="gapped_forward_spray"  TimeOffset="1" />
       </EnemyPatterns>
     </EnemyWave>
     
+
   </EnemyWaves>
+
+
 </LevelData>

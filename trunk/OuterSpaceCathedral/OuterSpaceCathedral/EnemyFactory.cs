@@ -48,6 +48,7 @@ namespace OuterSpaceCathedral
                 case "lone_linear_destroyer":           LoneDestroyer(movementStrategies); break;
                 case "single_fast_linear":              SingleFastLinear(movementStrategies); break;
                 case "dual_guarded":                    DualGuarded(movementStrategies); break;
+                case "boss":                            Boss(movementStrategies); break;
             }
 
             // build attack pattern
@@ -67,6 +68,7 @@ namespace OuterSpaceCathedral
             {
                 case "asteroid":                        buildEnemy = new BuildEnemyDelegate(BuildAsteroid); break;
                 case "leaf_tron":                       buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
+                case "leaf_tron_miniboss":              buildEnemy = new BuildEnemyDelegate(BuildLeafTronMiniBoss); break;
                 case "anime_punch":                     buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
                 case "random_ddr_arrow":                buildEnemy = new BuildEnemyDelegate(BuildRandomDDRArrow); break;
                 case "countdown_ten":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTen); break;
@@ -80,6 +82,7 @@ namespace OuterSpaceCathedral
                 case "countdown_two":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTwo); break;
                 case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
                 case "evil_heart":                      buildEnemy = new BuildEnemyDelegate(BuildHeart); break;
+                case "coco":                            buildEnemy = new BuildEnemyDelegate(BuildCoco); break;
             }
 
             // build enemies
@@ -237,9 +240,22 @@ namespace OuterSpaceCathedral
         {
             Vector2 topPosition = new Vector2(GameConstants.RenderTargetWidth + 64, 1 * GameConstants.RenderTargetHeight / 4);
             Vector2 botPosition = new Vector2(GameConstants.RenderTargetWidth + 64, 3 * GameConstants.RenderTargetHeight / 4);
-            
-            movementStrategies.Add( BuildMoveToLocation(topPosition, topPosition + new Vector2(-128, 0), 100) );
-            movementStrategies.Add( BuildMoveToLocation(botPosition, botPosition + new Vector2(-128, 0), 100) );
+            Vector2 topTarget = topPosition + new Vector2(-128, 0);
+            Vector2 botTarget = botPosition + new Vector2(-128, 0);
+            Vector2 bobDisp = new Vector2(0, 5);
+
+            movementStrategies.Add( BuildMoveToLocationThenBob(topPosition, topTarget, bobDisp, 100, 2.0f) );
+            movementStrategies.Add( BuildMoveToLocationThenBob(botPosition, botTarget, bobDisp, 100, 2.0f) );
+        }
+
+        // one enemy that moves out and hovers
+        private static void Boss(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 position = new Vector2(GameConstants.RenderTargetWidth + 64, 1 * GameConstants.RenderTargetHeight / 2);            
+            Vector2 target = position + new Vector2(-160, 0);            
+            Vector2 bobDisp = new Vector2(0, 10);
+
+            movementStrategies.Add( BuildMoveToLocationThenBob(position, target, bobDisp, 100, 2.0f) );
         }
 
         // Might Ducks flying v
@@ -296,6 +312,16 @@ namespace OuterSpaceCathedral
             // move to position, then wait
             List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>();
             MoveToLocation(strats, initialPosition, targetLocation, moveSpeed);
+            return new EnemyCompositeMovementStrategy(strats);
+        }
+
+        // move to a location and then bob in place
+        private static IEnemyMovementStrategy BuildMoveToLocationThenBob(Vector2 initialPosition, Vector2 targetLocation, Vector2 bobDisplacement, float moveSpeed, float bobRate)
+        {
+            // move to position, then wait
+            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>();
+            MoveToLocation(strats, initialPosition, targetLocation, moveSpeed);
+            MoveWave(strats, targetLocation, Vector2.Zero, bobDisplacement, bobRate, 0.0f);
             return new EnemyCompositeMovementStrategy(strats);
         }
 
@@ -443,9 +469,17 @@ namespace OuterSpaceCathedral
         private delegate Enemy BuildEnemyDelegate( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy);
 
         private static Enemy BuildLeafTron( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy )
-        {   
-            int health = 25;
+        {
+            return BuildLeafTronGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 25);
+        }
 
+        private static Enemy BuildLeafTronMiniBoss( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy )
+        {
+            return BuildLeafTronGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 200);
+        }
+
+        private static Enemy BuildLeafTronGeneric( int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy, int health )
+        {
             AnimFrameManager animFrameMgr = new AnimFrameManager(   1/10.0f,
                                                                     new List<Rectangle>()
                                                                     {
@@ -752,6 +786,13 @@ namespace OuterSpaceCathedral
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
+
+        private static Enemy BuildCoco(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            // TODO : REPLACE
+            return BuildLeafTronGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 400);
+        }
+
 
         #endregion Enemy Builder Delegates
     }

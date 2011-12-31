@@ -652,13 +652,13 @@ namespace OuterSpaceCathedral
             RemoveIfOffscreen();
         }
 
-        public override void CollisionReaction()
+        public override void CollisionReaction(CollisionMessage collisionMessage)
         {
-            Damage(1);
-            base.CollisionReaction();
+            Damage(1, collisionMessage);
+            base.CollisionReaction(collisionMessage);
         }
 
-        public void Damage(int damageStrength)
+        public void Damage(int damageStrength, CollisionMessage collisionMessage)
         {
             mHealth -= damageStrength;
 
@@ -667,6 +667,18 @@ namespace OuterSpaceCathedral
                 RemoveObject();
                 EffectsBuilder.BuildExplosion(position);
                 AudioManager.PlayEnemyDeathSFX();
+
+                if (collisionMessage is BulletCollisionMessage)
+                {
+                    BulletFirer bf = ((BulletCollisionMessage)collisionMessage).BulletFirer;
+
+                    if (bf != BulletFirer.Enemy)
+                    {
+                        GameState.Level.PlayerStatsManager.Players[(int)bf].Kills++;
+                    }
+
+                    
+                }
             }
         }
 

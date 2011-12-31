@@ -64,7 +64,7 @@ namespace OuterSpaceCathedral
             spriteBatch.Draw(GameState.SpriteSheet, PositionRectangle, sourceRectangle, color);
         }
 
-        public virtual void CollisionReaction()
+        public virtual void CollisionReaction(CollisionMessage collisionMessage)
         {
         }
 
@@ -90,5 +90,7 @@ namespace OuterSpaceCathedral
                 return new Rectangle((int)(position.X - sourceRectangle.Width / 2), (int)(position.Y - sourceRectangle.Height / 2), sourceRectangle.Width, sourceRectangle.Height);
             }
         }
+
+        public CollisionMessage CollisionMessage { get; protected set; }
     }
 }

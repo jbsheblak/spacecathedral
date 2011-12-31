@@ -37,16 +37,17 @@ namespace OuterSpaceCathedral
             position = new Vector2(15, 35 + (int)playerIndex * 50);
         }
 
-        public override void CollisionReaction()
+        public override void CollisionReaction(CollisionMessage collisionMessage)
         {
             if (!invincible)
             {
                 AudioManager.PlayPlayerDeathSFX();
                 EffectsBuilder.BuildPlayerDeathExplosion(position);
+                GameState.Level.PlayerStatsManager.Players[(int)playerIndex].Deaths++;
                 RemoveObject();
             }
 
-            base.CollisionReaction();
+            base.CollisionReaction(collisionMessage);
         }
 
         public override void Update(float deltaTime)

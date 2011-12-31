@@ -844,7 +844,7 @@ namespace OuterSpaceCathedral
 
             // draw rejoin text
             
-            const int skPadding = 15;
+            const int skPadding = 10;
             Vector2 rejoinTextSize = GameState.PixelFont.MeasureString(rejoinText);
             for ( int i = 0; i < skMaxPlayers; ++i )
             {

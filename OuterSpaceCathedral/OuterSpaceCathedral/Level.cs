@@ -382,6 +382,10 @@ namespace OuterSpaceCathedral
         {   
             Vector2 textSize = GameState.PixelFont.MeasureString(mData.Text);
             Vector2 textPos = GameConstants.RenderTargetCenter - new Vector2( textSize.X / 2, 0 );
+
+            //Prevent letters getting chopped off
+            textPos = new Vector2((int)textPos.X, (int)textPos.Y);
+
             Vector2 shadowPos = textPos + new Vector2(-1, -1);
             Color textColor = ParseUtil.ParseColor(mData.Color);
             Color shadowColor = Color.Black;

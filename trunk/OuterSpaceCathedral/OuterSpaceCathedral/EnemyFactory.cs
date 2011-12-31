@@ -35,11 +35,15 @@ namespace OuterSpaceCathedral
                 case "move_center_then_circle":         MoveCenterThenCircle(movementStrategies); break;
                 case "line_up_then_move":               LineUpThenMove(movementStrategies); break;
                 case "wave_line":                       WaveLine(movementStrategies); break;
+                case "wave_line_small":                 WaveLineSmall(movementStrategies); break;
                 case "uncluttered_line":                UnclutteredLine(movementStrategies); break;
+                case "uncluttered_line_easy":           UnclutteredLineEasy(movementStrategies); break;
+                case "uncluttered_line_medium":         UnclutteredLineMedium(movementStrategies); break;
                 case "flying_v":                        FlyingV(movementStrategies); break;
                 case "snake_wave":                      SnakeWave(movementStrategies); break;
                 case "lone_linear_destroyer":           LoneDestroyer(movementStrategies); break;
                 case "single_fast_linear":              SingleFastLinear(movementStrategies); break;
+                case "dual_guarded":                    DualGuarded(movementStrategies); break;
             }
 
             // build attack pattern
@@ -49,6 +53,8 @@ namespace OuterSpaceCathedral
                 case "attack1234":                      attackDelegate = new BuildAttackDelegate(Build_1_2_3_4_Pattern); break;
                 case "1sec_periodic":                   attackDelegate = new BuildAttackDelegate(Build_1_sec_periodic); break;
                 case "circular_gap":                    attackDelegate = new BuildAttackDelegate(Build_Circular_Gap); break;
+                case "heavy_dual_horiz_line":           attackDelegate = new BuildAttackDelegate(Build_Heavy_Dual_Horiz_Line); break;
+                case "gapped_forward_spray":            attackDelegate = new BuildAttackDelegate(Build_Gapped_Forward_Spray); break;
             }   
 
             // build unit description
@@ -109,8 +115,18 @@ namespace OuterSpaceCathedral
         // vertical line of wave movers
         private static void WaveLine( List<IEnemyMovementStrategy> movementStrategies )
         {
-            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
-            Vector2 waveDisplacement = new Vector2(0, 35);
+            WaveLineWithDisplacement( movementStrategies, DefaultEnemyMoveVelocity, new Vector2(0, 35) );
+        }
+
+        // vertical line of wave movers
+        private static void WaveLineSmall( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            WaveLineWithDisplacement( movementStrategies, DefaultEnemyMoveVelocity * 0.5f, new Vector2(0, 10) );
+        }
+
+        // vertical line of wave movers
+        private static void WaveLineWithDisplacement( List<IEnemyMovementStrategy> movementStrategies, Vector2 linearVelocity, Vector2 waveDisplacement )
+        {   
             float rotRateDegrees = 180.0f;
 
             for ( int i = 0; i < 8; ++i )
@@ -132,6 +148,30 @@ namespace OuterSpaceCathedral
             }
         }
 
+        // easy uncluttered line of movers
+        private static void UnclutteredLineEasy(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
+
+            for (int i = 0; i < 8; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256 * i, GameUtility.Random.Next(1, 8) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+            }
+        }
+
+        // medium uncluttered line of movers
+        private static void UnclutteredLineMedium(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = DefaultEnemyMoveVelocity;
+
+            for (int i = 0; i < 16; ++i)
+            {
+                Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 128 * i, GameUtility.Random.Next(1, 8) * 32);
+                movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+            }
+        }
+
         // uncluttered line of movers
         private static void SingleFastLinear(List<IEnemyMovementStrategy> movementStrategies)
         {
@@ -139,6 +179,16 @@ namespace OuterSpaceCathedral
             Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256, GameConstants.RenderTargetHeight / 2);
 
             movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
+        }
+
+        // two enemies that move just on screen and hover
+        private static void DualGuarded(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 topPosition = new Vector2(GameConstants.RenderTargetWidth + 64, 1 * GameConstants.RenderTargetHeight / 4);
+            Vector2 botPosition = new Vector2(GameConstants.RenderTargetWidth + 64, 3 * GameConstants.RenderTargetHeight / 4);
+            
+            movementStrategies.Add( BuildMoveToLocation(topPosition, topPosition + new Vector2(-128, 0), 100) );
+            movementStrategies.Add( BuildMoveToLocation(botPosition, botPosition + new Vector2(-128, 0), 100) );
         }
 
         // Might Ducks flying v
@@ -189,6 +239,14 @@ namespace OuterSpaceCathedral
         #endregion
 
         #region Movement Strategy Builders
+
+        private static IEnemyMovementStrategy BuildMoveToLocation(Vector2 initialPosition, Vector2 targetLocation, float moveSpeed)
+        {
+            // move to position, then wait
+            List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>();
+            MoveToLocation(strats, initialPosition, targetLocation, moveSpeed);
+            return new EnemyCompositeMovementStrategy(strats);
+        }
 
         private static IEnemyMovementStrategy BuildMoveToLocationThenCircle(Vector2 initialCenter, Vector2 targetCenter, float radius, float initialRotationDegrees)
         {
@@ -282,7 +340,7 @@ namespace OuterSpaceCathedral
             float periodTime        = 0.1f;
             int [] attackPattern    = new int [] { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 };
 
-            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern) );
+            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
         }
 
         // slow period attack pattern
@@ -291,7 +349,7 @@ namespace OuterSpaceCathedral
             float fireVelocity      = DefaultFireSpeed;
             float periodTime        = 1.0f;
 
-            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicAttackRateStrategy(periodTime, 0.0f) );
+            return new EnemyAttackStrategy( new EnemyFixedAttackTargetStrategy(fireVelocity),  new EnemyPeriodicAttackRateStrategy(periodTime, 0.0f), 1 );
         }
 
         // circular pattern with gaps for evasion
@@ -302,7 +360,29 @@ namespace OuterSpaceCathedral
             float rotationRate      = 360;
             int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             
-            return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern) );
+            return new EnemyAttackStrategy( new EnemyCircularAttackTargetStrategy(fireVelocity, rotationRate, 0.0f), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
+        }
+
+        // heavy fire with gaps, dual line
+        private static IEnemyAttackStrategy Build_Heavy_Dual_Horiz_Line( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.05f;
+            int [] attackPattern    = new int [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            
+            return new EnemyAttackStrategy( new EnemyLineAttackTargetStrategy(fireVelocity, 2), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 2 );
+        }
+                
+        private static IEnemyAttackStrategy Build_Gapped_Forward_Spray( int enemyIndex, int enemyCount )
+        {   
+            float fireVelocity      = DefaultFireSpeed;
+            float periodTime        = 0.005f;
+            float rotationRate      = 180;
+            float rotationMin       = 135;
+            float rotationMax       = 225;
+            int [] attackPattern    = new int [] { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            
+            return new EnemyAttackStrategy( new EnemyArcAttackStrategy(fireVelocity, rotationRate, rotationMax, rotationMin, rotationMax), new EnemyPeriodicPatternedAttackRateStrategy(periodTime, attackPattern), 1 );
         }
 
         #endregion

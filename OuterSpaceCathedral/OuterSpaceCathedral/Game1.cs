@@ -221,7 +221,7 @@ namespace OuterSpaceCathedral
 
                 // draw game
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
-                if ( GameState.GetGameMode() == GameState.Mode.FrontEnd )
+                if ( GameState.GameMode == GameState.Mode.FrontEnd )
                 {
                     RenderTitleScreen(spriteBatch);
                 }

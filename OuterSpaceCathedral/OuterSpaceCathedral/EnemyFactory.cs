@@ -39,6 +39,7 @@ namespace OuterSpaceCathedral
                 case "flying_v":                        FlyingV(movementStrategies); break;
                 case "snake_wave":                      SnakeWave(movementStrategies); break;
                 case "lone_linear_destroyer":           LoneDestroyer(movementStrategies); break;
+                case "single_fast_linear":              SingleFastLinear(movementStrategies); break;
             }
 
             // build attack pattern
@@ -56,6 +57,16 @@ namespace OuterSpaceCathedral
             {
                 case "leaf_tron":                       buildEnemy = new BuildEnemyDelegate(BuildLeafTron); break;
                 case "anime_punch":                     buildEnemy = new BuildEnemyDelegate(BuildAnimePunch); break;
+                case "countdown_ten":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTen); break;
+                case "countdown_nine":                  buildEnemy = new BuildEnemyDelegate(BuildCountdownNine); break;
+                case "countdown_eight":                 buildEnemy = new BuildEnemyDelegate(BuildCountdownEight); break;
+                case "countdown_seven":                 buildEnemy = new BuildEnemyDelegate(BuildCountdownSeven); break;
+                case "countdown_six":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownSix); break;
+                case "countdown_five":                  buildEnemy = new BuildEnemyDelegate(BuildCountdownFive); break;
+                case "countdown_four":                  buildEnemy = new BuildEnemyDelegate(BuildCountdownFour); break;
+                case "countdown_three":                 buildEnemy = new BuildEnemyDelegate(BuildCountdownThree); break;
+                case "countdown_two":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTwo); break;
+                case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
             }
 
             // build enemies
@@ -119,6 +130,15 @@ namespace OuterSpaceCathedral
                 Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256 * i, GameUtility.Random.Next(1, 8) * 32);
                 movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
             }
+        }
+
+        // uncluttered line of movers
+        private static void SingleFastLinear(List<IEnemyMovementStrategy> movementStrategies)
+        {
+            Vector2 linearVelocity = new Vector2(-500, 0);
+            Vector2 initialPosition = new Vector2(GameConstants.RenderTargetWidth + 256, GameConstants.RenderTargetHeight / 2);
+
+            movementStrategies.Add(BuildLinearMove(initialPosition, linearVelocity));
         }
 
         // Might Ducks flying v
@@ -332,6 +352,206 @@ namespace OuterSpaceCathedral
 
             IEnemyAttackStrategy attack = null;
             if ( buildAttackDelegate != null )
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownTen(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(0, 112, 48, 48),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownNine(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(48, 112, 32, 48),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownEight(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(80, 112, 32, 48),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownSeven(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(112, 112, 32, 48),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownSix(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(144, 112, 32, 48),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownFive(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(176, 112, 64, 80),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownFour(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(240, 112, 80, 80),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownThree(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(0, 160, 80, 112),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownTwo(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(80, 160, 80, 112),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
+            {
+                attack = buildAttackDelegate(enemyIndex, enemyCount);
+            }
+
+            return new Enemy(movementStrategy, attack, animFrameMgr, health);
+        }
+
+        private static Enemy BuildCountdownOne(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            int health = 10000;
+
+            AnimFrameManager animFrameMgr = new AnimFrameManager(10f,
+                                                                    new List<Rectangle>()
+                                                                    {
+                                                                        new Rectangle(0, 272, 48, 144),
+                                                                    }
+                                                                );
+
+            IEnemyAttackStrategy attack = null;
+            if (buildAttackDelegate != null)
             {
                 attack = buildAttackDelegate(enemyIndex, enemyCount);
             }

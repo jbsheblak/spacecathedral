@@ -924,6 +924,7 @@ namespace OuterSpaceCathedral
         /// </summary>
         private void SetReturnToFrontend()
         {
+            AudioManager.StopPlayerFireSFX();
             GameState.GameMode = GameState.Mode.FrontEnd;
         }
 

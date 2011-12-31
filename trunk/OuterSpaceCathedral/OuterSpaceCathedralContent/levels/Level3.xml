@@ -1,8 +1,8 @@
 <LevelData Name="TestLevel">
 
   <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
-  <Intro Text="A New Year Approaches..." Time="60" Color="1 0 0" />
-  <Outro Text="Cathedrals Hate Space"    Time="5" Color="1 0 0" />  
+  <Intro Text="A New Year Approaches..." Time="1" Color="1 0.3 0.3" />
+  <Outro Text="Happy New Year!"    Time="5" Color="1 0.3 0.3" />  
   
   <ArtPieces>
     <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
@@ -14,16 +14,16 @@
 
   <EnemyWaves>
 
-    <EnemyWave Name="SecondWave" >
+    <!--<EnemyWave Name="BebopColaWave" >
       <EnemyPatterns>
-        <EnemyPattern ActorId="leaf_tron" AttackId ="1sec_periodic" PatternId="move_center_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="bebop_cola" AttackId ="1sec_periodic" PatternId="single_fast_linear" TimeOffset="0" />
       </EnemyPatterns>
-    </EnemyWave>
+    </EnemyWave>-->
     
     <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
     <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->
     
-    <EnemyWave Name="FirstWave">      
+    <EnemyWave Name="FirstWave" StartCondition="PrevWaveComplete">      
       <EnemyPatterns>
         <EnemyPattern ActorId="countdown_ten" PatternId="single_fast_linear"        TimeOffset="0" />
       </EnemyPatterns>

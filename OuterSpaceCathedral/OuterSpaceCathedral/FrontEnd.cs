@@ -32,6 +32,7 @@ namespace OuterSpaceCathedral
 
         private List<LevelEntry> mLevelEntries = new List<LevelEntry>();
         private int              mSelectedIdx = 0;
+        private bool             mShouldLaunchFinalLevel = false;
         private bool             mPrevPressingSelect = true;
         private int              mPrevNagivationDelta = 0;
 
@@ -59,6 +60,9 @@ namespace OuterSpaceCathedral
             CheckForLevelUnlocks(true);
         }
 
+        /// <summary>
+        /// Reset all of the key caching mechanisms.
+        /// </summary>
         public void ResetKeyCache()
         {
             mPrevPressingSelect = true;
@@ -71,6 +75,16 @@ namespace OuterSpaceCathedral
             
             // check for unlocks
             CheckForLevelUnlocks(false);
+
+            // check for final level auto launch
+            if ( mShouldLaunchFinalLevel )
+            {
+                mShouldLaunchFinalLevel = false;
+                GameState.GameMode = GameState.Mode.Game;
+                GameState.Level = Level.BuildLevelFromFile( mLevelEntries[ mLevelEntries.Count - 1 ].Path );
+                AudioManager.PlayCursorSelectSFX();
+                return;
+            }
 
             // check for level selection
             bool isSelectButtonDown = primaryPadState.IsButtonDown(Buttons.A);
@@ -146,6 +160,9 @@ namespace OuterSpaceCathedral
             spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
         }
 
+        /// <summary>
+        /// Get the color for the given menu index.
+        /// </summary>
         private Color GetColorForIndex(int idx)
         {
             if ( idx == mSelectedIdx )
@@ -165,15 +182,16 @@ namespace OuterSpaceCathedral
         /// <summary>
         /// For for unlocks in our level entries.
         /// </summary>
-        /// <param name="initialUnlock"></param>
         private void CheckForLevelUnlocks(bool initialUnlock)
         {
             bool playUnlockSound = false;
 
             int timeNow = GameUtility.GetCurrentTimeValue();
 
-            foreach ( LevelEntry e in mLevelEntries )
+            for ( int i = 0; i < mLevelEntries.Count; ++i )
             {
+                LevelEntry e = mLevelEntries[i];
+
                 if ( !e.Unlocked )
                 {
                     if ( !string.IsNullOrEmpty(e.UnlockTime) )
@@ -185,6 +203,12 @@ namespace OuterSpaceCathedral
                             if ( !initialUnlock )
                             {
                                 playUnlockSound = true;
+
+                                // auto-launch last level
+                                if ( i == mLevelEntries.Count - 1 )
+                                {
+                                    mShouldLaunchFinalLevel = true;
+                                }
                             }
                         }
                     }

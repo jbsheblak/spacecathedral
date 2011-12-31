@@ -1,7 +1,8 @@
 <LevelData Name="TestLevel">
 
-  <Intro Text="Hi" Time="5" Color="1 0 0" />
-  <Outro Text="Cathedrals Hate Space" Time="5" Color="1 0 0" />  
+  <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
+  <Intro Text="A New Year Approaches..." Time="60" Color="1 0 0" />
+  <Outro Text="Cathedrals Hate Space"    Time="5" Color="1 0 0" />  
   
   <ArtPieces>
     <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
@@ -20,7 +21,7 @@
     </EnemyWave>
     
     <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
-    <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->    
+    <!--<EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />-->
     
     <EnemyWave Name="FirstWave">      
       <EnemyPatterns>

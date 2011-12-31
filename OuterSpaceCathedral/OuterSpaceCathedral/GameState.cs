@@ -52,16 +52,18 @@ namespace OuterSpaceCathedral
 
                 case Mode.Game:
                     {
+                    #if DEBUG
                         // allow player one to back out of the level
                         // (skip the re-reroute)
-                        GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
-                        if ( gamePad.Buttons.Back == ButtonState.Pressed )
                         {
-                            GameState.GameMode = GameState.Mode.FrontEnd;
-                            return;
+                            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
+                            if ( gamePad.Buttons.Back == ButtonState.Pressed )
+                            {
+                                GameState.GameMode = GameState.Mode.FrontEnd;
+                                return;
+                            }
                         }
-
-                    #if DEBUG
+                                            
                         {
                             // check for debug control changes
                             GamePadState debugPad = GamePad.GetState(PlayerIndex.One);
@@ -75,7 +77,7 @@ namespace OuterSpaceCathedral
                                 mChangingDebugControl = wantsToChangeDebugControl;
                             }
                         }
-                    #endif
+                    #endif // DEBUG
 
 
                         level.Update(deltaTime);

@@ -96,6 +96,10 @@ namespace OuterSpaceCathedral
                     GameState.Level = Level.BuildLevelFromFile( mLevelEntries[mSelectedIdx].Path );
                     AudioManager.PlayCursorSelectSFX();
 
+                    if (mSelectedIdx == 0)
+                    {
+                        AudioManager.PlaySpaceSong();
+                    }
                     if (mSelectedIdx == 2)
                     {
                         AudioManager.PlayMaxSong();

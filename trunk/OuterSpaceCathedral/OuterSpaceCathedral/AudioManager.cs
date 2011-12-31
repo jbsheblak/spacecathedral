@@ -17,6 +17,7 @@ namespace OuterSpaceCathedral
         private static SoundEffect  levelUnlockedSFX;
         private static SoundEffect  bebopColaSFX;
         private static SoundEffect  countdownSFX;
+        private static SoundEffect  fireworkSFX;
 
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
@@ -34,6 +35,7 @@ namespace OuterSpaceCathedral
             levelUnlockedSFX    = content.Load<SoundEffect>("sfx\\levelUnlock");
             bebopColaSFX        = content.Load<SoundEffect>("sfx\\bebop");
             countdownSFX        = content.Load<SoundEffect>("sfx\\countdown");
+            fireworkSFX         = content.Load<SoundEffect>("sfx\\fireworkPop");
 
             max300              = content.Load<Song>("songs\\Max300");
             outerSpace          = content.Load<Song>("songs\\OuterSpace");
@@ -86,6 +88,11 @@ namespace OuterSpaceCathedral
         public static void PlayCountdownSFX()
         {   
             countdownSFX.Play();
+        }
+
+        public static void PlayFireworkPopSFX()
+        {   
+            fireworkSFX.Play();
         }
 
         public static void Update(float deltaTime)

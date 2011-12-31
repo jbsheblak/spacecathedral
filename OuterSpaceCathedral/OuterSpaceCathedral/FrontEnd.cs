@@ -30,7 +30,6 @@ namespace OuterSpaceCathedral
         private int              mSelectedIdx = 0;
         private bool             mPrevPressingSelect = true;
         private int              mPrevNagivationDelta = 0;
-        private float            mElapsedTime;
 
         public FrontEnd()
         {
@@ -56,7 +55,7 @@ namespace OuterSpaceCathedral
             {   
                 if ( mSelectedIdx < mLevelEntries.Count )
                 {
-                    GameState.SetGameMode(GameState.Mode.Game);
+                    GameState.GameMode = GameState.Mode.Game;
                     GameState.Level = Level.BuildLevelFromFile( mLevelEntries[mSelectedIdx].Path );
                     AudioManager.PlayCursorSelectSFX();
                     return;
@@ -91,16 +90,12 @@ namespace OuterSpaceCathedral
                     mPrevNagivationDelta = nagivationDelta;
                 }
             }
-
-            mElapsedTime += deltaTime;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             // draw the level entries
             Vector2 levelEntryPosition = new Vector2(15, 25);
-
-            DrawSomeBadassTrippyBackgroundArt(spriteBatch);
 
             for ( int i = 0; i < mLevelEntries.Count; ++i )
             {
@@ -115,27 +110,6 @@ namespace OuterSpaceCathedral
             Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
             Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
             spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
-        }
-
-        public void DrawSomeBadassTrippyBackgroundArt(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(GameState.SpriteSheet, GameConstants.RenderTargetRect, new Rectangle(0, 0, 16, 16), new Color(26, 48, 78));
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 17; j++)
-                {
-                    spriteBatch.Draw(GameState.SpriteSheet, new Rectangle(i * 64, j * 64, 64, 64), new Rectangle(352, 0, 64, 64), Color.White);
-                }
-            }
-
-            for (int i = 0; i < 11; i++)
-            {
-                for (int j = 0; j < 17; j++)
-                {
-                    spriteBatch.Draw(GameState.SpriteSheet, new Rectangle(-32 + i * 64 - (int)((mElapsedTime * 32) % 64), j * 64, 64, 64), new Rectangle(352, 0, 64, 64), Color.White);
-                }
-            }
         }
     }
 }

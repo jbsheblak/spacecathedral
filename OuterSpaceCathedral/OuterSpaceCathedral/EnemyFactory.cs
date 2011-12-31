@@ -34,6 +34,7 @@ namespace OuterSpaceCathedral
             {
                 case "move_center_then_circle":         MoveCenterThenCircle(movementStrategies); break;
                 case "move_in_shallow_then_circle":     MoveInShallowThenCircle(movementStrategies); break;
+                case "move_to_boss_then_circle":        MoveToBossThenCircle(movementStrategies); break;
                 case "line_up_then_move":               LineUpThenMove(movementStrategies); break;
                 case "wave_line":                       WaveLine(movementStrategies); break;
                 case "wave_line_small":                 WaveLineSmall(movementStrategies); break;
@@ -83,6 +84,7 @@ namespace OuterSpaceCathedral
                 case "countdown_two":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownTwo); break;
                 case "countdown_one":                   buildEnemy = new BuildEnemyDelegate(BuildCountdownOne); break;
                 case "evil_heart":                      buildEnemy = new BuildEnemyDelegate(BuildHeart); break;
+                case "evil_heart_miniboss":             buildEnemy = new BuildEnemyDelegate(BuildHeartMiniboss); break;
                 case "dreamcast":                       buildEnemy = new BuildEnemyDelegate(BuildDreamcast); break;
                 case "coco":                            buildEnemy = new BuildEnemyDelegate(BuildCoco); break;
                 case "bebop_cola":                      buildEnemy = new BuildEnemyDelegate(BuildBebopCola); break;
@@ -104,21 +106,29 @@ namespace OuterSpaceCathedral
         // move to the center of screen, then split and rotation around center
         private static void MoveCenterThenCircle( List<IEnemyMovementStrategy> movementStrategies )
         {
-            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, GameConstants.RenderTargetCenter);
+            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, GameConstants.RenderTargetCenter, DefaultEnemyMoveVelocity);
         }
 
         // move to the center of screen, then split and rotation around center
         private static void MoveInShallowThenCircle( List<IEnemyMovementStrategy> movementStrategies )
         {
-            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, ScreenRightMiddle + new Vector2(-128, 0));
+            MoveToPositionThenCircle(movementStrategies, ScreenRightMiddle, ScreenRightMiddle + new Vector2(-128, 0), DefaultEnemyMoveVelocity);
         }
 
-        private static void MoveToPositionThenCircle( List<IEnemyMovementStrategy> movementStrategies, Vector2 initialPosition, Vector2 moveToPosition )
+        private static void MoveToBossThenCircle( List<IEnemyMovementStrategy> movementStrategies )
+        {
+            Vector2 position = new Vector2(GameConstants.RenderTargetWidth + 64, GameConstants.RenderTargetHeight / 2);
+            Vector2 target = position + new Vector2(-160, 0);
+
+            MoveToPositionThenCircle(movementStrategies, position, target, Vector2.Zero);
+        }
+
+        private static void MoveToPositionThenCircle( List<IEnemyMovementStrategy> movementStrategies, Vector2 initialPosition, Vector2 moveToPosition, Vector2 moveVelocity )
         {
             const int enemyCount = 8;
             for ( int i = 0; i < enemyCount; ++i )
             {
-                movementStrategies.Add( BuildMoveToLocationThenCircle(initialPosition, moveToPosition, 75, 360/enemyCount * i) );
+                movementStrategies.Add( BuildMoveToLocationThenCircle(initialPosition, moveToPosition, moveVelocity, 75, 360/enemyCount * i) );
             }
         }
 
@@ -329,7 +339,7 @@ namespace OuterSpaceCathedral
             return new EnemyCompositeMovementStrategy(strats);
         }
 
-        private static IEnemyMovementStrategy BuildMoveToLocationThenCircle(Vector2 initialCenter, Vector2 targetCenter, float radius, float initialRotationDegrees)
+        private static IEnemyMovementStrategy BuildMoveToLocationThenCircle(Vector2 initialCenter, Vector2 targetCenter, Vector2 moveVelocity, float radius, float initialRotationDegrees)
         {
             // calculate radial position
             float targetX = radius * (float)Math.Cos( initialRotationDegrees * Math.PI / 180.0f );
@@ -340,7 +350,7 @@ namespace OuterSpaceCathedral
             List<IEnemyMovementStrategy> strats = new List<IEnemyMovementStrategy>();
             MoveToLocation(strats, initialCenter, targetCenter,   100);
             MoveToLocation(strats, targetCenter,  radialPosition, 100);
-            MovingRotateAboutPoint(strats, new Vector2(-100, 0), targetCenter, 180, initialRotationDegrees, radius);
+            MovingRotateAboutPoint(strats, moveVelocity, targetCenter, 180, initialRotationDegrees, radius);
 
             return new EnemyCompositeMovementStrategy(strats);
         }
@@ -784,8 +794,16 @@ namespace OuterSpaceCathedral
 
         private static Enemy BuildHeart(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
         {
-            int health = 10;
-            
+            return BuildHeartGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 10);
+        }
+
+        private static Enemy BuildHeartMiniboss(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
+        {
+            return BuildHeartGeneric(enemyIndex, enemyCount, buildAttackDelegate, movementStrategy, 100);
+        }
+
+        private static Enemy BuildHeartGeneric(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy, int health)
+        {   
             AnimFrameManager animFrameMgr = new AnimFrameManager(1/4.0f,
                                                                     new List<Rectangle>()
                                                                     {
@@ -803,7 +821,6 @@ namespace OuterSpaceCathedral
 
             return new Enemy(movementStrategy, attack, animFrameMgr, health);
         }
-
         private static Enemy BuildDreamcast(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
         {
             int health = 10;

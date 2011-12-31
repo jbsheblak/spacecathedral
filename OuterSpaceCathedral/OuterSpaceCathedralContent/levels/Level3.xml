@@ -76,13 +76,15 @@
 
     <EnemyWave Name="Celebration" StartCondition="PrevWaveComplete" StartAction="AddCelebrationStub" />
 
-    <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
+    <EnemyWave Name="Calendar" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
-        <EnemyPattern ActorId="calendar_boss" PatternId="boss" AttackId="happy_new_year"        TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart_miniboss" PatternId="move_to_boss_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="calendar_boss"       PatternId="boss" AttackId="happy_new_year"        TimeOffset="0" />
       </EnemyPatterns>
     </EnemyWave>
+    
 
-    <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
+    <EnemyWave Name="BebopCola" StartCondition="PrevWaveComplete">
       <EnemyPatterns>
         <EnemyPattern ActorId="bebop_cola" PatternId="boss"        TimeOffset="0" />
       </EnemyPatterns>

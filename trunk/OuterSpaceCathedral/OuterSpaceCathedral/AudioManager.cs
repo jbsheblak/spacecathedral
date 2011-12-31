@@ -19,7 +19,7 @@ namespace OuterSpaceCathedral
         private static SoundEffectInstance enemyDeathSFXInstance;
         private static SoundEffectInstance playerFireSFXInstance;
 
-        private static Song max300;
+        private static Song max300, outerSpace;
 
         private static bool playingPlayerFireSFX;
 
@@ -34,6 +34,7 @@ namespace OuterSpaceCathedral
             levelUnlockedSFX    = content.Load<SoundEffect>("sfx\\levelUnlock");
 
             max300              = content.Load<Song>("songs\\Max300");
+            outerSpace          = content.Load<Song>("songs\\OuterSpace");
 
             enemyDeathSFXInstance = enemyDeathSFX.CreateInstance();
             playerFireSFXInstance = playerFireSFX.CreateInstance();
@@ -107,6 +108,11 @@ namespace OuterSpaceCathedral
         public static void PlayMaxSong()
         {
             MediaPlayer.Play(max300);
+        }
+
+        public static void PlaySpaceSong()
+        {
+            MediaPlayer.Play(outerSpace);
         }
 
         public static void StopAllMusic()

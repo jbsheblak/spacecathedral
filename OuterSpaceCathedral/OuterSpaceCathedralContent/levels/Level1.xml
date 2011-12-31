@@ -9,7 +9,7 @@
   </ArtPieces>
 
   <Intro Text="Do not trust the hearts." Time="5" Color="1 0 0" />
-  <Outro Text="" Time="1" Color="1 0 0" />
+  <Outro Text="Dance to the beat of your own heart." Time="5" Color="1 0 0" />
 
   <EnemyWaves>
     

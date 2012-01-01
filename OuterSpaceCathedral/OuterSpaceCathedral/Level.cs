@@ -97,6 +97,11 @@ namespace OuterSpaceCathedral
 
         public bool ArePatternsComplete()
         {
+            if (EnemyPatterns == null)
+            {
+                return true;
+            }
+
             return mPatternIdx >= EnemyPatterns.Count;
         }
 

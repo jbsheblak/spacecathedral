@@ -796,7 +796,7 @@ namespace OuterSpaceCathedral
 
         private static Enemy BuildRandomDDRArrow(int enemyIndex, int enemyCount, BuildAttackDelegate buildAttackDelegate, IEnemyMovementStrategy movementStrategy)
         {
-            int health = 20;
+            int health = 10;
 
             AnimFrameManager animFrameMgr = new AnimFrameManager(1f,
                                                                     new List<Rectangle>()

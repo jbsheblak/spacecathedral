@@ -47,7 +47,7 @@ namespace OuterSpaceCathedral
         #endif
 
             // level unlocks
-            mLevelEntries.Add( new LevelEntry("Ocean Ochestra",     "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
+            mLevelEntries.Add( new LevelEntry("Ocean Orchestra",    "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
             mLevelEntries.Add( new LevelEntry("Cathedral 300",      "content\\levels\\Level2.xml", "23:00:00",   unlockedByDefault) );
             mLevelEntries.Add( new LevelEntry("SECRET",             "content\\levels\\Level3.xml", "23:58:00",   unlockedByDefault) );
 

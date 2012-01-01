@@ -1,0 +1,69 @@
+<LevelData Name="TestLevel">
+
+  <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
+  <Intro Text="A New Year Approaches..." Time="5" Color="1 0.3 0.3" />
+  <Outro Text="Happy New Year!"    Time="15" Color="1 0.3 0.3" />  
+  
+  <ArtPieces>
+    <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.05 0.21 0.32" />
+    <ArtPiece Name="clouds0"  Type="scrolling"  Layer="background" ArtId="city_clouds_background"  Rate="-200 0" Color="0.4 0.6 0.7"     ColorMod="0.35" />
+    <ArtPiece Name="clouds1"  Type="scrolling"  Layer="background" ArtId="city_clouds_background2" Rate="-150 0" Color="0.4 0.6 0.7"     ColorMod="0.15" />
+    <ArtPiece Name="city"     Type="scrolling"  Layer="background" ArtId="city_background"         Rate="-350 0" Color="0.66 0.66 0.66"  ColorMod="0.75" />
+    <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"       Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.50" />
+  </ArtPieces>
+
+  <EnemyWaves>
+    
+    <!-- this is ~25 seconds -->
+    <EnemyWave Name="PreWave" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="dreamcast" PatternId="asteroid_mob"        TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="snake_wave"          TimeOffset="5" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="snake_wave"          TimeOffset="9" />
+        
+        <EnemyPattern ActorId="dreamcast" PatternId="asteroid_mob"        TimeOffset="11" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="flying_v"           TimeOffset="14" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="flying_v"           TimeOffset="15" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="flying_v"           TimeOffset="16" />
+        <EnemyPattern ActorId="evil_heart" PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="19" />
+        
+      </EnemyPatterns>
+    </EnemyWave>
+    
+    <!-- This will cause all normal enemies to be destroyed at 11:59:50PM, the countdown wave then follows. -->
+    <EnemyWave Name="ClearAllEnemies" StartCondition="TimeQuery=23:59:50" StartAction="ClearEnemies" />
+    
+    <EnemyWave Name="CountdownWave" StartCondition="PrevWaveComplete">      
+      <EnemyPatterns>
+        <EnemyPattern ActorId="countdown_ten" PatternId="single_fast_linear"        TimeOffset="0" />      
+        <EnemyPattern ActorId="countdown_nine" PatternId="single_fast_linear"        TimeOffset="1" />      
+        <EnemyPattern ActorId="countdown_eight" PatternId="single_fast_linear"        TimeOffset="2" />      
+        <EnemyPattern ActorId="countdown_seven" PatternId="single_fast_linear"        TimeOffset="3" />      
+        <EnemyPattern ActorId="countdown_six" PatternId="single_fast_linear"        TimeOffset="4" />      
+        <EnemyPattern ActorId="countdown_five" PatternId="single_fast_linear"        TimeOffset="5" />      
+        <EnemyPattern ActorId="countdown_four" PatternId="single_fast_linear"        TimeOffset="6" />      
+        <EnemyPattern ActorId="countdown_three" PatternId="single_fast_linear"        TimeOffset="7" />      
+        <EnemyPattern ActorId="countdown_two" PatternId="single_fast_linear"        TimeOffset="8" />      
+        <EnemyPattern ActorId="countdown_one" PatternId="single_fast_linear"        TimeOffset="9" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="Celebration" StartCondition="PrevWaveComplete" StartAction="AddCelebrationStub" />
+
+    <!-- Calendar Boss -->
+    <EnemyWave Name="Calendar" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="evil_heart_miniboss" PatternId="move_to_boss_then_circle" TimeOffset="0" />
+        <EnemyPattern ActorId="calendar_boss"       PatternId="boss" AttackId="happy_new_year"        TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <!-- Bebop Cola Boss -->
+    <EnemyWave Name="BebopCola" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="bebop_cola" PatternId="boss_bebop" AttackId="circular_gap_bebop" TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+    
+  </EnemyWaves>
+</LevelData>

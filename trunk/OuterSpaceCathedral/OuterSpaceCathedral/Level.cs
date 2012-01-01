@@ -322,7 +322,11 @@ namespace OuterSpaceCathedral
                         bool startNextWave = (nextWave.StartCondition == null);
                         if ( !string.IsNullOrEmpty(nextWave.StartCondition) )
                         {
-                            if ( nextWave.StartCondition == "PrevWaveComplete" )
+                            if ( nextWave.StartCondition == "PrevWaveComplete" 
+                            #if NON_TIMED_BUILD
+                                || nextWave.StartCondition.Contains("TimeQuery")
+                            #endif
+                                )
                             {
                                 bool prevWaveComplete = ( mWaveIdx >= 0 ) ? mEnemyWaves[mWaveIdx].ArePatternsComplete() : true;
                                 startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );

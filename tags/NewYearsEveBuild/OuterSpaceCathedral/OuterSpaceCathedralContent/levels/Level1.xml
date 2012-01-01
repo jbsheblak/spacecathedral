@@ -1,0 +1,76 @@
+<LevelData Name="Maintains">
+
+  <ArtPieces>
+    <ArtPiece Name="sky"      Type="solid"      Layer="background" Color="0.02 0.30 0.58" />
+    <ArtPiece Name="clouds0"  Type="scrolling"  Layer="background" ArtId="city_clouds_background2" Rate="-25 0" Color="0.4 0.6 0.7"     ColorMod="0.35" />
+    <ArtPiece Name="clouds1"  Type="scrolling"  Layer="background" ArtId="city_clouds_background" Rate="-50 0" Color="1.0 1.0 1.0"     ColorMod="0.70" />
+    <ArtPiece Name="ocean"    Type="scrolling"  Layer="background" ArtId="ocean_background"        Rate="-350 0" Color="1.0 1.0 1.0"     ColorMod="1.00" />
+    <ArtPiece Name="clouds2"  Type="scrolling"  Layer="foreground" ArtId="clouds_foreground"      Rate="-500 0" Color="1.0 1.0 1.0"     ColorMod="0.60" />
+  </ArtPieces>
+
+  <Intro Text="Do not trust the hearts." Time="5" Color="1 0 0" />
+  <Outro Text="Dance to the beat of your own heart." Time="5" Color="1 0 0" />
+
+  <EnemyWaves>
+    
+    <EnemyWave Name="Warmup_1" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_easy" TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"         TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"         TimeOffset="12" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="Warmup_2" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron" PatternId="uncluttered_line_medium" TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"           TimeOffset="0" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="GuardianShield" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
+        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="heavy_dual_horiz_line"  TimeOffset="1" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="Circle" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="0" />
+        <EnemyPattern ActorId="evil_heart" PatternId="asteroid_mob"                                            TimeOffset="1" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="4" />
+        <EnemyPattern ActorId="leaf_tron"  PatternId="move_in_shallow_then_circle" AttackId="1sec_periodic"    TimeOffset="8" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+    <EnemyWave Name="FlyingV" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"  TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="flying_v"  TimeOffset="1" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="3" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="4" />
+        <EnemyPattern ActorId="leaf_tron" PatternId="wave_line" TimeOffset="5" />
+
+      </EnemyPatterns>
+    </EnemyWave>
+    
+    <EnemyWave Name="GuardianShieldHard" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="leaf_tron"   PatternId="wave_line_small"                                   TimeOffset="0" />
+        <EnemyPattern ActorId="anime_punch" PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="1" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+
+    <EnemyWave Name="BossToss" StartCondition="PrevWaveComplete">
+      <EnemyPatterns>
+        <EnemyPattern ActorId="coco"                PatternId="boss"            AttackId="circular_gap"           TimeOffset="0" />
+        <EnemyPattern ActorId="leaf_tron_miniboss"  PatternId="dual_guarded"    AttackId="gapped_forward_spray"   TimeOffset="0.5" />
+      </EnemyPatterns>
+    </EnemyWave>
+    
+  </EnemyWaves>
+
+
+</LevelData>

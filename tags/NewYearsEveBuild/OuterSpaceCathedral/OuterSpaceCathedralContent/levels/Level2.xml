@@ -1,0 +1,20 @@
+<LevelData Name="TestLevel">
+
+  <Intro Text="" Time="5" Color="1 0 0" />
+  <Outro Text="Dance Dance Inquisition" Time="5" Color="1 0 0" />
+
+  <ArtPieces>
+    <ArtPiece Name="MAX"  Type="scrolling"  Layer="background" ArtId="cathedral300_background"  Rate="0 0" Color="1 1 1"     ColorMod="1" />
+  </ArtPieces>
+
+  <EnemyWaves>
+
+    <EnemyWave Name="FirstWave" >
+      <EnemyPatterns>
+        <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity" TimeOffset="0" />
+        <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity_and_im_serious" TimeOffset="54" />
+      </EnemyPatterns>
+    </EnemyWave>
+
+  </EnemyWaves>
+</LevelData>

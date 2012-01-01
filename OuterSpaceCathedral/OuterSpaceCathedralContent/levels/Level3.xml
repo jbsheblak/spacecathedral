@@ -1,7 +1,7 @@
 <LevelData Name="TestLevel">
 
   <!-- Note: This intro text serves as a blocker while people get back to the TV. -->  
-  <Intro Text="A New Year Approaches..." Time="70" Color="1 0.3 0.3" />
+  <Intro Text="A New Year Approaches..." Time="5" Color="1 0.3 0.3" />
   <Outro Text="Happy New Year!"    Time="15" Color="1 0.3 0.3" />  
   
   <ArtPieces>

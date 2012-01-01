@@ -12,8 +12,6 @@
     <EnemyWave Name="FirstWave" >
       <EnemyPatterns>
         <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity" TimeOffset="0" />
-      </EnemyPatterns>
-      <EnemyPatterns>
         <EnemyPattern ActorId="random_ddr_arrow" PatternId="ddr_insanity_and_im_serious" TimeOffset="54" />
       </EnemyPatterns>
     </EnemyWave>

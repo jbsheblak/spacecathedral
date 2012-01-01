@@ -35,33 +35,15 @@
     
     <EnemyWave Name="CountdownWave" StartCondition="PrevWaveComplete">      
       <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_ten" PatternId="single_fast_linear"        TimeOffset="0" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_nine" PatternId="single_fast_linear"        TimeOffset="1" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_eight" PatternId="single_fast_linear"        TimeOffset="2" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_seven" PatternId="single_fast_linear"        TimeOffset="3" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_six" PatternId="single_fast_linear"        TimeOffset="4" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_five" PatternId="single_fast_linear"        TimeOffset="5" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_four" PatternId="single_fast_linear"        TimeOffset="6" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_three" PatternId="single_fast_linear"        TimeOffset="7" />
-      </EnemyPatterns>
-      <EnemyPatterns>
-        <EnemyPattern ActorId="countdown_two" PatternId="single_fast_linear"        TimeOffset="8" />
-      </EnemyPatterns>
-      <EnemyPatterns>
+        <EnemyPattern ActorId="countdown_ten" PatternId="single_fast_linear"        TimeOffset="0" />      
+        <EnemyPattern ActorId="countdown_nine" PatternId="single_fast_linear"        TimeOffset="1" />      
+        <EnemyPattern ActorId="countdown_eight" PatternId="single_fast_linear"        TimeOffset="2" />      
+        <EnemyPattern ActorId="countdown_seven" PatternId="single_fast_linear"        TimeOffset="3" />      
+        <EnemyPattern ActorId="countdown_six" PatternId="single_fast_linear"        TimeOffset="4" />      
+        <EnemyPattern ActorId="countdown_five" PatternId="single_fast_linear"        TimeOffset="5" />      
+        <EnemyPattern ActorId="countdown_four" PatternId="single_fast_linear"        TimeOffset="6" />      
+        <EnemyPattern ActorId="countdown_three" PatternId="single_fast_linear"        TimeOffset="7" />      
+        <EnemyPattern ActorId="countdown_two" PatternId="single_fast_linear"        TimeOffset="8" />      
         <EnemyPattern ActorId="countdown_one" PatternId="single_fast_linear"        TimeOffset="9" />
       </EnemyPatterns>
     </EnemyWave>

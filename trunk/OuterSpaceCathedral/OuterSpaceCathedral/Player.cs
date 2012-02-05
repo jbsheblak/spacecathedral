@@ -20,7 +20,6 @@ namespace OuterSpaceCathedral
         PlayerIndex playerIndex;
         float movementSpeed = 200;
         Vector2 invertY = new Vector2(1, -1);
-        GamePadState oldGamePadState, gamePadState;
         float fireInterval = 0.1f;
 
         Vector2 nonFloatPosition;
@@ -52,17 +51,19 @@ namespace OuterSpaceCathedral
 
         public override void Update(float deltaTime)
         {
-            gamePadState = GameState.GetGamePadState(playerIndex);
+            ControllerInput.IController controller = GameState.GetController(playerIndex);
+            
+            Vector2 movement = controller.GetAnalogDirection(ControllerInput.AnalogAction.Game_Move) * invertY * movementSpeed;
 
-            Vector2 movement = gamePadState.ThumbSticks.Left * invertY * movementSpeed;
+            bool fireInput = controller.GetButtonState(ControllerInput.ButtonAction.Game_Fire) == ButtonState.Pressed;
 
-            if (gamePadState.IsButtonDown(Buttons.A) && fireIntervalCounterElapsed >= fireInterval)
+            if (fireInput && fireIntervalCounterElapsed >= fireInterval)
             {
-                bulletStreamAngleScalar = 1 - gamePadState.Triggers.Right;
+                bulletStreamAngleScalar = 1 - controller.GetAnalogDirection(ControllerInput.AnalogAction.Game_StreamControl).X;
                 DefaultFire(movement);
             }
 
-            if (gamePadState.IsButtonDown(Buttons.A))
+            if (fireInput)
             {
                 isFiring = true;
             }
@@ -102,8 +103,6 @@ namespace OuterSpaceCathedral
                     invincibilityTimeElapsed += deltaTime;
                 }
             }
-
-            oldGamePadState = gamePadState;
         }
 
         public void DefaultFire(Vector2 playerMoveSpeed)

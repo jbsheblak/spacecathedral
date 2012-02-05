@@ -322,11 +322,7 @@ namespace OuterSpaceCathedral
                         bool startNextWave = (nextWave.StartCondition == null);
                         if ( !string.IsNullOrEmpty(nextWave.StartCondition) )
                         {
-                            if ( nextWave.StartCondition == "PrevWaveComplete" 
-                            #if NON_TIMED_BUILD
-                                || nextWave.StartCondition.Contains("TimeQuery")
-                            #endif
-                                )
+                            if ( nextWave.StartCondition == "PrevWaveComplete" )
                             {
                                 bool prevWaveComplete = ( mWaveIdx >= 0 ) ? mEnemyWaves[mWaveIdx].ArePatternsComplete() : true;
                                 startNextWave = ( prevWaveComplete && (enemiesList.Count == 0) );
@@ -674,8 +670,8 @@ namespace OuterSpaceCathedral
             {
                 if ( players[i] == null )
                 {
-                    GamePadState gpad = GameState.GetGamePadState( (PlayerIndex)i );
-                    if ( gpad.Buttons.Start == ButtonState.Pressed )
+                    ControllerInput.IController controller = GameState.GetController( (PlayerIndex)i );
+                    if ( controller.GetButtonState(ControllerInput.ButtonAction.Game_Spawn) == ButtonState.Pressed )
                     {
                         AddPlayer( (PlayerIndex)i );
                         AudioManager.PlayPlayerJoinSFX();

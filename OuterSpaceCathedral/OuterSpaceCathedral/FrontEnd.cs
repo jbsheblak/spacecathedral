@@ -42,7 +42,7 @@ namespace OuterSpaceCathedral
             
             bool unlockedByDefault = false;
 
-        #if DEBUG
+        #if DEBUG || NON_TIMED_BUILD
             unlockedByDefault = true;
         #endif
 

@@ -58,11 +58,12 @@ namespace OuterSpaceCathedral
                 case Mode.Game:
                     {
                     #if DEBUG
+                        ControllerInput.IController controller = ControllerInput.GetController(PlayerIndex.One);
+
                         // allow player one to back out of the level
                         // (skip the re-reroute)
                         {
-                            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
-                            if ( gamePad.Buttons.Back == ButtonState.Pressed )
+                            if ( controller.GetButtonState(ControllerInput.ButtonAction.Debug_Back) == ButtonState.Pressed )
                             {
                                 GameState.GameMode = GameState.Mode.FrontEnd;
                                 return;
@@ -71,8 +72,7 @@ namespace OuterSpaceCathedral
                                             
                         {
                             // check for debug control changes
-                            GamePadState debugPad = GamePad.GetState(PlayerIndex.One);
-                            bool wantsToChangeDebugControl = ( debugPad.Buttons.RightShoulder == ButtonState.Pressed );
+                            bool wantsToChangeDebugControl = ( controller.GetButtonState(ControllerInput.ButtonAction.Debug_SwapControl) == ButtonState.Pressed );
                             if ( wantsToChangeDebugControl != mChangingDebugControl )
                             {
                                 if ( wantsToChangeDebugControl )
@@ -133,9 +133,9 @@ namespace OuterSpaceCathedral
         }
         
         /// <summary>
-        /// Get the GamePadState for a given player index.
+        /// Gets the controller for a given player.
         /// </summary>
-        public static GamePadState GetGamePadState(PlayerIndex playerIndex)
+        public static ControllerInput.IController GetController(PlayerIndex playerIndex)
         {
         #if DEBUG
             // if we have a non-default debug control, reroute controls
@@ -145,16 +145,16 @@ namespace OuterSpaceCathedral
                 // if request for player0 comes in, route through something assumed unused
                 if ( (int)playerIndex == mDebugControl )
                 {
-                    return GamePad.GetState(PlayerIndex.One);
+                    return ControllerInput.GetController(PlayerIndex.One);
                 }
                 else if ( (int)playerIndex == 0 )
                 {
-                    return GamePad.GetState(PlayerIndex.Four);
+                    return ControllerInput.GetController(PlayerIndex.Four);
                 }
             }
         #endif
 
-            return GamePad.GetState(playerIndex);
+            return ControllerInput.GetController(playerIndex);
         }
 
         public static Texture2D SpriteSheet

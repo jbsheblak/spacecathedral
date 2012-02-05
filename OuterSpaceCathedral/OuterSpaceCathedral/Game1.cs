@@ -41,7 +41,7 @@ namespace OuterSpaceCathedral
         {
             renderTarget  = new RenderTarget2D(GraphicsDevice, GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight);
             renderTarget2 = new RenderTarget2D(GraphicsDevice, GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight);
-
+            
             graphics.PreferredBackBufferWidth = GameConstants.BackBufferWidth;
             graphics.PreferredBackBufferHeight = GameConstants.BackBufferHeight;
 
@@ -49,7 +49,8 @@ namespace OuterSpaceCathedral
             graphics.SynchronizeWithVerticalRetrace = false;
 
             graphics.ApplyChanges();
-            
+
+            ControllerInput.Initialize();
 
             base.Initialize();
         }

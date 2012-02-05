@@ -54,7 +54,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE;XBOX;XBOX360;NON_TIMED_BUILD</DefineConstants>
+    <DefineConstants>TRACE;XBOX;XBOX360</DefineConstants>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
@@ -67,6 +67,7 @@
     <Compile Include="AudioManager.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="CollisionMessage.cs" />
+    <Compile Include="ControllerInput.cs" />
     <Compile Include="CustomStub.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectsBuilder.cs" />

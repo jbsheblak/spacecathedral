@@ -42,12 +42,12 @@ namespace OuterSpaceCathedral
             
             bool unlockedByDefault = false;
 
-        #if DEBUG || NON_TIMED_BUILD
+        #if DEBUG
             unlockedByDefault = true;
         #endif
 
             // level unlocks
-            mLevelEntries.Add( new LevelEntry("Ocean Orchestra",     "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
+            mLevelEntries.Add( new LevelEntry("Ocean Orchestra",    "content\\levels\\Level1.xml", "22:00:00",   unlockedByDefault) );
             mLevelEntries.Add( new LevelEntry("Cathedral 300",      "content\\levels\\Level2.xml", "23:00:00",   unlockedByDefault) );
             mLevelEntries.Add( new LevelEntry("SECRET",             "content\\levels\\Level3.xml", "23:58:00",   unlockedByDefault) );
 
@@ -71,8 +71,8 @@ namespace OuterSpaceCathedral
 
         public void Update(float deltaTime)
         {
-            GamePadState primaryPadState = GamePad.GetState(0);
-            
+            ControllerInput.IController controller = ControllerInput.GetController(PlayerIndex.One);
+
             // check for unlocks
             CheckForLevelUnlocks(false);
 
@@ -88,8 +88,8 @@ namespace OuterSpaceCathedral
             }
 
             // check for level selection
-            bool isSelectButtonDown = primaryPadState.IsButtonDown(Buttons.A);
-            if ( !mPrevPressingSelect && isSelectButtonDown )
+            bool isSelectPressed = ( controller.GetButtonState(ControllerInput.ButtonAction.FrontEnd_Select) == ButtonState.Pressed );
+            if ( !mPrevPressingSelect && isSelectPressed )
             {   
                 if ( mSelectedIdx < mLevelEntries.Count )
                 {
@@ -119,7 +119,7 @@ namespace OuterSpaceCathedral
                     return;
                 }
             }
-            mPrevPressingSelect = isSelectButtonDown;
+            mPrevPressingSelect = isSelectPressed;
 
             // check for menu navigations
             if ( mLevelEntries.Count > 0 )
@@ -128,12 +128,14 @@ namespace OuterSpaceCathedral
 
                 int nagivationDelta = 0;
 
-                if ( primaryPadState.DPad.Up == ButtonState.Pressed || primaryPadState.ThumbSticks.Left.Y >= sin45 )
+                Vector2 selectDir = controller.GetAnalogDirection(ControllerInput.AnalogAction.FrontEnd_Move);
+
+                if ( selectDir.Y >= sin45 )
                 {
                     nagivationDelta = -1;
                 }
 
-                if ( primaryPadState.DPad.Down == ButtonState.Pressed || primaryPadState.ThumbSticks.Left.Y <= -sin45 )
+                if ( selectDir.Y <= -sin45 )
                 {
                     nagivationDelta = +1;
                 }
@@ -174,11 +176,35 @@ namespace OuterSpaceCathedral
             }
 
             // draw the time
-            string timeString = DateTime.Now.ToString("h:mm:ss tt");
+            {
+                string timeString = DateTime.Now.ToString("h:mm:ss tt");
+                Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
+                Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
+                spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
+            }
 
-            Vector2 stringSize = new Vector2(100, GameState.PixelFont.LineSpacing);
-            Vector2 timeStringPos = new Vector2(GameConstants.RenderTargetWidth, GameConstants.RenderTargetHeight) - stringSize;
-            spriteBatch.DrawString(GameState.PixelFont, timeString, timeStringPos, Color.Red);
+            // draw the controller input
+            {
+                string controllerString = string.Empty;
+                switch ( ControllerInput.GetController(PlayerIndex.One).GetControllerType() )
+                {
+                    case ControllerInput.ControllerType.GamePad:
+                        controllerString = "GamePad";
+                        break;
+
+                    case ControllerInput.ControllerType.Keyboard:
+                        controllerString = "Keyboard";
+                        break;
+
+                    case ControllerInput.ControllerType.Null:
+                        controllerString = "Null";
+                        break;
+                }
+            
+                Vector2 stringSize = new Vector2(0, GameState.PixelFont.LineSpacing);
+                Vector2 stringPos = new Vector2(5, GameConstants.RenderTargetHeight) - stringSize;
+                spriteBatch.DrawString(GameState.PixelFont, controllerString, stringPos, Color.White);
+            }
         }
 
         /// <summary>
